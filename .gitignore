@@ -1,0 +1,24 @@
+# Credentials and private provider configuration
+密钥/
+服务商.json
+
+# Local data directories
+学生数据/
+教师数据/
+
+# Runtime output
+日志/
+课件输出/
+__pycache__/
+*.pyc
+_历史/
+
+# Skill packs: keep only the three synthetic samples shipped with this repository,
+# so that a real teacher's pack cannot be committed by accident
+技能包/*
+!技能包/demo-real
+!技能包/qa-verify-pack
+!技能包/refactor-check
+
+# Ad-hoc scripts and generated artifacts at the top level
+/_*

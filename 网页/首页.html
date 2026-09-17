@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>「邵新」辅助教育系统</title>
+<link rel="stylesheet" href="/网页/样式.css">
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="brand">
+      <span class="name">「邵新」辅助教育系统</span>
+      <span class="sub">乡村教师经验留存 · 内部使用</span>
+    </div>
+    <div class="meta">版本 <span id="verNo">（读取中）</span> · 本地运行 · <a href="#" data-go="设置">设置</a></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section id="view-首页">
+    <h2 class="page">工作台</h2>
+    <div class="tiles">
+      <button class="tile" data-go="创造模式">
+        <span class="t-name">创造模式</span>
+        <span class="t-desc">直接跟 AI 说想做什么：出课件、备课、查材料、录数据</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="电脑服务">
+        <span class="t-name">电脑服务</span>
+        <span class="t-desc">一句话让电脑做事：看内存、清垃圾、清回收站</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="环境配置">
+        <span class="t-name">环境配置</span>
+        <span class="t-desc">检测并配齐 Python / Node / Git / VS Code / WSL</span>
+        <span class="t-state ok" id="envState">检测中…</span>
+      </button>
+      <button class="tile" data-go="教师蒸馏">
+        <span class="t-name">教师蒸馏</span>
+        <span class="t-desc">把一位教师的材料整理成 AI 技能包</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="本地知识库">
+        <span class="t-name">本地知识库</span>
+        <span class="t-desc">教师材料与已生成的技能包</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="学生档案馆">
+        <span class="t-name">学生档案馆</span>
+        <span class="t-desc">按编号记录作答与错误类型</span>
+        <span class="t-state wait">同意书未签 · 阻断</span>
+      </button>
+      <button class="tile" data-go="学生问答">
+        <span class="t-name">学生问答</span>
+        <span class="t-desc">学生输自己的编号提问，问答计入本人档案</span>
+        <span class="t-state wait">同意书未签 · 阻断</span>
+      </button>
+      <button class="tile" data-go="学生注册">
+        <span class="t-name">学生注册</span>
+        <span class="t-desc">登记学生编号，一人一个档案文件夹</span>
+        <span class="t-state wait">同意书未签 · 阻断</span>
+      </button>
+      <button class="tile" data-go="课件生成">
+        <span class="t-name">PPT 生成</span>
+        <span class="t-desc">按这位教师的风格生成带讲稿的课件</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="联动教学">
+        <span class="t-name">联动教学</span>
+        <span class="t-desc">边放课件边讲，随时按「我有问题」暂停答疑</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="错因诊断">
+        <span class="t-name">错因诊断</span>
+        <span class="t-desc">按这位老师的方法看这道题为什么错、他该怎么讲</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="讲解评定">
+        <span class="t-name">讲解评定</span>
+        <span class="t-desc">老师本人逐条校对 AI 的讲解（教师审核闭环）</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="反馈与优化">
+        <span class="t-name">反馈与优化</span>
+        <span class="t-desc">提意见 → 出诊断草稿 → 人决定改不改（机器不动代码）</span>
+        <span class="t-state ok">可用</span>
+      </button>
+    </div>
+  </section>
+
+  <section id="view-电脑服务" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>电脑服务</h2>
+      <div class="body">
+        <div class="notice">
+          不会用电脑也没关系 —— 用一句话说，或点下面的按钮。<br>
+          <b>只看不动的</b>（看内存、看垃圾有多少）点一下就出结果；
+          <b>要动手的</b>（清临时文件、清回收站）会先把「会发生什么」摊开给你看，
+          你按 <b>确认执行</b> 才会真的做。
+          <br><br>
+          <b>先说清楚一件事</b>：Windows 没有可靠的「清理内存」操作 —— 那些号称清内存的软件
+          是把程序的工作集强行刷走，用起来反而更卡。真正管用的是
+          <b>磁盘腾出空间</b>（清临时文件）和 <b>关掉不用的程序</b>；
+          该关哪个，「谁最占内存」会告诉你，这一步请你自己关。
+        </div>
+        <div class="chatrow">
+          <textarea id="pcText" rows="2" placeholder="例如：电脑好卡，帮我清一下垃圾"></textarea>
+          <button id="btnPcAsk">帮我看看</button>
+        </div>
+        <div id="pcMenu" style="margin-top:12px"></div>
+        <div id="pcMsg" style="margin-top:12px"></div>
+        <pre id="pcOut" class="hide"></pre>
+        <table id="pcTable" class="hide" style="margin-top:12px"></table>
+        <div style="margin-top:12px">
+          <button class="danger hide" id="btnPcRun">确认执行</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-环境配置" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>环境配置</h2>
+      <div class="body">
+        <div class="notice">
+          检测这台电脑上有没有 Python / Node / Git / VS Code / WSL。
+          <b>检测</b>只看不动；
+          <b>安装</b>走 Windows 自带的 winget（微软官方包管理器），会先把「装什么、要多久、
+          要不要授权」摊开给你看，你按 <b>确认安装</b> 才开始。
+          <br><br>
+          <b>WSL 不代劳</b>：它需要管理员权限且装完要重启电脑，系统只给命令，请你自己执行。
+          装完后本系统可能要关掉重开，才会检测到新装的东西。
+        </div>
+        <div id="envAlert" class="notice err hide" style="white-space:pre-line"></div>
+        <div style="margin-top:12px">
+          <button id="btnEnvScan">检测本机环境</button>
+        </div>
+        <div id="envMsg" style="margin-top:12px"></div>
+        <pre id="envOut" class="hide"></pre>
+        <table id="envTable" class="hide" style="margin-top:12px"></table>
+        <table id="envPlan" class="hide" style="margin-top:12px"></table>
+        <div style="margin-top:12px">
+          <button class="danger hide" id="btnEnvRun">确认安装</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-创造模式" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>创造模式</h2>
+      <div class="body">
+        <div class="notice">
+          直接跟 AI 说想做什么，它会自己动手。能做的事：
+          <b>出课件</b>（生成 HTML 课件文件）、<b>备课</b>（生成整课讲稿）、
+          <b>查材料与技能包</b>、<b>录学生记录</b>（需先签同意书）。
+          <br>
+          对话只存在这个页面里，<b>刷新即清、服务端不保存</b>；涉及学生时请用编号，不要写姓名。
+        </div>
+        <div class="chatlog" id="chatLog"></div>
+        <div class="chatrow">
+          <textarea id="chatText" rows="2" placeholder="例如：用 teacher-a 的风格，出一节「分数的除法」的课件"></textarea>
+          <button id="btnChatSend">发送</button>
+        </div>
+        <div style="margin-top:8px">
+          <button class="ghost" id="btnChatClear">清空对话</button>
+        </div>
+        <div id="chatMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card hide" id="cmdCard">
+      <h2>AI 想执行的命令（等你确认）</h2>
+      <div class="body">
+        <div class="notice">
+          下面是为完成你刚才那句话、AI 想跑的命令。
+          <b>先读一遍说明，看不懂就别点</b> —— 命令没确认之前，一个字符都没跑。
+        </div>
+        <div id="cmdList"></div>
+        <div id="cmdMsg" style="margin-top:12px"></div>
+        <pre id="cmdOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-教师蒸馏" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>教师蒸馏</h2>
+      <div class="body">
+        <div class="notice">
+          材料放在 <code>材料/</code> 目录下，仅支持 <code>.txt</code> / <code>.md</code>。
+          材料正文只在蒸馏时读取，不上传到任何公开位置。
+        </div>
+        <div class="row">
+          <div>
+            <label>选择材料</label>
+            <select id="fileSelect"></select>
+          </div>
+          <div>
+            <label>技能包代号（小写字母、数字、连字符）</label>
+            <input type="text" id="skillName" placeholder="例如：math-fraction-teacher-a">
+          </div>
+        </div>
+        <label>技能包描述（写进 SKILL.md，决定「什么时候该用它」）</label>
+        <input type="text" id="skillDesc" placeholder="例如：小学数学分数除法，用乡村场景打比方，先举例后下定义">
+        <div style="margin-top:12px">
+          <button id="btnDistill">开始蒸馏</button>
+          <button class="ghost" id="btnRefreshDistill">刷新材料列表</button>
+        </div>
+        <div id="distillMsg" style="margin-top:12px"></div>
+        <pre id="distillOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-本地知识库" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>教师材料</h2>
+      <div class="body">
+        <div class="notice">只列文件名与大小，<b>不展示材料正文</b> —— 材料属教师本人。</div>
+        <button class="ghost" id="btnRefreshMats">刷新</button>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:60px">序号</th><th>文件名</th><th style="width:120px">大小（字节）</th></tr></thead>
+          <tbody id="matRows"><tr><td colspan="3">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>技能包</h2>
+      <div class="body">
+        <button class="ghost" id="btnRefreshSkills">刷新</button>
+        <div id="skillMsg" style="margin-top:12px"></div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:60px">序号</th><th style="width:250px">技能包代号</th><th>描述</th><th style="width:90px">操作</th></tr></thead>
+          <tbody id="skillRows"><tr><td colspan="4">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>课件</h2>
+      <div class="body">
+        <button class="ghost" id="btnRefreshDecks">刷新</button>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:60px">序号</th><th>课件文件</th><th style="width:120px">大小（字节）</th><th style="width:160px">生成时间</th><th style="width:90px">操作</th></tr></thead>
+          <tbody id="deckRows"><tr><td colspan="5">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card hide" id="skillViewCard">
+      <h2>技能包内容</h2>
+      <div class="body"><pre id="skillView"></pre></div>
+    </div>
+    <div class="card hide" id="skillEditCard">
+      <h2>技能包校订</h2>
+      <div class="body">
+        <div class="notice">
+          把这份技能包按 <code>##</code> 拆成一段一段，请老师逐段过一遍 ——
+          申报材料里写的「该老师<b>本人逐条校对</b>技能包」就是这里。
+          改动会直接写回 <code>SKILL.md</code>，但<b>存之前会自动备份</b>到
+          <code>_历史\</code>，改坏了可以照着恢复。
+        </div>
+        <div id="skillEditMsg" style="margin-top:12px"></div>
+        <div id="skillEditList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-学生档案馆" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>学生档案馆</h2>
+      <div class="body">
+        <div id="arcGate" class="notice" style="white-space:pre-line"></div>
+        <button class="ghost" id="btnRefreshArc">刷新</button>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:50px">序号</th><th style="width:90px">编号</th><th style="width:110px">姓名</th><th style="width:90px">记录条数</th><th>最近一条</th><th style="width:90px">操作</th></tr></thead>
+          <tbody id="arcRows"><tr><td colspan="6">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>录入一条记录</h2>
+      <div class="body">
+        <div class="notice">
+          这里录的是 <b>编号化的记录</b>：只填编号，<b>不要把姓名写进题目或作答里</b>。
+          姓名属于对照表，不进记录、不进报告、不发送；记录只存本机。
+        </div>
+        <div class="row">
+          <div>
+            <label>学生编号</label>
+            <input type="text" id="arcSid" placeholder="例如：S01">
+          </div>
+          <div>
+            <label>学科</label>
+            <input type="text" id="arcSubject" placeholder="例如：数学">
+          </div>
+        </div>
+        <label>题目</label>
+        <textarea id="arcQuestion" rows="2"></textarea>
+        <label style="margin-top:12px">学生作答</label>
+        <textarea id="arcAnswer" rows="2"></textarea>
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label>对错</label>
+            <select id="arcCorrect"></select>
+          </div>
+          <div>
+            <label>错误类型</label>
+            <select id="arcError"></select>
+          </div>
+        </div>
+        <div style="margin-top:12px"><button id="btnArcAdd">录入</button></div>
+        <div id="arcMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card hide" id="arcViewCard">
+      <h2 id="arcViewTitle">某个学生的档案</h2>
+      <div class="body">
+        <div id="arcViewInfo" class="notice"></div>
+        <table>
+          <thead><tr><th style="width:70px">类型</th><th>内容</th><th>补充</th><th style="width:160px">时间</th></tr></thead>
+          <tbody id="arcViewRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-学生问答" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>学生问答</h2>
+      <div class="body">
+        <div class="notice">
+          填你自己的编号，选一位老师，然后提问。回答会按这位老师的讲法。
+          <b>这次问答会记进你自己的档案</b>（《学生数据处理约定》4.1 采集清单第 1 项）。
+          需先取得监护人签署的《家长知情同意书》。
+        </div>
+        <div class="row">
+          <div>
+            <label>你的编号</label>
+            <input type="text" id="qaStuSid" placeholder="例如：S01">
+          </div>
+          <div>
+            <label>请哪位老师来答</label>
+            <select id="qaStuSkill"></select>
+          </div>
+        </div>
+        <label>你的问题</label>
+        <textarea id="qaStuQuestion" rows="3" placeholder="例如：老师，为什么除以分数要倒过来乘？"></textarea>
+        <div style="margin-top:12px">
+          <button id="btnQaStuAsk">提问</button>
+          <button class="ghost" id="btnRefreshQaStu">刷新老师列表</button>
+        </div>
+        <div id="qaStuMsg" style="margin-top:12px"></div>
+        <pre id="qaStuOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-学生注册" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>学生注册</h2>
+      <div class="body">
+        <div class="notice">
+          登记 <b>编号</b>（如 S01）与学生的识别信息。编号会分到一个自己的档案文件夹
+          （<b>学生数据/&lt;编号&gt;/</b>）。
+          <b>姓名、年级、班级只写进对照表</b>（<b>学生数据/对照表/姓名对照表.json</b>，单独存放），
+          不进问答记录、不进报告、不发送给 AI 服务商。
+        </div>
+        <div class="row">
+          <div>
+            <label>学生编号</label>
+            <input type="text" id="regSid" placeholder="例如：S03">
+          </div>
+          <div>
+            <label>姓名</label>
+            <input type="text" id="regName" placeholder="只进对照表，不发送">
+          </div>
+          <div>
+            <label>学号</label>
+            <input type="text" id="regNo" placeholder="只进对照表，不发送">
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label>年级</label>
+            <input type="text" id="regGrade" placeholder="例如：八年级">
+          </div>
+          <div>
+            <label>班级</label>
+            <input type="text" id="regClass" placeholder="例如：3 班">
+          </div>
+          <div>
+            <label>家长同意书</label>
+            <select id="regConsent"></select>
+          </div>
+        </div>
+        <label style="margin-top:12px">备注</label>
+        <textarea id="regNote" rows="2" placeholder="例如：家长 9/15 已签回。别写电话、住址"></textarea>
+        <div style="margin-top:12px">
+          <button id="btnRegAdd">注册</button>
+          <button class="ghost" id="btnRefreshReg">刷新名册</button>
+        </div>
+        <div id="regMsg" style="margin-top:12px"></div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:40px">序号</th><th style="width:72px">编号</th><th style="width:100px">姓名</th><th style="width:90px">学号</th><th style="width:74px">年级</th><th style="width:64px">班级</th><th style="width:96px">家长同意书</th><th style="width:74px">记录条数</th><th>最近一条</th></tr></thead>
+          <tbody id="regRows"><tr><td colspan="9">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-课件生成" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>PPT 生成</h2>
+      <div class="body">
+        <div class="notice">
+          按所选技能包里 <b>那位老师的风格</b> 生成 <b>PowerPoint 课件（.pptx）</b>：
+          要点在幻灯片上，讲稿放在该页的<b>备注</b>里（放映时用演讲者视图看得到）。
+          下载后可用 PowerPoint 或 WPS 打开修改。
+          想在上课时逐页讲解、随时答疑，用「联动教学」。
+        </div>
+        <div class="row">
+          <div>
+            <label>用哪位教师的风格</label>
+            <select id="pptSkill"></select>
+          </div>
+          <div>
+            <label>页数（默认 8）</label>
+            <input type="text" id="pptSlides" placeholder="8">
+          </div>
+        </div>
+        <label>课题</label>
+        <input type="text" id="pptTopic" placeholder="例如：分数的除法">
+        <div style="margin-top:12px">
+          <button id="btnPpt">生成课件</button>
+          <button class="ghost" id="btnRefreshPpt">刷新技能包列表</button>
+        </div>
+        <div id="pptMsg" style="margin-top:12px"></div>
+        <div id="pptOpen" class="hide" style="margin-top:8px">
+          <a id="pptLink" href="#">下载课件（.pptx） →</a>
+        </div>
+        <pre id="pptOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-错因诊断" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>错因诊断</h2>
+      <div class="body">
+        <div class="notice">
+          判断这道题<b>为什么错</b>，并按所选技能包里<b>那位老师的方法</b>重讲一遍。
+          结果<b>不落盘</b>（它不在采集清单三项里）；要留档就把它带到「学生档案馆」再录一条。
+        </div>
+        <div class="row">
+          <div>
+            <label>用哪位教师的方法</label>
+            <select id="diagSkill"></select>
+          </div>
+          <div>
+            <label>学科</label>
+            <input type="text" id="diagSubject" placeholder="例如：数学">
+          </div>
+        </div>
+        <label>题目</label>
+        <textarea id="diagTopic" rows="2"></textarea>
+        <label style="margin-top:12px">学生的作答</label>
+        <textarea id="diagAnswer" rows="2"></textarea>
+        <div style="margin-top:12px">
+          <button id="btnDiag">诊断</button>
+          <button class="ghost" id="btnRefreshDiag">刷新技能包列表</button>
+        </div>
+        <div id="diagMsg" style="margin-top:12px"></div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:110px">项</th><th>内容</th><th style="width:210px">备注</th></tr></thead>
+          <tbody id="diagRows"><tr><td colspan="3">还没有诊断过。</td></tr></tbody>
+        </table>
+        <div class="hide" id="diagToArcWrap" style="margin-top:12px">
+          <button id="btnDiagToArc">把这一条带去「学生档案馆」录入 →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-讲解评定" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>讲解评定 · 出题</h2>
+      <div class="body">
+        <div class="notice">
+          用<b>项目组自备的题目</b>让 AI 按这位老师的方法写一段讲解（<b>不经学生</b>），
+          再由<b>老师本人</b>看这段讲解对不对。他的改版会和 AI 原版一起留下，
+          供实验五做盲评对照。（依据：知情同意书-教师 第三节第 6 项。）
+        </div>
+        <div class="row">
+          <div>
+            <label>用哪位老师的方法</label>
+            <select id="evalSkill"></select>
+          </div>
+          <div>
+            <label>条目号（下面在评哪一条）</label>
+            <input type="text" id="evalNo" placeholder="出题后自动填好">
+          </div>
+        </div>
+        <label>题目（项目组自备，不要写学生姓名）</label>
+        <textarea id="evalTopic" rows="2"></textarea>
+        <div style="margin-top:12px">
+          <button id="btnEvalGen">按这位老师的讲法出一段讲解</button>
+          <button class="ghost" id="btnRefreshEval">刷新技能包列表</button>
+        </div>
+        <div id="evalMsg" style="margin-top:12px"></div>
+        <div id="evalShowCard" class="hide" style="margin-top:12px">
+          <label>AI 原版（讲解A）—— 给老师看的就是这一段</label>
+          <pre id="evalShowA"></pre>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>老师判定</h2>
+      <div class="body">
+        <div class="row">
+          <div>
+            <label>老师怎么看这段讲解</label>
+            <select id="evalVerdict"></select>
+          </div>
+        </div>
+        <label>老师改后的版本（没改就留空）</label>
+        <textarea id="evalFixed" rows="4"></textarea>
+        <label style="margin-top:12px">老师说的话（<b>原话</b>，不要润色）</label>
+        <textarea id="evalWords" rows="2"></textarea>
+        <div style="margin-top:12px"><button id="btnEvalSave">存下这条判定</button></div>
+        <div id="evalSaveMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>评定台账</h2>
+      <div class="body">
+        <div class="row">
+          <div>
+            <label>只看</label>
+            <select id="evalOnly"></select>
+          </div>
+          <div style="align-self:flex-end">
+            <button class="ghost" id="btnEvalLedger">刷新台账</button>
+          </div>
+        </div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:60px">号</th><th style="width:80px">状态</th><th style="width:90px">判定</th><th>题目</th><th style="width:90px">老师改过</th><th>老师原话</th></tr></thead>
+          <tbody id="evalRows"><tr><td colspan="6">还没有条目。上面出第一题就有了。</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-反馈与优化" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>提一条反馈</h2>
+      <div class="body">
+        <div class="notice">
+          遇到不好用、算错了、太慢，或者想要什么功能，写在这里会存进 <code>教师数据\反馈.jsonl</code> 等排期。
+          <br>
+          <b>学生自己提的意见请由老师转述</b> —— 反馈内容不属《学生数据处理约定》里的三项采集内容，
+          学生那边<b>不落盘</b>（所以手机版上没有这个入口）。
+        </div>
+        <div class="row">
+          <div>
+            <label>属于哪一类</label>
+            <select id="fbKind"></select>
+          </div>
+          <div>
+            <label>影响到什么（可选）</label>
+            <input type="text" id="fbScope" placeholder="例如：手机版">
+          </div>
+        </div>
+        <label>具体是什么（写清楚你在做什么时遇到的）</label>
+        <textarea id="fbText" rows="3"></textarea>
+        <div style="margin-top:12px"><button id="btnFbSend">存下这条反馈</button></div>
+        <div id="fbMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>反馈清单</h2>
+      <div class="body">
+        <div class="row">
+          <div>
+            <label>只看</label>
+            <select id="fbOnly"></select>
+          </div>
+          <div>
+            <label>按类型筛</label>
+            <select id="fbFilterKind"></select>
+          </div>
+          <div style="align-self:flex-end">
+            <button class="ghost" id="btnFbRefresh">刷新清单</button>
+          </div>
+        </div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:50px">号</th><th style="width:70px">状态</th><th style="width:90px">类型</th><th>内容</th><th style="width:80px">结果</th><th style="width:90px">提交号</th><th style="width:90px">用时</th></tr></thead>
+          <tbody id="fbRows"><tr><td colspan="7">还没有反馈。</td></tr></tbody>
+        </table>
+        <div class="row" style="margin-top:16px">
+          <div>
+            <label>要处理哪一条（填号）</label>
+            <input type="text" id="fbHandleNo" placeholder="例如：1">
+          </div>
+          <div>
+            <label>结果</label>
+            <select id="fbResult"></select>
+          </div>
+          <div>
+            <label>提交号（已修时填）</label>
+            <input type="text" id="fbCommit" placeholder="例如：3e811c8">
+          </div>
+        </div>
+        <label>补一句（可选）</label>
+        <input type="text" id="fbNote">
+        <div style="margin-top:12px"><button id="btnFbMark">记下处理结果</button></div>
+        <div id="fbMarkMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>诊断草稿（只出主意，不动代码）</h2>
+      <div class="body">
+        <div class="notice">
+          把一条反馈和<b>你点名要看的文件</b>交给模型，产出「定位 / 建议改动 / 要动哪几个文件 / 怎么验证 / 风险」。
+          <b>它不改任何文件、不执行任何命令</b> —— 改不改由人定；改完要过自检 + 双向回归，再 git 提交（所以能回滚）。
+          <br>
+          路径里带 <code>..</code> 的一律拒；<code>密钥\</code>、<code>学生数据\</code>、
+          <code>教师数据\</code> 里的东西<b>一律不许</b>发给模型。
+        </div>
+        <div class="row">
+          <div>
+            <label>诊断哪一条（填号）</label>
+            <input type="text" id="fbDiagNo" placeholder="例如：1">
+          </div>
+          <div>
+            <label>先看哪些文件（相对路径，逗号分隔；可留空）</label>
+            <input type="text" id="fbDiagFiles" placeholder="例如：能力/学生问答.py,网页/手机.html">
+          </div>
+        </div>
+        <div style="margin-top:12px"><button id="btnFbDiag">出一份诊断草稿</button></div>
+        <div id="fbDiagMsg" style="margin-top:12px"></div>
+        <pre id="fbDiagOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-联动教学" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+
+    <div class="card" id="lecSetup">
+      <h2>联动教学 · 备课</h2>
+      <div class="body">
+        <div class="notice">
+          选一位老师、给定课题，系统按他的讲法生成整课（每页要点 + 讲稿），然后一页页讲。
+          上课时学生按 <b>「我有问题」</b> 就会暂停，答完再继续。
+        </div>
+        <div class="row">
+          <div>
+            <label>用哪位教师的讲法</label>
+            <select id="lecSkill"></select>
+          </div>
+          <div>
+            <label>页数（默认 6）</label>
+            <input type="text" id="lecSlides" placeholder="6">
+          </div>
+        </div>
+        <label>课题</label>
+        <input type="text" id="lecTopic" placeholder="例如：分数的除法">
+        <div style="margin-top:12px">
+          <button id="btnLecStart">开始上课</button>
+          <button class="ghost" id="btnRefreshLec">刷新技能包列表</button>
+        </div>
+        <div id="lecMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <div class="card hide" id="lecPlayer">
+      <h2 id="lecTitle">上课中</h2>
+      <div class="body">
+        <div class="stage">
+          <div class="stage-no" id="lecNo"></div>
+          <h3 id="lecSlideTitle"></h3>
+          <ul id="lecPoints"></ul>
+          <div class="script"><b>讲稿</b><p id="lecScript"></p></div>
+        </div>
+        <div style="margin-top:12px">
+          <button id="btnPrev">上一页</button>
+          <button id="btnNext">下一页</button>
+          <button class="ghost" id="btnAuto">自动播放</button>
+          <button class="danger" id="btnAskPause">我有问题</button>
+          <button class="ghost" id="btnLecStop">结束上课</button>
+        </div>
+        <div id="lecOutMsg" style="margin-top:12px"></div>
+
+        <div class="askbox hide" id="askBox">
+          <h3>暂停中 —— 请写下你的问题</h3>
+          <textarea id="askText" rows="2" placeholder="例如：为什么除以分数要倒过来乘？"></textarea>
+          <div style="margin-top:10px">
+            <button id="btnAskSend">提交问题</button>
+            <button class="ghost" id="btnResume">继续上课</button>
+          </div>
+          <div id="askMsg" style="margin-top:10px"></div>
+          <pre id="askOut" class="hide"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-设置" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>模型配置</h2>
+      <div class="body">
+        <div class="notice">
+          改了立即生效，不用重启。密钥只写入本机 <code>密钥/</code> 目录，界面不回显、日志不记录。
+        </div>
+        <table>
+          <thead><tr><th style="width:130px">服务商</th><th style="width:60px">当前</th><th style="width:170px">模型</th><th>接口地址</th><th style="width:140px">密钥</th></tr></thead>
+          <tbody id="setRows"><tr><td colspan="5">加载中…</td></tr></tbody>
+        </table>
+        <div style="margin-top:16px">
+          <div class="row">
+            <div>
+              <label>服务商</label>
+              <select id="setProvider"></select>
+            </div>
+            <div>
+              <label>设为当前使用</label>
+              <select id="setDefault"><option>是</option><option>否</option></select>
+            </div>
+          </div>
+          <label>模型名</label>
+          <input type="text" id="setModel" placeholder="例如：deepseek-flash">
+          <label style="margin-top:12px">接口地址</label>
+          <input type="text" id="setBase" placeholder="例如：https://api.deepseek.com">
+          <label style="margin-top:12px">密钥环境变量名</label>
+          <input type="text" id="setKeyEnv" placeholder="例如：DEEPSEEK_API_KEY">
+          <label style="margin-top:12px">密钥（留空则不改动）</label>
+          <input type="password" id="setKey" placeholder="粘贴 API Key，保存后只存本机">
+          <div style="margin-top:12px">
+            <button id="btnSaveSettings">保存</button>
+            <button class="ghost" id="btnReloadSettings">重新读取</button>
+          </div>
+          <div id="setMsg" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>模型用量与缓存命中</h2>
+      <div class="body">
+        <div class="notice">
+          上下文缓存由服务商侧默认开启、不用改代码。这里只展示软件自己记下来的用量 —— 记下来才看得出是哪条路径低。
+          <b>官方说明：前两次请求不会命中，第三次起才命中</b>；缓存尽力而为、不保证 100%。
+        </div>
+        <button class="ghost" id="btnCacheRefresh">刷新用量</button>
+        <div id="cacheMsg" style="margin-top:12px"></div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:140px">来源</th><th style="width:100px">计入的调用次数</th><th style="width:110px">命中 token</th><th style="width:120px">未命中 token</th><th style="width:110px">推理 token</th><th>命中率</th></tr></thead>
+          <tbody id="cacheRows"><tr><td colspan="6">点「刷新用量」看看</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>主办：开发团队</span><span>|</span>
+    <span>技术支持：小l</span><span>|</span>
+    <span>数据仅存本地，不对外提供</span>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+let ABILITIES = null;
+const SETTINGS = { items: [] };
+const LEC = { items: [], index: 0, skill: '', auto: false, timer: null };
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function brief(s, n) {
+  const t = String(s == null ? '' : s);
+  return t.length > n ? t.slice(0, n) + '…' : t;
+}
+
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  const t = await r.text();
+  let d;
+  try { d = JSON.parse(t); } catch (e) { throw new Error('服务返回的不是 JSON：' + t.slice(0, 200)); }
+  if (!r.ok) throw new Error(d.错误 || ('HTTP ' + r.status));
+  return d;
+}
+
+async function 能力() {
+  if (!ABILITIES) ABILITIES = (await api('/api/能力')).条目;
+  return ABILITIES;
+}
+
+async function paramOptions(ability, param) {
+  const list = await 能力();
+  const ab = list.find(a => a.代号 === ability);
+  if (!ab) return [];
+  const p = ab.参数.find(x => x.代号 === param);
+  return (p && p.可选项) || [];
+}
+
+function run(ability, args) {
+  return api('/api/run', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 能力: ability, 参数: args || {} })
+  });
+}
+
+function say(el, text, cls) {
+  el.className = 'notice ' + (cls || '');
+  el.textContent = text;
+}
+
+function fillSelect(sel, list, emptyText, 默认值) {
+  sel.innerHTML = list.length
+    ? list.map(v => '<option value="' + esc(v) + '">' + esc(v) + '</option>').join('')
+    : '<option value="">' + esc(emptyText) + '</option>';
+  if (默认值 && list.indexOf(默认值) >= 0) sel.value = 默认值;
+}
+
+async function fillOptions(ability, param, selectId, emptyText) {
+  const sel = $(selectId);
+  try {
+    fillSelect(sel, await paramOptions(ability, param), emptyText);
+  } catch (e) {
+    sel.innerHTML = '<option value="">读取失败：' + esc(e.message) + '</option>';
+  }
+}
+
+const MSG_OUT = [
+  ['distillMsg', 'distillOut'],
+  ['pptMsg', 'pptOut'],
+  ['arcMsg', null],
+  ['skillMsg', null],
+  ['lecMsg', null],
+  ['setMsg', null],
+  ['cacheMsg', null],
+  ['chatMsg', null],
+  ['pcMsg', 'pcOut'],
+  ['envMsg', 'envOut'],
+  ['cmdMsg', 'cmdOut'],
+  ['qaStuMsg', 'qaStuOut'],
+  ['regMsg', null],
+  ['diagMsg', null],
+  ['evalMsg', null],
+  ['evalSaveMsg', null],
+  ['skillEditMsg', null],
+  ['fbMsg', null],
+  ['fbMarkMsg', null],
+  ['fbDiagMsg', 'fbDiagOut']
+];
+
+function clearResults() {
+  MSG_OUT.forEach(pair => {
+    const msg = $(pair[0]);
+    msg.className = '';
+    msg.textContent = '';
+    if (pair[1]) {
+      $(pair[1]).classList.add('hide');
+      $(pair[1]).textContent = '';
+    }
+  });
+  $('arcGate').className = 'notice';
+  $('arcGate').textContent = '';
+  if ($('envAlert')) {
+    $('envAlert').classList.add('hide');
+    $('envAlert').innerHTML = '';
+  }
+  if ($('envPlan')) {
+    $('envPlan').classList.add('hide');
+    $('envPlan').innerHTML = '';
+  }
+  if ($('arcViewCard')) $('arcViewCard').classList.add('hide');
+  $('skillViewCard').classList.add('hide');
+  $('skillView').textContent = '';
+  $('pptOpen').classList.add('hide');
+  $('cmdCard').classList.add('hide');
+  $('cmdList').innerHTML = '';
+  $('diagRows').innerHTML = '<tr><td colspan="3">还没有诊断过。</td></tr>';
+  $('diagToArcWrap').classList.add('hide');
+  $('skillEditCard').classList.add('hide');
+  $('skillEditList').innerHTML = '';
+  $('evalShowCard').classList.add('hide');
+  $('evalShowA').textContent = '';
+  $('evalRows').innerHTML = '<tr><td colspan="6">还没有条目。上面出第一题就有了。</td></tr>';
+  $('fbRows').innerHTML = '<tr><td colspan="7">还没有反馈。</td></tr>';
+  $('fbDiagOut').textContent = '';
+}
+
+function lecReset() {
+  lecAuto(false);
+  LEC.items = [];
+  LEC.index = 0;
+  LEC.skill = '';
+  $('lecPlayer').classList.add('hide');
+  $('lecSetup').classList.remove('hide');
+  $('askBox').classList.add('hide');
+  $('askOut').classList.add('hide');
+  $('askText').value = '';
+  $('lecOutMsg').className = '';
+  $('lecOutMsg').textContent = '';
+  $('askMsg').className = '';
+  $('askMsg').textContent = '';
+}
+
+const VIEWS = ['首页', '创造模式', '学生问答', '学生注册', '电脑服务', '环境配置', '教师蒸馏', '本地知识库', '学生档案馆', '课件生成', '错因诊断', '讲解评定', '反馈与优化', '联动教学', '设置'];
+
+async function show(name) {
+  VIEWS.forEach(v => $('view-' + v).classList.toggle('hide', v !== name));
+  clearResults();
+  if (name !== '联动教学') lecReset();
+  if (name === '教师蒸馏') await fillOptions('蒸馏', '文件', 'fileSelect', '（材料/ 目录暂无材料）');
+  if (name === '本地知识库') { loadMaterials(); loadSkills(); loadDecks(); }
+  if (name === '学生档案馆') loadArchive();
+  if (name === '学生问答') loadQaStu();
+  if (name === '学生注册') loadReg();
+  if (name === '课件生成') await fillOptions('课件生成', '技能包', 'pptSkill', '（还没有技能包，先去「教师蒸馏」生成）');
+  if (name === '错因诊断') await fillOptions('错因诊断', '技能包', 'diagSkill', '（还没有技能包，先去「教师蒸馏」生成）');
+  if (name === '讲解评定') {
+    await fillOptions('讲解评定', '技能包', 'evalSkill', '（还没有技能包，先去「教师蒸馏」生成）');
+    loadEvalLedger();
+  }
+  if (name === '反馈与优化') loadFeedback();
+  if (name === '联动教学') await fillOptions('联动教学', '技能包', 'lecSkill', '（还没有技能包，先去「教师蒸馏」生成）');
+  if (name === '创造模式') chatRender();
+  if (name === '电脑服务') loadPcMenu();
+  if (name === '环境配置') envScan();
+  if (name === '设置') { loadSettings(); loadCacheUse(); }
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll('[data-go]').forEach(el => {
+  el.onclick = ev => {
+    if (el.tagName === 'A') ev.preventDefault();
+    show(el.dataset.go);
+  };
+});
+
+
+async function loadMaterials() {
+  const tb = $('matRows');
+  try {
+    const d = await run('材料台账', {});
+    if (!d.条目 || !d.条目.length) {
+      tb.innerHTML = '<tr><td colspan="3">暂无材料。把 .txt / .md 放进 材料/ 目录</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.条目.map((m, i) =>
+      '<tr><td>' + (i + 1) + '</td><td>' + esc(m['文件名']) + '</td><td>' + esc(m['大小(字节)']) + '</td></tr>'
+    ).join('');
+  } catch (e) {
+    tb.innerHTML = '<tr><td colspan="3">读取失败：' + esc(e.message) + '</td></tr>';
+  }
+}
+
+async function loadSkills() {
+  const tb = $('skillRows');
+  try {
+    const d = await run('技能包管理', {});
+    if (!d.条目 || !d.条目.length) {
+      tb.innerHTML = '<tr><td colspan="4">暂无技能包。先去做一次蒸馏</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.条目.map((s, i) =>
+      '<tr><td>' + (i + 1) + '</td>' +
+      '<td><span class="tag">' + esc(s['技能包代号']) + '</span></td>' +
+      '<td>' + (s['描述'] ? esc(brief(s['描述'], 40)) : '<span style="color:#999">（无描述）</span>') + '</td>' +
+      '<td><button class="ghost" data-skill="' + esc(s['技能包代号']) + '">查看</button> ' +
+      '<button class="ghost" data-skill-edit="' + esc(s['技能包代号']) + '">校订</button></td></tr>'
+    ).join('');
+  } catch (e) {
+    tb.innerHTML = '<tr><td colspan="4">读取失败：' + esc(e.message) + '</td></tr>';
+  }
+}
+
+async function loadDecks() {
+  const tb = $('deckRows');
+  try {
+    const d = await run('课件台账', {});
+    if (!d.条目 || !d.条目.length) {
+      tb.innerHTML = '<tr><td colspan="5">还没有生成过课件。去「PPT 生成」或「联动教学」做一份（.pptx）</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.条目.map((k, i) =>
+      '<tr><td>' + (i + 1) + '</td><td>' + esc(k['课件文件']) + '</td>' +
+      '<td>' + esc(k['大小(字节)']) + '</td><td>' + esc(k['生成时间']) + '</td>' +
+      '<td><a href="/课件/' + esc(encodeURIComponent(k['课件文件'])) + '">下载</a></td></tr>'
+    ).join('');
+  } catch (e) {
+    tb.innerHTML = '<tr><td colspan="5">读取失败：' + esc(e.message) + '</td></tr>';
+  }
+}
+
+$('skillRows').addEventListener('click', e => {
+  const 看 = e.target.closest('button[data-skill]');
+  if (看) { viewSkill(看.dataset.skill); return; }
+  const 改 = e.target.closest('button[data-skill-edit]');
+  if (改) editSkill(改.dataset.skillEdit);
+});
+
+async function viewSkill(name) {
+  try {
+    const d = await run('查看技能包', { 技能包: name });
+    $('skillView').textContent = d.正文;
+    $('skillViewCard').classList.remove('hide');
+  } catch (e) {
+    say($('skillMsg'), '读取失败：' + e.message, 'err');
+  }
+}
+
+
+let DIAG = { 学科: '', 题目: '', 作答: '', 错误类型: '' };
+
+async function runDiag() {
+  const tb = $('diagRows');
+  try {
+    const d = await run('错因诊断', {
+      技能包: $('diagSkill').value,
+      学科: $('diagSubject').value,
+      题目: $('diagTopic').value,
+      作答: $('diagAnswer').value
+    });
+    const 有问题 = (d.条目 || []).some(一 => 一['备注']);
+    say($('diagMsg'), d.提示 || '诊断完成。', 有问题 ? 'err' : 'ok');
+    tb.innerHTML = (d.条目 || []).map(一 =>
+      '<tr><td><b>' + esc(一['字段']) + '</b></td><td>' + esc(一['内容'] || '（空）') +
+      '</td><td style="color:#999">' + esc(一['备注'] || '') + '</td></tr>').join('')
+      || '<tr><td colspan="3">模型没按格式给出三项，看提示里的告警。</td></tr>';
+    DIAG = {
+      学科: $('diagSubject').value,
+      题目: $('diagTopic').value,
+      作答: $('diagAnswer').value,
+      错误类型: d['错误类型'] || ''
+    };
+    $('diagToArcWrap').classList.toggle('hide', !DIAG.错误类型);
+  } catch (e) {
+    say($('diagMsg'), '诊断失败：' + e.message, 'err');
+    tb.innerHTML = '';
+    $('diagToArcWrap').classList.add('hide');
+  }
+}
+
+function 带去档案() {
+  $('arcSubject').value = DIAG.学科;
+  $('arcQuestion').value = DIAG.题目;
+  $('arcAnswer').value = DIAG.作答;
+  show('学生档案馆');
+  if (!DIAG.错误类型) return;
+  const 下拉 = $('arcError');
+  下拉.value = DIAG.错误类型;
+  if (下拉.value !== DIAG.错误类型) {
+    say($('arcMsg'), '注意：下拉里没有「' + DIAG.错误类型 + '」这一项，请手动选一个再录入。', 'err');
+  } else {
+    say($('arcMsg'), '已把这条带到录入表，错误类型也填好了。核对后点「录入」。', 'ok');
+  }
+}
+
+$('btnDiag').onclick = runDiag;
+$('btnDiagToArc').onclick = 带去档案;
+$('btnRefreshDiag').onclick = () =>
+  fillOptions('错因诊断', '技能包', 'diagSkill', '（还没有技能包，先去「教师蒸馏」生成）');
+
+
+async function doEvalGen() {
+  const btn = $('btnEvalGen');
+  btn.disabled = true;
+  say($('evalMsg'), '正在按这位老师的讲法写讲解，可能要十几秒…');
+  $('evalShowCard').classList.add('hide');
+  try {
+    const d = await run('讲解评定', {
+      技能包: $('evalSkill').value,
+      题目: $('evalTopic').value
+    });
+    $('evalNo').value = (d.条目号 == null ? '' : d.条目号);
+    $('evalShowA').textContent = d.正文 || '';
+    $('evalShowCard').classList.remove('hide');
+    say($('evalMsg'), d.提示 || '已生成。', 'ok');
+    loadEvalLedger();
+  } catch (e) {
+    say($('evalMsg'), '出题失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function doEvalSave() {
+  const 号 = $('evalNo').value.trim();
+  if (!号) { say($('evalSaveMsg'), '先在上面出一题，或者手填一个条目号。', 'err'); return; }
+  const btn = $('btnEvalSave');
+  btn.disabled = true;
+  say($('evalSaveMsg'), '正在存…');
+  try {
+    const d = await run('记讲解评定', {
+      条目号: 号,
+      判定: $('evalVerdict').value,
+      改后讲解: $('evalFixed').value,
+      老师原话: $('evalWords').value
+    });
+    say($('evalSaveMsg'), d.提示 || '已存下。', 'ok');
+    $('evalFixed').value = '';
+    $('evalWords').value = '';
+    loadEvalLedger();
+  } catch (e) {
+    say($('evalSaveMsg'), '存不下：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function loadEvalLedger() {
+  const tb = $('evalRows');
+  try {
+    const d = await run('评定台账', { 只看: $('evalOnly').value || '全部' });
+    if (!d.条目 || !d.条目.length) {
+      tb.innerHTML = '<tr><td colspan="6">' + esc(d.提示 || '还没有条目。') + '</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.条目.map(r =>
+      '<tr><td>' + esc(r['条目号']) + '</td><td>' + esc(r['状态']) + '</td>' +
+      '<td>' + esc(r['判定'] || '—') + '</td><td>' + esc(brief(r['题目'], 30)) + '</td>' +
+      '<td>' + (r['讲解B'] ? '改过' : '没改') + '</td>' +
+      '<td>' + esc(brief(r['老师原话'], 30)) + '</td></tr>'
+    ).join('');
+  } catch (e) {
+    tb.innerHTML = '<tr><td colspan="6">读取失败：' + esc(e.message) + '</td></tr>';
+  }
+}
+
+$('btnEvalGen').onclick = doEvalGen;
+$('btnEvalSave').onclick = doEvalSave;
+$('btnEvalLedger').onclick = loadEvalLedger;
+$('btnRefreshEval').onclick = () =>
+  fillOptions('讲解评定', '技能包', 'evalSkill', '（还没有技能包，先去「教师蒸馏」生成）');
+$('evalOnly').onchange = loadEvalLedger;
+
+
+let 在改的包 = '';
+
+async function editSkill(代号) {
+  在改的包 = 代号;
+  const 盒 = $('skillEditList');
+  $('skillEditCard').classList.remove('hide');
+  盒.innerHTML = '<div class="notice">正在读技能包…</div>';
+  say($('skillEditMsg'), '');
+  try {
+    const d = await run('技能包校订', { 技能包: 代号 });
+    say($('skillEditMsg'), d.提示 || '', '');
+    盒.innerHTML = (d.条目 || []).map(一 =>
+      '<div style="margin-top:18px">' +
+      '<label>第 ' + esc(一['节号']) + ' 段 · ' + esc(一['标题']) + '</label>' +
+      '<textarea rows="4" data-sec="' + esc(一['标题']) + '">' + esc(一['原文']) + '</textarea>' +
+      '<input type="text" data-words="' + esc(一['标题']) +
+      '" placeholder="老师为什么这么改（原话，不要润色）">' +
+      '<div style="margin-top:8px"><button class="ghost" data-secsave="' +
+      esc(一['标题']) + '">存回这一段</button></div></div>').join('');
+  } catch (e) {
+    盒.innerHTML = '';
+    say($('skillEditMsg'), '读不出来：' + e.message, 'err');
+  }
+}
+
+async function saveSection(节标题) {
+  const 盒 = $('skillEditList');
+  const 选择 = 盒.querySelector('textarea[data-sec="' + CSS.escape(节标题) + '"]');
+  const 原话 = 盒.querySelector('input[data-words="' + CSS.escape(节标题) + '"]');
+  if (!选择) return;
+  if (!选择.value.trim()) {
+    say($('skillEditMsg'), '「' + 节标题 + '」这段不能存空的。', 'err');
+    return;
+  }
+  if (!confirm('确认把「' + 节标题 + '」这段改写回技能包？\n（改前那一版会自动备份到 _历史\\）')) return;
+  say($('skillEditMsg'), '正在存…');
+  try {
+    const d = await run('存技能包节', {
+      技能包: 在改的包, 节标题: 节标题,
+      新内容: 选择.value, 老师原话: 原话 ? 原话.value : ''
+    });
+    say($('skillEditMsg'), d.提示 || '已存回。', 'ok');
+  } catch (e) {
+    say($('skillEditMsg'), '存不进去：' + e.message, 'err');
+  }
+}
+
+$('skillEditList').addEventListener('click', e => {
+  const 改 = e.target.closest('button[data-secsave]');
+  if (改) saveSection(改.dataset.secsave);
+});
+
+
+async function sendFeedback() {
+  const btn = $('btnFbSend');
+  btn.disabled = true;
+  say($('fbMsg'), '正在存…');
+  try {
+    const d = await run('记反馈', {
+      类型: $('fbKind').value, 内容: $('fbText').value, 影响面: $('fbScope').value
+    });
+    say($('fbMsg'), d.提示 || '已存下。', 'ok');
+    $('fbText').value = '';
+    $('fbScope').value = '';
+    loadFeedback();
+  } catch (e) {
+    say($('fbMsg'), '存不下：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function loadFeedback() {
+  const tb = $('fbRows');
+  try {
+    const d = await run('反馈清单', {
+      只看: $('fbOnly').value || '全部', 类型: $('fbFilterKind').value || '全部'
+    });
+    if (!d.条目 || !d.条目.length) {
+      tb.innerHTML = '<tr><td colspan="7">' + esc(d.提示 || '还没有反馈。') + '</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.条目.map(r =>
+      '<tr><td>' + esc(r['反馈编号']) + '</td><td>' + esc(r['状态']) + '</td>' +
+      '<td>' + esc(r['类型']) + '</td><td>' + esc(brief(r['内容'], 40)) + '</td>' +
+      '<td>' + esc(r['结果'] || '—') + '</td><td>' + esc(r['提交号'] || '—') + '</td>' +
+      '<td>' + (r['处理用时小时'] == null ? '—' : esc(r['处理用时小时']) + ' 小时') +
+      '</td></tr>'
+    ).join('');
+  } catch (e) {
+    tb.innerHTML = '<tr><td colspan="7">读取失败：' + esc(e.message) + '</td></tr>';
+  }
+}
+
+async function markFeedback() {
+  const 号 = $('fbHandleNo').value.trim();
+  if (!号) { say($('fbMarkMsg'), '先填一下要处理哪一条（清单里的号）。', 'err'); return; }
+  const btn = $('btnFbMark');
+  btn.disabled = true;
+  say($('fbMarkMsg'), '正在记…');
+  try {
+    const d = await run('记反馈处理', {
+      反馈编号: 号, 结果: $('fbResult').value,
+      提交号: $('fbCommit').value, 说明: $('fbNote').value
+    });
+    say($('fbMarkMsg'), d.提示 || '已记下。', 'ok');
+    $('fbNote').value = '';
+    loadFeedback();
+  } catch (e) {
+    say($('fbMarkMsg'), '记不下：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function diagnoseFeedback() {
+  const 号 = $('fbDiagNo').value.trim();
+  if (!号) { say($('fbDiagMsg'), '先填一下诊断哪一条。', 'err'); return; }
+  const btn = $('btnFbDiag');
+  btn.disabled = true;
+  $('fbDiagOut').classList.add('hide');
+  say($('fbDiagMsg'), '正在读代码、让模型出草稿，可能要二三十秒…');
+  try {
+    const d = await run('反馈诊断', { 反馈编号: 号, 相关文件: $('fbDiagFiles').value });
+    say($('fbDiagMsg'), d.提示 || '', 'ok');
+    $('fbDiagOut').textContent = d.正文 || '';
+    $('fbDiagOut').classList.remove('hide');
+  } catch (e) {
+    say($('fbDiagMsg'), '出不了草稿：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+$('btnFbSend').onclick = sendFeedback;
+$('btnFbMark').onclick = markFeedback;
+$('btnFbDiag').onclick = diagnoseFeedback;
+$('btnFbRefresh').onclick = loadFeedback;
+$('fbOnly').onchange = loadFeedback;
+$('fbFilterKind').onchange = loadFeedback;
+
+
+async function loadArchive() {
+  const tb = $('arcRows');
+  $('arcViewCard').classList.add('hide');
+  try {
+    const d = await run('学生档案馆', {});
+    if (d.正文) {
+      $('arcGate').className = 'notice err';
+      $('arcGate').textContent = d.正文;
+    }
+    if (!d.条目 || !d.条目.length) {
+      tb.innerHTML = '<tr><td colspan="6">' + esc(d.提示 || '暂无学生') + '</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.条目.map((r, i) =>
+      '<tr><td>' + (i + 1) + '</td><td>' + esc(r['编号']) + '</td><td>' + esc(r['姓名']) +
+      '</td><td>' + esc(r['记录条数']) + '</td><td>' + esc(r['最近一条']) + '</td>' +
+      '<td><button class="ghost" data-stu="' + esc(r['编号']) + '">查看</button></td></tr>'
+    ).join('');
+  } catch (e) {
+    tb.innerHTML = '<tr><td colspan="6">读取失败：' + esc(e.message) + '</td></tr>';
+  }
+}
+
+$('arcRows').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-stu]');
+  if (btn) viewStudent(btn.dataset.stu);
+});
+
+async function viewStudent(编号) {
+  try {
+    const d = await run('查看学生档案', { 编号: 编号 });
+    $('arcViewTitle').textContent = '学生档案 · ' + 编号 + '（' + (d.提示 || '') + '）';
+    $('arcViewInfo').textContent = d.正文 || '';
+    $('arcViewRows').innerHTML = (d.条目 && d.条目.length)
+      ? d.条目.map(r => '<tr><td>' + esc(r['类型']) + '</td><td>' + esc(r['内容']) +
+          '</td><td>' + esc(r['补充']) + '</td><td>' + esc(r['时间']) + '</td></tr>').join('')
+      : '<tr><td colspan="4">这个学生还没有记录。</td></tr>';
+    $('arcViewCard').classList.remove('hide');
+  } catch (e) {
+    say($('arcMsg'), '读取失败：' + e.message, 'err');
+  }
+}
+
+async function doArchiveAdd() {
+  const btn = $('btnArcAdd');
+  const msg = $('arcMsg');
+  btn.disabled = true;
+  say(msg, '正在录入…');
+  try {
+    const d = await run('录入学生记录', {
+      编号: $('arcSid').value.trim(),
+      学科: $('arcSubject').value.trim(),
+      题目: $('arcQuestion').value.trim(),
+      作答: $('arcAnswer').value.trim(),
+      对错: $('arcCorrect').value,
+      错误类型: $('arcError').value
+    });
+    say(msg, d.提示 || '已录入', 'ok');
+    $('arcQuestion').value = '';
+    $('arcAnswer').value = '';
+    loadArchive();
+  } catch (e) {
+    say(msg, '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+
+async function doPpt() {
+  const btn = $('btnPpt');
+  const msg = $('pptMsg');
+  const out = $('pptOut');
+  const topic = $('pptTopic').value.trim();
+
+  if (!$('pptSkill').value) { say(msg, '请先选一位教师的技能包', 'err'); return; }
+  if (!topic) { say(msg, '请填课题', 'err'); return; }
+
+  btn.disabled = true;
+  say(msg, '正在生成课件，可能要十几秒到一分钟…');
+  out.classList.add('hide');
+  $('pptOpen').classList.add('hide');
+  try {
+    const d = await run('课件生成', {
+      技能包: $('pptSkill').value,
+      课题: topic,
+      页数: $('pptSlides').value.trim() || '8'
+    });
+    say(msg, d.提示 || '已生成', 'ok');
+    if (d.课件文件) {
+      $('pptLink').href = '/课件/' + encodeURIComponent(d.课件文件);
+      $('pptOpen').classList.remove('hide');
+    }
+    out.textContent = d.正文 || '';
+    out.classList.remove('hide');
+  } catch (e) {
+    say(msg, '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+
+function lecRender() {
+  const it = LEC.items[LEC.index];
+  if (!it) return;
+  $('lecNo').textContent = '第 ' + (LEC.index + 1) + ' 页 / 共 ' + LEC.items.length + ' 页';
+  $('lecSlideTitle').textContent = it['标题'] || '';
+  const points = String(it['要点'] || '').split('\n').filter(x => x.trim());
+  $('lecPoints').innerHTML = points.map(p => '<li>' + esc(p) + '</li>').join('');
+  $('lecScript').textContent = it['讲稿'] || '';
+}
+
+function lecSchedule() {
+  clearTimeout(LEC.timer);
+  if (!LEC.auto || !LEC.items.length) return;
+  const script = String(LEC.items[LEC.index]['讲稿'] || '');
+  const seconds = Math.max(4, Math.round(script.length / 6));
+  LEC.timer = setTimeout(() => {
+    if (LEC.index < LEC.items.length - 1) {
+      LEC.index += 1;
+      lecRender();
+      lecSchedule();
+    } else {
+      lecAuto(false);
+      say($('lecOutMsg'), '这一课讲完了。', 'ok');
+    }
+  }, seconds * 1000);
+}
+
+function lecAuto(on) {
+  LEC.auto = on;
+  $('btnAuto').textContent = on ? '暂停自动播放' : '自动播放';
+  lecSchedule();
+}
+
+async function doLectureStart() {
+  const btn = $('btnLecStart');
+  const msg = $('lecMsg');
+  const topic = $('lecTopic').value.trim();
+
+  if (!$('lecSkill').value) { say(msg, '请先选一位教师的技能包', 'err'); return; }
+  if (!topic) { say(msg, '请填课题', 'err'); return; }
+
+  btn.disabled = true;
+  say(msg, '正在备课，可能要十几秒到一分钟…');
+  try {
+    const d = await run('联动教学', {
+      技能包: $('lecSkill').value,
+      课题: topic,
+      页数: $('lecSlides').value.trim() || '6'
+    });
+    if (!d.条目 || !d.条目.length) throw new Error('没有生成任何页面');
+
+    LEC.items = d.条目;
+    LEC.index = 0;
+    LEC.skill = $('lecSkill').value;
+    $('lecTitle').textContent = '上课中 · ' + (d.课名 || topic);
+    $('lecSetup').classList.add('hide');
+    $('lecPlayer').classList.remove('hide');
+    say($('lecOutMsg'), d.提示 || '开始上课', 'ok');
+    lecRender();
+    lecAuto(true);
+  } catch (e) {
+    say(msg, '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function lecPause() {
+  lecAuto(false);
+  $('askBox').classList.remove('hide');
+  $('askOut').classList.add('hide');
+  $('askMsg').className = '';
+  $('askMsg').textContent = '';
+  $('askText').value = '';
+  $('askText').focus();
+}
+
+async function doAskSend() {
+  const btn = $('btnAskSend');
+  const msg = $('askMsg');
+  const out = $('askOut');
+  const question = $('askText').value.trim();
+  if (!question) { say(msg, '请先写下问题', 'err'); return; }
+
+  btn.disabled = true;
+  say(msg, '正在按这位老师的方式作答…');
+  out.classList.add('hide');
+  try {
+    const d = await run('答疑', { 技能包: LEC.skill, 问题: question });
+    say(msg, d.提示 || '回答完成', 'ok');
+    out.textContent = d.正文 || '';
+    out.classList.remove('hide');
+  } catch (e) {
+    say(msg, '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function doResume() {
+  $('askBox').classList.add('hide');
+  say($('lecOutMsg'), '继续上课。', 'ok');
+  lecAuto(true);
+}
+
+
+async function loadCacheUse() {
+  const tb = $('cacheRows');
+  try {
+    const d = await run('用量统计', {});
+    say($('cacheMsg'), d.提示 || '', '');
+    tb.innerHTML = (d.条目 && d.条目.length)
+      ? d.条目.map(r => '<tr><td>' + esc(r['来源']) + '</td><td>' + esc(r['计入的调用次数']) +
+          '</td><td>' + esc(r['命中token']) + '</td><td>' + esc(r['未命中token']) +
+          '</td><td>' + esc(r['推理token']) + '</td><td>' + esc(r['命中率']) +
+          '</td></tr>').join('')
+      : '<tr><td colspan="6">' + esc(d.正文 || '还没有记录') + '</td></tr>';
+  } catch (e) {
+    say($('cacheMsg'), '读取失败：' + e.message, 'err');
+    tb.innerHTML = '<tr><td colspan="6">读取失败</td></tr>';
+  }
+}
+
+async function loadSettings() {
+  const tb = $('setRows');
+  try {
+    const d = await run('模型配置', {});
+    SETTINGS.items = d.条目 || [];
+    if (!SETTINGS.items.length) {
+      tb.innerHTML = '<tr><td colspan="5">没有读到任何服务商配置</td></tr>';
+      return;
+    }
+    tb.innerHTML = SETTINGS.items.map(s =>
+      '<tr><td>' + esc(s['代号']) + '</td><td>' + esc(s['当前']) + '</td><td>' + esc(s['模型']) +
+      '</td><td>' + esc(s['接口地址']) + '</td><td>' + esc(s['密钥']) + '</td></tr>'
+    ).join('');
+    say($('setMsg'), d.提示 || '', '');
+    const 当前服务商 = (SETTINGS.items.find(s => String(s['当前'] || '').trim() === '是') || {})['代号'] || '';
+    fillSelect($('setProvider'), SETTINGS.items.map(s => s['代号']), '（没有服务商）', 当前服务商);
+    fillSettingsForm();
+  } catch (e) {
+    tb.innerHTML = '<tr><td colspan="5">读取失败：' + esc(e.message) + '</td></tr>';
+  }
+}
+
+function fillSettingsForm() {
+  const name = $('setProvider').value;
+  const item = SETTINGS.items.find(s => s['代号'] === name);
+  if (!item) return;
+  $('setModel').value = item['模型'] || '';
+  $('setBase').value = item['接口地址'] || '';
+  $('setKeyEnv').value = '';
+  $('setKey').value = '';
+}
+
+async function doSaveSettings() {
+  const btn = $('btnSaveSettings');
+  const msg = $('setMsg');
+  btn.disabled = true;
+  say(msg, '正在保存…');
+  try {
+    const d = await run('保存模型配置', {
+      服务商: $('setProvider').value,
+      模型: $('setModel').value.trim(),
+      接口地址: $('setBase').value.trim(),
+      密钥变量名: $('setKeyEnv').value.trim(),
+      密钥: $('setKey').value.trim(),
+      设为当前: $('setDefault').value
+    });
+    say(msg, d.提示 || '已保存', 'ok');
+    $('setKey').value = '';
+    loadSettings();
+  } catch (e) {
+    say(msg, '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+
+async function doDistill() {
+  const btn = $('btnDistill');
+  const msg = $('distillMsg');
+  const out = $('distillOut');
+  const file = $('fileSelect').value;
+  const name = $('skillName').value.trim();
+  const desc = $('skillDesc').value.trim();
+
+  if (!file) { say(msg, '请先选一份材料', 'err'); return; }
+  if (!name) { say(msg, '请填技能包代号', 'err'); return; }
+  if (!desc) { say(msg, '请填描述（它决定这个技能包什么时候被用上）', 'err'); return; }
+
+  btn.disabled = true;
+  say(msg, '正在调用大模型，可能要十几秒到一分钟…');
+  out.classList.add('hide');
+  try {
+    const d = await run('蒸馏', { 文件: file, 代号: name, 描述: desc });
+    say(msg, d.提示 || '完成', 'ok');
+    loadSkills();
+    out.textContent = d.正文 || '';
+    out.classList.remove('hide');
+  } catch (e) {
+    say(msg, '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+
+const CHAT = { history: [] };
+
+function chatRender() {
+  if (!CHAT.history.length) {
+    $('chatLog').innerHTML = '<div class="msg ai">你好，我是「邵新」的助手。想做什么直接说，' +
+      '比如「用 teacher-a 的风格出一节分数的除法的课件」。</div>';
+    return;
+  }
+  $('chatLog').innerHTML = CHAT.history.map(m =>
+    '<div class="msg ' + (m.role === 'user' ? 'me' : 'ai') + '">' + esc(m.content) + '</div>'
+  ).join('');
+  $('chatLog').scrollTop = $('chatLog').scrollHeight;
+}
+
+async function doChatSend() {
+  const text = $('chatText').value.trim();
+  const msg = $('chatMsg');
+  const btn = $('btnChatSend');
+  if (!text) { say(msg, '请先写下想做什么', 'err'); return; }
+
+  CHAT.history.push({ role: 'user', content: text });
+  $('chatText').value = '';
+  chatRender();
+
+  btn.disabled = true;
+  say(msg, 'AI 正在处理…');
+  try {
+    const history = CHAT.history.slice(0, -1)
+      .map(m => (m.role === 'user' ? '老师：' : '助手：') + m.content).join('\n');
+    const d = await run('创造模式', { 内容: text, 之前的对话: history });
+    CHAT.history.push({ role: 'assistant', content: d.正文 || '（没有返回内容）' });
+    say(msg, d.提示 || '', 'ok');
+    chatRender();
+    cmdShow(d.待确认命令);
+  } catch (e) {
+    say(msg, '失败：' + e.message + '（这句没进对话记录）', 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function doChatClear() {
+  CHAT.history = [];
+  chatRender();
+  say($('chatMsg'), '对话已清空。');
+}
+
+
+const PC = { pending: '' };
+
+function pcTable(items) {
+  if (!items || !items.length) return '';
+  const cols = Object.keys(items[0]);
+  return '<thead><tr>' + cols.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead>' +
+    '<tbody>' + items.map(r =>
+      '<tr>' + cols.map(c => '<td>' + esc(r[c]) + '</td>').join('') + '</tr>').join('') + '</tbody>';
+}
+
+function pcShow(d) {
+  $('pcOut').textContent = d.正文 || '';
+  $('pcOut').classList.toggle('hide', !d.正文);
+  const html = pcTable(d.条目);
+  $('pcTable').innerHTML = html;
+  $('pcTable').classList.toggle('hide', !html);
+  PC.pending = d.需要确认 ? (d.动作 || '') : '';
+  $('btnPcRun').classList.toggle('hide', !d.需要确认);
+}
+
+async function loadPcMenu() {
+  try {
+    const d = await run('电脑服务', { 一句话: '' });
+    $('pcMenu').innerHTML = (d.条目 || []).map(a =>
+      '<button class="ghost" data-pc="' + esc(a['代号']) + '">' + esc(a['名称']) + '</button>'
+    ).join(' ');
+  } catch (e) {
+    say($('pcMsg'), '读取动作清单失败：' + e.message, 'err');
+  }
+}
+
+async function pcPreview(action) {
+  try {
+    const d = await run('执行电脑动作', { 动作代号: action, 确认: '否' });
+    say($('pcMsg'), d.提示 || '', 'ok');
+    pcShow(d);
+  } catch (e) {
+    say($('pcMsg'), '失败：' + e.message, 'err');
+  }
+}
+
+async function pcAsk() {
+  const sentence = $('pcText').value.trim();
+  if (!sentence) { say($('pcMsg'), '请先用一句话说说想干什么', 'err'); return; }
+  const btn = $('btnPcAsk');
+  btn.disabled = true;
+  say($('pcMsg'), '正在理解这句话…');
+  try {
+    const d = await run('电脑服务', { 一句话: sentence });
+    if (d.动作) {
+      await pcPreview(d.动作);
+    } else {
+      say($('pcMsg'), d.提示 || '', 'err');
+      pcShow(d);
+    }
+  } catch (e) {
+    say($('pcMsg'), '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function pcRun() {
+  if (!PC.pending) return;
+  const btn = $('btnPcRun');
+  btn.disabled = true;
+  say($('pcMsg'), '正在执行…');
+  try {
+    const d = await run('执行电脑动作', { 动作代号: PC.pending, 确认: '是' });
+    say($('pcMsg'), d.提示 || '', 'ok');
+    pcShow(d);
+  } catch (e) {
+    say($('pcMsg'), '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+$('pcMenu').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-pc]');
+  if (btn) pcPreview(btn.dataset.pc);
+});
+
+
+const ENV = { pending: '' };
+
+function kvTable(items) {
+  const cols = Object.keys(items[0]);
+  return '<thead><tr>' + cols.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' +
+    items.map(r => '<tr>' + cols.map(c => '<td>' + esc(r[c]) + '</td>').join('') + '</tr>').join('') +
+    '</tbody>';
+}
+
+function envShow(d) {
+  const items = d.条目 || [];
+  $('envOut').textContent = d.正文 || '';
+  $('envOut').classList.toggle('hide', !d.正文);
+
+  const isScan = items.length > 0 && items[0]['代号'] !== undefined;
+
+  if (isScan) {
+    const miss = items.filter(x => x['状态'] !== '已就绪');
+    if (miss.length) {
+      $('envAlert').innerHTML = '<b>有 ' + miss.length + ' 项还没配齐：' +
+        miss.map(x => esc(x['环境'])).join('、') + '</b>\n' +
+        miss.map(x => x['补充提示'] ? esc(x['环境']) + '：' + esc(x['补充提示']) : '').filter(Boolean).join('\n');
+      $('envAlert').classList.remove('hide');
+    } else {
+      $('envAlert').classList.add('hide');
+      $('envAlert').innerHTML = '';
+    }
+    envBadge(miss.length);
+
+    const cols = Object.keys(items[0]).filter(c => c !== '补充提示');
+    $('envTable').innerHTML =
+      '<thead><tr>' + cols.map(c => '<th>' + esc(c) + '</th>').join('') +
+      '<th style="width:90px">操作</th></tr></thead><tbody>' +
+      items.map(r => '<tr>' + cols.map(c => '<td>' + esc(r[c]) + '</td>').join('') +
+        '<td><button class="ghost" data-env="' + esc(r['代号']) + '">安装</button></td></tr>').join('') +
+      '</tbody>';
+    $('envTable').classList.remove('hide');
+  }
+
+  if (!isScan && items.length) {
+    $('envPlan').innerHTML = kvTable(items);
+    $('envPlan').classList.remove('hide');
+  } else {
+    $('envPlan').classList.add('hide');
+    $('envPlan').innerHTML = '';
+  }
+
+  ENV.pending = d.需要确认 ? (d.环境项 || '') : '';
+  $('btnEnvRun').classList.toggle('hide', !d.需要确认);
+}
+
+function envBadge(missingCount, 测不出) {
+  const el = $('envState');
+  if (!el) return;
+  if (测不出) {
+    el.className = 't-state wait';
+    el.textContent = '没测出来';
+    return;
+  }
+  if (missingCount) {
+    el.className = 't-state wait';
+    el.textContent = '有 ' + missingCount + ' 项未配齐';
+  } else {
+    el.className = 't-state ok';
+    el.textContent = '全部就绪';
+  }
+}
+
+async function envCheckQuiet() {
+  try {
+    const d = await run('环境配置', {});
+    envBadge((d.条目 || []).filter(x => x['状态'] !== '已就绪').length);
+  } catch (e) {
+    envBadge(0, true);
+  }
+}
+
+async function envScan() {
+  say($('envMsg'), '正在检测…');
+  try {
+    const d = await run('环境配置', {});
+    say($('envMsg'), d.提示 || '', 'ok');
+    envShow(d);
+  } catch (e) {
+    say($('envMsg'), '检测失败：' + e.message, 'err');
+  }
+}
+
+async function envPreview(tool) {
+  if (!tool) {
+    say($('envMsg'), '这一行没带环境代号，点「检测本机环境」重来一次。', 'err');
+    return;
+  }
+  try {
+    const d = await run('安装环境', { 环境代号: tool, 确认: '否' });
+    say($('envMsg'), d.提示 || '', d.需要确认 ? 'err' : 'ok');
+    envShow(d);
+  } catch (e) {
+    say($('envMsg'), '失败：' + e.message, 'err');
+  }
+}
+
+async function envRun() {
+  if (!ENV.pending) return;
+  const btn = $('btnEnvRun');
+  btn.disabled = true;
+  say($('envMsg'), '正在安装，可能要几分钟，请不要关窗口…');
+  try {
+    const d = await run('安装环境', { 环境代号: ENV.pending, 确认: '是' });
+    say($('envMsg'), d.提示 || '', (d.提示 || '').indexOf('成功') >= 0 ? 'ok' : 'err');
+    envShow(d);
+  } catch (e) {
+    say($('envMsg'), '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+$('envTable').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-env]');
+  if (btn) envPreview(btn.dataset.env);
+});
+
+
+const CMD = { pending: [] };
+
+function cmdShow(list) {
+  CMD.pending = list || [];
+  $('cmdCard').classList.toggle('hide', !CMD.pending.length);
+  $('cmdList').innerHTML = CMD.pending.map((c, i) =>
+    '<div class="cmdbx"><code>' + esc(c.命令) + '</code>' +
+    (c.为什么 ? '<p class="cmdwhy">' + esc(c.为什么) + '</p>' : '') +
+    (c.风险 ? '<p class="cmdrisk">' + esc(c.风险) + '</p>' : '') +
+    '<button class="danger" data-cmd="' + i + '">执行这条命令</button></div>'
+  ).join('');
+}
+
+async function cmdRun(i) {
+  const c = CMD.pending[i];
+  if (!c) return;
+  say($('cmdMsg'), '正在执行…');
+  try {
+    const d = await run('执行命令', { 命令: c.命令, 确认: '是', 编号: c.编号 || '' });
+    say($('cmdMsg'), d.提示 || '', 'ok');
+    $('cmdOut').textContent = d.正文 || '';
+    $('cmdOut').classList.remove('hide');
+  } catch (e) {
+    say($('cmdMsg'), '失败：' + e.message, 'err');
+  }
+}
+
+$('cmdList').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-cmd]');
+  if (btn) cmdRun(Number(btn.dataset.cmd));
+});
+
+$('btnEnvScan').onclick = envScan;
+$('btnEnvRun').onclick = envRun;
+$('btnPcAsk').onclick = pcAsk;
+$('btnPcRun').onclick = pcRun;
+$('btnChatSend').onclick = doChatSend;
+$('btnChatClear').onclick = doChatClear;
+$('btnDistill').onclick = doDistill;
+$('btnRefreshDistill').onclick = () => fillOptions('蒸馏', '文件', 'fileSelect', '（材料/ 目录暂无材料）');
+$('btnRefreshSkills').onclick = loadSkills;
+$('btnRefreshMats').onclick = loadMaterials;
+$('btnRefreshDecks').onclick = loadDecks;
+
+async function loadQaStu() {
+  await fillOptions('学生问答', '技能包', 'qaStuSkill',
+    '（还没有技能包，先去「教师蒸馏」生成）');
+}
+
+async function doQaStuAsk() {
+  const btn = $('btnQaStuAsk');
+  const msg = $('qaStuMsg');
+  const out = $('qaStuOut');
+  const 编号 = $('qaStuSid').value.trim();
+  const 问题 = $('qaStuQuestion').value.trim();
+
+  if (!编号) { say(msg, '请先填你的编号', 'err'); return; }
+  if (!$('qaStuSkill').value) { say(msg, '请先选一位老师', 'err'); return; }
+  if (!问题) { say(msg, '请先写问题', 'err'); return; }
+
+  btn.disabled = true;
+  say(msg, '正在请这位老师回答，请稍候…');
+  out.classList.add('hide');
+  try {
+    const d = await run('学生问答', { 编号: 编号, 技能包: $('qaStuSkill').value, 问题: 问题 });
+    say(msg, d.提示 || '已作答', 'ok');
+    $('qaStuQuestion').value = '';
+    out.textContent = d.正文 || '';
+    out.classList.remove('hide');
+  } catch (e) {
+    say(msg, '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+
+async function loadReg() {
+  const tb = $('regRows');
+  try {
+    const d = await run('学生名册', {});
+    if (d.正文) {
+      say($('regMsg'), d.正文, 'err');
+    }
+    if (!d.条目 || !d.条目.length) {
+      tb.innerHTML = '<tr><td colspan="9">' + esc(d.提示 || '还没有学生') + '</td></tr>';
+      return;
+    }
+    tb.innerHTML = d.条目.map((r, i) =>
+      '<tr><td>' + (i + 1) + '</td><td>' + esc(r['编号']) + '</td><td>' + esc(r['姓名']) +
+      '</td><td>' + esc(r['学号']) + '</td><td>' + esc(r['年级']) + '</td><td>' +
+      esc(r['班级']) + '</td><td>' + esc(r['家长同意书']) + '</td><td>' +
+      esc(r['记录条数']) + '</td><td>' + esc(r['最近一条']) + '</td></tr>').join('');
+  } catch (e) {
+    tb.innerHTML = '<tr><td colspan="9">读取失败：' + esc(e.message) + '</td></tr>';
+  }
+}
+
+async function doRegAdd() {
+  const btn = $('btnRegAdd');
+  const msg = $('regMsg');
+  const 编号 = $('regSid').value.trim();
+  const 姓名 = $('regName').value.trim();
+  if (!编号) { say(msg, '请先填学生编号', 'err'); return; }
+  if (!姓名) { say(msg, '请填学生姓名（只写进对照表，不发送）', 'err'); return; }
+  btn.disabled = true;
+  say(msg, '正在注册…');
+  try {
+    const d = await run('学生注册', {
+      编号: 编号,
+      姓名: 姓名,
+      学号: $('regNo').value.trim(),
+      年级: $('regGrade').value.trim(),
+      班级: $('regClass').value.trim(),
+      备注: $('regNote').value.trim(),
+      家长同意书: $('regConsent').value
+    });
+    say(msg, [d.提示, d.正文].filter(Boolean).join('　'), 'ok');
+    ['regSid', 'regName', 'regNo', 'regGrade', 'regClass', 'regNote'].forEach(id => { $(id).value = ''; });
+    loadReg();
+  } catch (e) {
+    say(msg, '失败：' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+$('btnRefreshArc').onclick = loadArchive;
+$('btnQaStuAsk').onclick = doQaStuAsk;
+$('btnRefreshQaStu').onclick = loadQaStu;
+$('btnRegAdd').onclick = doRegAdd;
+$('btnRefreshReg').onclick = loadReg;
+$('btnArcAdd').onclick = doArchiveAdd;
+$('btnPpt').onclick = doPpt;
+$('btnRefreshPpt').onclick = () => fillOptions('课件生成', '技能包', 'pptSkill', '（还没有技能包）');
+$('btnRefreshLec').onclick = () => fillOptions('联动教学', '技能包', 'lecSkill', '（还没有技能包）');
+$('btnLecStart').onclick = doLectureStart;
+$('btnPrev').onclick = () => { LEC.index = Math.max(0, LEC.index - 1); lecRender(); lecSchedule(); };
+$('btnNext').onclick = () => { LEC.index = Math.min(LEC.items.length - 1, LEC.index + 1); lecRender(); lecSchedule(); };
+$('btnAuto').onclick = () => lecAuto(!LEC.auto);
+$('btnAskPause').onclick = lecPause;
+$('btnAskSend').onclick = doAskSend;
+$('btnResume').onclick = doResume;
+$('btnLecStop').onclick = () => { lecReset(); say($('lecMsg'), '已结束上课。', 'ok'); };
+$('btnSaveSettings').onclick = doSaveSettings;
+$('btnReloadSettings').onclick = loadSettings;
+$('btnCacheRefresh').onclick = loadCacheUse;
+$('setProvider').onchange = fillSettingsForm;
+
+(async () => {
+  try {
+    const 表 = await api('/api/能力');
+    ABILITIES = 表.条目;
+    if (表.版本 && $('verNo')) $('verNo').textContent = 表.版本;
+    fillSelect($('arcCorrect'), await paramOptions('录入学生记录', '对错'), '对');
+    fillSelect($('arcError'), await paramOptions('录入学生记录', '错误类型'), '其他');
+    fillSelect($('regConsent'), await paramOptions('学生注册', '家长同意书'), '（无）', '未签回');
+    fillSelect($('evalVerdict'), await paramOptions('记讲解评定', '判定'), '可接受');
+    fillSelect($('evalOnly'), await paramOptions('评定台账', '只看'), '全部');
+    fillSelect($('fbKind'), await paramOptions('记反馈', '类型'), '不好用');
+    fillSelect($('fbOnly'), await paramOptions('反馈清单', '只看'), '全部');
+    fillSelect($('fbFilterKind'), await paramOptions('反馈清单', '类型'), '全部');
+    fillSelect($('fbResult'), await paramOptions('记反馈处理', '结果'), '已修');
+  } catch (e) {
+    say($('arcMsg'), '读取能力列表失败：' + e.message, 'err');
+  }
+  envCheckQuiet();
+  show('首页');
+})();
+</script>
+</body>
+</html>

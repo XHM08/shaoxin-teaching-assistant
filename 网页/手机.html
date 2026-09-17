@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>「邵新」辅助教育系统 · 手机版</title>
+<style>
+:root{
+  --deep:#1a3c6e; --blue:#2660a4; --light:#eaf1f9; --line:#d6dee8;
+  --bg:#f4f6f9; --text:#1f2d3d; --weak:#6b7c93; --red:#c8102e;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text); font-size:16px; line-height:1.75;
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB","SimSun",sans-serif;
+  padding-bottom:20px; padding-bottom:calc(20px + env(safe-area-inset-bottom));
+}
+.top{
+  position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:8px;
+  background:var(--deep); color:#fff; padding:8px 12px;
+  padding:calc(8px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 8px calc(12px + env(safe-area-inset-left));
+}
+.top .back{flex:0 0 auto; min-width:44px; min-height:44px; padding:0 12px; background:transparent;
+  color:#fff; border:1px solid rgba(255,255,255,.5); font-size:18px; line-height:1}
+.top .brand{min-width:0; display:flex; flex-direction:column; line-height:1.4}
+.top .name{font-size:16px; font-weight:700; letter-spacing:.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.top .sub{font-size:12px; color:#a9c6e8}
+
+main{
+  max-width:680px; margin:0 auto; padding-left:12px; padding-right:12px;
+  padding-left:calc(12px + env(safe-area-inset-left));
+  padding-right:calc(12px + env(safe-area-inset-right));
+}
+.hide{display:none !important}
+
+.tiles{display:flex; flex-direction:column; gap:12px; margin:12px 0}
+.tile{
+  display:flex; flex-direction:column; align-items:flex-start; width:100%; min-height:76px;
+  padding:14px 16px; text-align:left; background:#fff; color:var(--text);
+  border:1px solid var(--line); border-left:4px solid var(--blue); border-radius:2px;
+}
+.tile:active{background:var(--light)}
+.t-name{font-size:17px; font-weight:700; color:var(--deep)}
+.t-desc{font-size:13px; line-height:1.6; color:var(--weak)}
+
+.card{background:#fff; border:1px solid var(--line); border-radius:2px; margin:12px 0}
+.card > h2{
+  margin:0; padding:11px 14px; font-size:15px; font-weight:700; color:var(--deep);
+  background:linear-gradient(#fbfdff,#f3f7fc);
+  border-bottom:1px solid var(--line); border-left:4px solid var(--blue);
+}
+.card > .body{padding:14px}
+
+label{display:block; margin:0 0 6px; font-size:13px; color:var(--weak)}
+input[type=text],input[type=password],select,textarea{
+  width:100%; min-height:44px; padding:9px 10px; font-family:inherit; font-size:16px;
+  line-height:1.6; color:var(--text); background:#fff; border:1px solid var(--line); border-radius:2px;
+}
+textarea{min-height:96px; resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none; border-color:var(--blue)}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+
+button{min-height:44px; padding:10px 18px; font-family:inherit; font-size:16px; color:#fff;
+  background:var(--blue); border:0; border-radius:2px}
+button:hover{background:var(--deep)}
+button:disabled{background:#b7c4d4}
+button.ghost{color:var(--blue); background:#fff; border:1px solid var(--blue)}
+button.ghost:hover{background:var(--light)}
+button.wide{display:block; width:100%}
+.stack > * + *{margin-top:10px}
+
+.list{margin-top:12px}
+.item{border:1px solid var(--line); border-radius:2px; margin-bottom:10px}
+.item:last-child{margin-bottom:0}
+.item > h3{
+  display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0;
+  padding:10px 12px; font-size:15px; color:var(--deep); background:var(--light);
+  border-bottom:1px solid var(--line);
+}
+.item > .body{padding:4px 12px 12px}
+.text{margin:10px 0; white-space:pre-wrap; word-break:break-word}
+
+.kv{display:flex; gap:10px; padding:7px 0; border-bottom:1px dashed var(--line); font-size:15px}
+.kv:last-child{border-bottom:0}
+.kv .k{flex:0 0 88px; font-size:13px; color:var(--weak); padding-top:2px}
+.kv .v{flex:1; min-width:0; word-break:break-word; white-space:pre-wrap}
+
+.tag{display:inline-block; flex:0 0 auto; padding:1px 7px; font-size:12px; color:var(--blue);
+  background:#fff; border:1px solid var(--blue); border-radius:2px}
+.when{flex:0 0 auto; font-size:12px; font-weight:400; color:var(--weak)}
+
+.notice{margin:12px 0; padding:9px 12px; font-size:14px; line-height:1.7; white-space:pre-wrap;
+  word-break:break-word; color:#8a6d1f; background:#fffaf0; border:1px solid #f0d9a8; border-radius:2px}
+.notice.err{color:#a01212; background:#fff5f5; border-color:#f0b8b8}
+.notice.ok{color:#1d6b32; background:#f4fbf6; border-color:#b8dcc0}
+
+.tip{margin:0 0 14px; padding:9px 12px; font-size:13.5px; line-height:1.7; color:#8a6d1f;
+  background:#fffaf0; border:1px solid #f0d9a8; border-radius:2px}
+.answer{margin-top:12px; padding:12px; font-size:16px; line-height:1.85; white-space:pre-wrap;
+  word-break:break-word; background:#f7f9fc; border:1px solid var(--line);
+  border-left:3px solid var(--blue); border-radius:2px}
+.info{margin:0 0 12px; padding:10px 12px; font-size:15px; line-height:1.8; white-space:pre-wrap;
+  background:#f7f9fc; border:1px solid var(--line); border-radius:2px}
+.load,.empty{padding:14px 2px; font-size:14px; color:var(--weak)}
+
+.chatlog{border:1px solid var(--line); border-radius:2px; padding:10px; background:#fff}
+.chatlog:empty{display:none}
+.msg{margin:0 0 10px; padding:10px 12px; font-size:15px; line-height:1.8; white-space:pre-wrap;
+  word-break:break-word; background:#f7f9fc; border-left:3px solid var(--line)}
+.msg:last-child{margin-bottom:0}
+.msg.me{background:var(--light); border-left-color:var(--blue)}
+
+.foot-notes{margin-top:14px; padding-top:10px; border-top:1px solid var(--line)}
+.foot-notes summary{font-size:13px; color:var(--weak)}
+.note{margin-top:8px; font-size:13.5px; line-height:1.8; color:#46586e; white-space:pre-wrap}
+.pcnote{margin:18px 0 8px; font-size:12.5px; line-height:1.7; color:var(--weak)}
+.tiny{margin:0; font-size:12px}
+.tiny a{color:var(--weak)}
+.foot{margin-top:16px; padding:14px 12px; text-align:center; font-size:12px; color:var(--weak);
+  border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <button class="back hide" id="btnBack" type="button" aria-label="返回">←</button>
+  <div class="brand">
+    <span class="name">「邵新」辅助教育系统</span>
+    <span class="sub" id="pageName">工作台</span>
+  </div>
+</header>
+
+<main>
+
+  <section id="view-首页">
+    <div class="tiles">
+      <button class="tile" type="button" data-go="提问">
+        <span class="t-name">我有一道题要问</span>
+        <span class="t-desc">填自己的编号，选一位老师来答。这次问答会记进你的档案。</span>
+      </button>
+      <button class="tile" type="button" data-go="档案">
+        <span class="t-name">看看学生的档案</span>
+        <span class="t-desc">按编号看问到哪儿了，也能录一条作答</span>
+      </button>
+      <button class="tile" type="button" data-go="登记">
+        <span class="t-name">登记一个新学生</span>
+        <span class="t-desc">给编号建档案。姓名只存本机对照表，不发送。</span>
+      </button>
+      <button class="tile" type="button" data-go="对话">
+        <span class="t-name">跟 AI 说点什么</span>
+        <span class="t-desc">直接说想做什么，可以来回对话</span>
+      </button>
+      <button class="tile" type="button" data-go="用量">
+        <span class="t-name">用量</span>
+        <span class="t-desc">看模型调用的缓存命中与推理 token</span>
+      </button>
+    </div>
+    <p class="pcnote">下面这些请在电脑上操作：教师蒸馏、课件生成、联动教学、环境配置、电脑服务、设置。</p>
+    <p class="tiny"><a id="pcLink" href="/网页/首页.html">用电脑版打开</a></p>
+  </section>
+
+  <section id="view-提问" class="hide">
+    <div class="card">
+      <h2>我有一道题要问</h2>
+      <div class="body">
+        <p class="tip">填你自己的编号、选一位老师，再写下问题。回答会按这位老师的讲法。<b>这次问答会记进你自己的档案</b>，需先取得监护人签署的同意书。</p>
+        <div class="field">
+          <label for="qaId">你的编号</label>
+          <input id="qaId" type="text" placeholder="例如：S01" autocapitalize="characters" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="qaSkill">请哪位老师来答</label>
+          <select id="qaSkill"></select>
+        </div>
+        <div class="field">
+          <label for="qaQuestion">你的问题</label>
+          <textarea id="qaQuestion" rows="4" placeholder="例如：老师，为什么除以分数要倒过来乘？"></textarea>
+        </div>
+        <button class="wide" type="button" id="qaSend">提问</button>
+        <div id="qaMsg" class="hide"></div>
+        <div id="qaOut" class="answer hide"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>不想填编号</h2>
+      <div class="body">
+        <p class="tip">匿名问一问：不记进任何学生的档案。</p>
+        <button class="ghost wide" type="button" data-go="匿名答疑">去匿名答疑</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-匿名答疑" class="hide">
+    <div class="card">
+      <h2>匿名答疑</h2>
+      <div class="body">
+        <p class="tip">不填编号的提问，不记进任何学生的档案。</p>
+        <div class="field">
+          <label for="anSkill">选一位老师</label>
+          <select id="anSkill"></select>
+        </div>
+        <div class="field">
+          <label for="anQuestion">问题</label>
+          <textarea id="anQuestion" rows="4" placeholder="例如：为什么除以分数要倒过来乘？"></textarea>
+        </div>
+        <button class="wide" type="button" id="anSend">提问</button>
+        <div id="anMsg" class="hide"></div>
+        <div id="anOut" class="answer hide"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-档案" class="hide">
+    <div class="card">
+      <h2>学生的档案</h2>
+      <div class="body">
+        <div id="arcGate" class="hide"></div>
+        <button class="ghost wide" type="button" id="arcReload">刷新</button>
+        <div id="arcList" class="list hide"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>录一条作答</h2>
+      <div class="body">
+        <p class="tip">这里录的是编号化的记录：只填编号，<b>不要把姓名写进题目或作答里</b>。</p>
+        <div class="field">
+          <label for="reId">学生编号</label>
+          <input id="reId" type="text" placeholder="例如：S01" autocapitalize="characters" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="reSubject">学科</label>
+          <input id="reSubject" type="text" placeholder="例如：数学" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="reQuestion">题目</label>
+          <textarea id="reQuestion" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label for="reAnswer">学生作答</label>
+          <textarea id="reAnswer" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label for="reCorrect">对错</label>
+          <select id="reCorrect"></select>
+        </div>
+        <div class="field">
+          <label for="reError">错误类型</label>
+          <select id="reError"></select>
+        </div>
+        <button class="wide" type="button" id="reSend">录入</button>
+        <div id="reMsg" class="hide"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-学生" class="hide">
+    <div class="card">
+      <h2 id="stuTitle">学生档案</h2>
+      <div class="body">
+        <div id="stuMsg" class="hide"></div>
+        <div id="stuInfo" class="info hide"></div>
+        <div id="stuList" class="list hide"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-登记" class="hide">
+    <div class="card">
+      <h2>登记学生</h2>
+      <div class="body">
+        <p class="tip">编号（如 S01）会分到一个自己的档案文件夹。<b>姓名、年级、班级只写进对照表</b>，不进记录、不发送给 AI 服务商。</p>
+        <div class="field">
+          <label for="regId">编号</label>
+          <input id="regId" type="text" placeholder="例如：S03" autocapitalize="characters" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="field">
+          <label for="regName">姓名</label>
+          <input id="regName" type="text" placeholder="只进对照表，不发送" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="regNo">学号</label>
+          <input id="regNo" type="text" placeholder="只进对照表" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="regGrade">年级</label>
+          <input id="regGrade" type="text" placeholder="例如：八年级" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="regClass">班级</label>
+          <input id="regClass" type="text" placeholder="例如：3 班" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="regConsent">家长同意书</label>
+          <select id="regConsent"></select>
+        </div>
+        <div class="field">
+          <label for="regNote">备注</label>
+          <textarea id="regNote" rows="2" placeholder="例如：家长 9/15 已签回。别写电话、住址"></textarea>
+        </div>
+        <button class="wide" type="button" id="regSend">登记</button>
+        <div id="regMsg" class="hide"></div>
+        <div id="regOut" class="answer hide"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>已登记的学生</h2>
+      <div class="body">
+        <button class="ghost wide" type="button" id="regReload">刷新名册</button>
+        <div id="regListMsg" class="hide"></div>
+        <div id="regList" class="list hide"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-对话" class="hide">
+    <div class="card">
+      <h2>跟 AI 说话</h2>
+      <div class="body">
+        <p class="tip">对话只在这个页面里，刷新就清，服务端不保存。涉及学生时请用编号，不要写姓名。</p>
+        <div id="chatLog" class="chatlog"></div>
+        <div class="field" style="margin-top:12px">
+          <label for="chatText">想做什么</label>
+          <textarea id="chatText" rows="3" placeholder="例如：出一节「分数的除法」的课件"></textarea>
+        </div>
+        <div class="stack">
+          <button class="wide" type="button" id="chatSend">发送</button>
+          <button class="ghost wide" type="button" id="chatClear">清空对话</button>
+        </div>
+        <div id="chatMsg" class="hide"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-用量" class="hide">
+    <div class="card">
+      <h2>用量统计</h2>
+      <div class="body">
+        <button class="ghost wide" type="button" id="useReload">刷新用量</button>
+        <div id="useMsg" class="hide"></div>
+        <div id="useList" class="list hide"></div>
+        <details class="foot-notes">
+          <summary>几件容易误判的事</summary>
+          <div id="useNote" class="note"></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="foot">数据仅存本地，不对外提供</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const TOKEN = new URLSearchParams(location.search).get('t') || '';
+
+function 带令牌(路径) {
+  if (!TOKEN) return 路径;
+  return 路径 + (路径.indexOf('?') < 0 ? '?' : '&') + 't=' + encodeURIComponent(TOKEN);
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+async function api(路径, 选项) {
+  const r = await fetch(带令牌(路径), 选项);
+  const 文本 = await r.text();
+  let d;
+  try {
+    d = JSON.parse(文本);
+  } catch (e) {
+    throw new Error('服务返回的不是 JSON：' + 文本.slice(0, 200));
+  }
+  if (!r.ok) throw new Error(d.错误 || ('HTTP ' + r.status));
+  return d;
+}
+
+function 跑能力(代号, 参数) {
+  return api('/api/run', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 能力: 代号, 参数: 参数 || {} })
+  });
+}
+
+let 能力缓存 = null;
+
+async function 取能力表() {
+  if (!能力缓存) 能力缓存 = (await api('/api/能力')).条目;
+  return 能力缓存;
+}
+
+async function 取选项(能力代号, 参数代号) {
+  const 表 = await 取能力表();
+  const 项 = 表.find(a => a.代号 === 能力代号);
+  if (!项) return [];
+  const 参数项 = 项.参数.find(p => p.代号 === 参数代号);
+  return (参数项 && 参数项.可选项) || [];
+}
+
+function 说(el, 文本, 类别) {
+  if (!el) return;
+  if (!文本) {
+    el.className = 'hide';
+    el.textContent = '';
+    return;
+  }
+  el.className = 'notice' + (类别 ? ' ' + 类别 : '');
+  el.textContent = 文本;
+}
+
+function 填块(el, html) {
+  if (!el) return;
+  el.innerHTML = html;
+  el.classList.remove('hide');
+}
+
+function 清块(el) {
+  if (!el) return;
+  el.textContent = '';
+  el.classList.add('hide');
+}
+
+function 清容器(el) {
+  if (!el) return;
+  el.innerHTML = '';
+  el.classList.add('hide');
+}
+
+function 写文本(el, 文本) {
+  if (!el) return;
+  if (!文本) {
+    el.textContent = '';
+    el.classList.add('hide');
+    return;
+  }
+  el.textContent = 文本;
+  el.classList.remove('hide');
+}
+
+function 值(id) {
+  return $(id).value.trim();
+}
+
+async function 忙(按钮, 文案, 干活) {
+  const 原文 = 按钮.textContent;
+  按钮.disabled = true;
+  按钮.textContent = 文案;
+  try {
+    return await 干活();
+  } finally {
+    按钮.disabled = false;
+    按钮.textContent = 原文;
+  }
+}
+
+async function 填下拉(下拉框id, 能力代号, 参数代号, 空文案, 默认值) {
+  const 下拉框 = $(下拉框id);
+  try {
+    const 清单 = await 取选项(能力代号, 参数代号);
+    下拉框.innerHTML = 清单.length
+      ? 清单.map(v => '<option value="' + esc(v) + '">' + esc(v) + '</option>').join('')
+      : '<option value="">' + esc(空文案) + '</option>';
+    if (默认值 && 清单.indexOf(默认值) >= 0) 下拉框.value = 默认值;
+    return 清单;
+  } catch (e) {
+    下拉框.innerHTML = '<option value="">' + esc('读取失败：' + e.message) + '</option>';
+    return [];
+  }
+}
+
+function 键值行(名, 值) {
+  const 文本 = String(值 == null ? '' : 值);
+  return '<div class="kv"><span class="k">' + esc(名) + '</span><span class="v">' +
+    (文本 ? esc(文本) : '—') + '</span></div>';
+}
+
+function 学生卡(行) {
+  const 姓名 = 行['姓名'] ? ' · ' + esc(行['姓名']) : '';
+  return '<div class="item">' +
+    '<h3><span>' + esc(行['编号']) + 姓名 + '</span>' +
+    '<span class="tag">' + esc(行['记录条数']) + ' 条</span></h3>' +
+    '<div class="body">' +
+      键值行('学号', 行['学号']) +
+      键值行('年级', 行['年级']) +
+      键值行('班级', 行['班级']) +
+      键值行('家长同意书', 行['家长同意书']) +
+      键值行('最近一条', 行['最近一条']) +
+      '<button class="ghost wide" type="button" data-stu="' + esc(行['编号']) + '">查看档案</button>' +
+    '</div></div>';
+}
+
+function 记录卡(行) {
+  const 补充 = 行['补充']
+    ? '<div class="kv"><span class="k">补充</span><span class="v">' + esc(行['补充']) + '</span></div>'
+    : '';
+  return '<div class="item">' +
+    '<h3><span class="tag">' + esc(行['类型']) + '</span>' +
+    '<span class="when">' + esc(行['时间']) + '</span></h3>' +
+    '<div class="body"><p class="text">' + esc(行['内容']) + '</p>' + 补充 + '</div></div>';
+}
+
+function 用量卡(行) {
+  return '<div class="item">' +
+    '<h3><span>' + esc(行['来源']) + '</span>' +
+    '<span class="tag">' + esc(行['命中率']) + '</span></h3>' +
+    '<div class="body">' +
+      键值行('调用次数', 行['计入的调用次数']) +
+      键值行('命中 token', 行['命中token']) +
+      键值行('未命中 token', 行['未命中token']) +
+      键值行('推理 token', 行['推理token']) +
+    '</div></div>';
+}
+
+
+const 页面名 = {
+  首页: '工作台',
+  提问: '我有一道题要问',
+  匿名答疑: '匿名答疑',
+  档案: '学生的档案',
+  学生: '学生档案',
+  登记: '登记新学生',
+  对话: '跟 AI 说话',
+  用量: '用量统计'
+};
+
+const 上一页 = {
+  提问: '首页', 匿名答疑: '提问', 档案: '首页',
+  学生: '档案', 登记: '首页', 对话: '首页', 用量: '首页'
+};
+
+const 重置 = {
+  提问: () => { 说($('qaMsg'), ''); 清容器($('qaOut')); },
+  匿名答疑: () => { 说($('anMsg'), ''); 清容器($('anOut')); },
+  档案: () => { 说($('arcGate'), ''); 说($('reMsg'), ''); 清容器($('arcList')); },
+  学生: () => { $('stuTitle').textContent = '学生档案'; 说($('stuMsg'), ''); 清块($('stuInfo')); 清容器($('stuList')); },
+  登记: () => { 说($('regMsg'), ''); 说($('regListMsg'), ''); 清容器($('regOut')); 清容器($('regList')); },
+  对话: () => { 说($('chatMsg'), ''); },
+  用量: () => { 说($('useMsg'), ''); 清容器($('useList')); 清块($('useNote')); }
+};
+
+let 当前页 = '首页';
+
+function 显示(名称) {
+  当前页 = 名称;
+  Object.keys(页面名).forEach(k => $('view-' + k).classList.toggle('hide', k !== 名称));
+  $('pageName').textContent = 页面名[名称];
+  $('btnBack').classList.toggle('hide', 名称 === '首页');
+  if (重置[名称]) 重置[名称]();
+  window.scrollTo(0, 0);
+
+  if (名称 === '提问') 填下拉('qaSkill', '学生问答', '技能包', '（还没有技能包，先在电脑上做一次「教师蒸馏」）');
+  if (名称 === '匿名答疑') 填下拉('anSkill', '答疑', '技能包', '（还没有技能包，先在电脑上做一次「教师蒸馏」）');
+  if (名称 === '档案') {
+    载入档案();
+    填下拉('reCorrect', '录入学生记录', '对错', '（无）');
+    填下拉('reError', '录入学生记录', '错误类型', '（无）');
+  }
+  if (名称 === '登记') {
+    填下拉('regConsent', '学生注册', '家长同意书', '（无）', '未签回');
+    载入名册();
+  }
+  if (名称 === '用量') 载入用量();
+  if (名称 === '对话') 画对话();
+}
+
+document.querySelectorAll('[data-go]').forEach(el => {
+  el.onclick = () => 显示(el.dataset.go);
+});
+$('btnBack').onclick = () => 显示(上一页[当前页] || '首页');
+
+
+async function 学生提问() {
+  const 按钮 = $('qaSend');
+  const 提示 = $('qaMsg');
+  const 回答 = $('qaOut');
+  const 编号 = 值('qaId');
+  const 技能包 = $('qaSkill').value;
+  const 问题 = 值('qaQuestion');
+
+  if (!编号) { 说(提示, '请填你的编号，例如 S01', 'err'); $('qaId').focus(); return; }
+  if (!技能包) { 说(提示, '还没有可选的老师，先在电脑上做一次「教师蒸馏」', 'err'); return; }
+  if (!问题) { 说(提示, '请写下你的问题', 'err'); $('qaQuestion').focus(); return; }
+
+  清容器(回答);
+  await 忙(按钮, '正在问…', async () => {
+    说(提示, '正在按这位老师的讲法作答…');
+    try {
+      const d = await 跑能力('学生问答', { 编号: 编号, 技能包: 技能包, 问题: 问题 });
+      说(提示, d.提示 || '已作答', 'ok');
+      写文本(回答, d.正文 || '（没有返回内容）');
+      $('qaQuestion').value = '';
+      回答.scrollIntoView({ block: 'nearest' });
+    } catch (e) {
+      说(提示, '失败：' + e.message, 'err');
+    }
+  });
+}
+
+
+async function 匿名提问() {
+  const 按钮 = $('anSend');
+  const 提示 = $('anMsg');
+  const 回答 = $('anOut');
+  const 技能包 = $('anSkill').value;
+  const 问题 = 值('anQuestion');
+
+  if (!技能包) { 说(提示, '还没有可选的老师，先在电脑上做一次「教师蒸馏」', 'err'); return; }
+  if (!问题) { 说(提示, '请写下问题', 'err'); $('anQuestion').focus(); return; }
+
+  清容器(回答);
+  await 忙(按钮, '正在问…', async () => {
+    说(提示, '正在按这位老师的讲法作答…');
+    try {
+      const d = await 跑能力('答疑', { 技能包: 技能包, 问题: 问题 });
+      说(提示, d.提示 || '回答完成', 'ok');
+      写文本(回答, d.正文 || '（没有返回内容）');
+      $('anQuestion').value = '';
+      回答.scrollIntoView({ block: 'nearest' });
+    } catch (e) {
+      说(提示, '失败：' + e.message, 'err');
+    }
+  });
+}
+
+
+async function 载入档案() {
+  const 闸门 = $('arcGate');
+  const 清单 = $('arcList');
+  填块(清单, '<div class="load">加载中…</div>');
+  try {
+    const d = await 跑能力('学生档案馆', {});
+    const 条目 = d.条目 || [];
+    if (d.正文) 说(闸门, d.正文, 条目.length ? '' : 'err');
+    填块(清单, 条目.length
+      ? 条目.map(学生卡).join('')
+      : '<div class="empty">' + esc(d.提示 || '还没有学生。先去「登记一个新学生」登记编号。') + '</div>');
+  } catch (e) {
+    填块(清单, '<div class="empty">读取失败</div>');
+    说(闸门, '读取失败：' + e.message, 'err');
+  }
+}
+
+async function 看学生(编号) {
+  const 提示 = $('stuMsg');
+  const 概览 = $('stuInfo');
+  const 清单 = $('stuList');
+  $('stuTitle').textContent = '学生档案 · ' + 编号;
+  说(提示, '正在读取…');
+  填块(清单, '<div class="load">加载中…</div>');
+  清块(概览);
+  try {
+    const d = await 跑能力('查看学生档案', { 编号: 编号 });
+    说(提示, d.提示 || '', 'ok');
+    写文本(概览, d.正文 || '');
+    const 条目 = d.条目 || [];
+    填块(清单, 条目.length
+      ? 条目.map(记录卡).join('')
+      : '<div class="empty">这个学生还没有记录。</div>');
+  } catch (e) {
+    填块(清单, '<div class="empty">读取失败</div>');
+    说(提示, '读取失败：' + e.message, 'err');
+  }
+}
+
+async function 录一条() {
+  const 按钮 = $('reSend');
+  const 提示 = $('reMsg');
+  const 编号 = 值('reId');
+  const 学科 = 值('reSubject');
+  const 题目 = 值('reQuestion');
+  const 作答 = 值('reAnswer');
+  const 对错 = $('reCorrect').value;
+  const 错误类型 = $('reError').value;
+
+  if (!编号) { 说(提示, '请填学生编号，例如 S01', 'err'); $('reId').focus(); return; }
+  if (!学科) { 说(提示, '请填学科，例如 数学', 'err'); $('reSubject').focus(); return; }
+  if (!题目) { 说(提示, '请填题目', 'err'); $('reQuestion').focus(); return; }
+  if (!作答) { 说(提示, '请填学生作答', 'err'); $('reAnswer').focus(); return; }
+  if (!对错) { 说(提示, '「对错」没读到选项，请重进这一页再试', 'err'); return; }
+
+  await 忙(按钮, '正在录入…', async () => {
+    说(提示, '正在录入…');
+    try {
+      const d = await 跑能力('录入学生记录', {
+        编号: 编号, 学科: 学科, 题目: 题目, 作答: 作答,
+        对错: 对错, 错误类型: 错误类型 || '其他'
+      });
+      说(提示, d.提示 || '已录入', 'ok');
+      $('reQuestion').value = '';
+      $('reAnswer').value = '';
+      载入档案();
+    } catch (e) {
+      说(提示, '失败：' + e.message, 'err');
+    }
+  });
+}
+
+function 接管查看(容器) {
+  容器.addEventListener('click', ev => {
+    const 按钮 = ev.target.closest('button[data-stu]');
+    if (!按钮) return;
+    显示('学生');
+    看学生(按钮.dataset.stu);
+  });
+}
+接管查看($('arcList'));
+接管查看($('regList'));
+
+
+async function 提交登记() {
+  const 按钮 = $('regSend');
+  const 提示 = $('regMsg');
+  const 正文 = $('regOut');
+  const 编号 = 值('regId');
+  const 姓名 = 值('regName');
+
+  if (!编号) { 说(提示, '请填编号，例如 S01', 'err'); $('regId').focus(); return; }
+  if (!姓名) { 说(提示, '请填姓名', 'err'); $('regName').focus(); return; }
+
+  清容器(正文);
+  await 忙(按钮, '正在登记…', async () => {
+    说(提示, '正在登记…');
+    try {
+      const d = await 跑能力('学生注册', {
+        编号: 编号,
+        姓名: 姓名,
+        学号: 值('regNo'),
+        年级: 值('regGrade'),
+        班级: 值('regClass'),
+        备注: 值('regNote'),
+        家长同意书: $('regConsent').value || '未签回'
+      });
+      说(提示, d.提示 || '已登记', 'ok');
+      写文本(正文, d.正文 || '');
+      载入名册();
+    } catch (e) {
+      说(提示, '失败：' + e.message, 'err');
+    }
+  });
+}
+
+async function 载入名册() {
+  const 提示 = $('regListMsg');
+  const 清单 = $('regList');
+  填块(清单, '<div class="load">加载中…</div>');
+  try {
+    const d = await 跑能力('学生名册', {});
+    const 条目 = d.条目 || [];
+    if (!条目.length) 说(提示, d.正文 || d.提示 || '', d.正文 ? 'err' : '');
+    else 说(提示, '');
+    填块(清单, 条目.length
+      ? 条目.map(学生卡).join('')
+      : '<div class="empty">' + esc(d.提示 || '还没有学生登记。') + '</div>');
+  } catch (e) {
+    填块(清单, '<div class="empty">读取失败</div>');
+    说(提示, '名册读取失败：' + e.message, 'err');
+  }
+}
+
+
+const 对话记录 = [];
+
+function 画对话() {
+  const 框 = $('chatLog');
+  if (!对话记录.length) {
+    框.innerHTML = '<div class="msg ai">你好，我是「邵新」的助手。想做什么直接说，比如「出一节分数的除法的课件」。</div>';
+    return;
+  }
+  框.innerHTML = 对话记录.map(m =>
+    '<div class="msg ' + (m.role === 'user' ? 'me' : 'ai') + '">' + esc(m.content) + '</div>'
+  ).join('');
+  const 末条 = 框.lastElementChild;
+  if (末条) 末条.scrollIntoView({ block: 'nearest' });
+}
+
+async function 发对话() {
+  const 按钮 = $('chatSend');
+  const 提示 = $('chatMsg');
+  const 文本 = 值('chatText');
+  if (!文本) { 说(提示, '请先写下想做什么', 'err'); $('chatText').focus(); return; }
+
+  对话记录.push({ role: 'user', content: 文本 });
+  $('chatText').value = '';
+  画对话();
+
+  await 忙(按钮, '正在处理…', async () => {
+    说(提示, 'AI 正在处理…');
+    try {
+      const 历史 = 对话记录.slice(0, -1)
+        .map(m => (m.role === 'user' ? '老师：' : '助手：') + m.content).join('\n');
+      const d = await 跑能力('创造模式', { 内容: 文本, 之前的对话: 历史 });
+      对话记录.push({ role: 'assistant', content: d.正文 || '（没有返回内容）' });
+      说(提示, d.提示 || '', 'ok');
+      画对话();
+    } catch (e) {
+      说(提示, '失败：' + e.message + '（这句没进对话记录）', 'err');
+    }
+  });
+}
+
+function 清对话() {
+  对话记录.length = 0;
+  画对话();
+  说($('chatMsg'), '对话已清空。');
+}
+
+
+async function 载入用量() {
+  const 提示 = $('useMsg');
+  const 清单 = $('useList');
+  const 说明 = $('useNote');
+  说(提示, '正在读取…');
+  填块(清单, '<div class="load">加载中…</div>');
+  try {
+    const d = await 跑能力('用量统计', {});
+    说(提示, d.提示 || '', 'ok');
+    const 条目 = d.条目 || [];
+    填块(清单, 条目.length
+      ? 条目.map(用量卡).join('')
+      : '<div class="empty">还没有能算出命中率的模型调用。</div>');
+    写文本(说明, d.正文 || '');
+  } catch (e) {
+    填块(清单, '<div class="empty">读取失败</div>');
+    说(提示, '读取失败：' + e.message, 'err');
+  }
+}
+
+
+$('qaSend').onclick = 学生提问;
+$('anSend').onclick = 匿名提问;
+$('reSend').onclick = 录一条;
+$('arcReload').onclick = 载入档案;
+$('regSend').onclick = 提交登记;
+$('regReload').onclick = 载入名册;
+$('chatSend').onclick = 发对话;
+$('chatClear').onclick = 清对话;
+$('useReload').onclick = 载入用量;
+
+$('pcLink').href = 带令牌('/网页/首页.html');
+
+const 直开页 = decodeURIComponent(location.hash.slice(1));
+显示(页面名[直开页] ? 直开页 : '首页');
+</script>
+</body>
+</html>

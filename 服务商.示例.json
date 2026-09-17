@@ -1,0 +1,99 @@
+{
+  "_readme": [
+    "把本文件复制成 providers.json 再改。providers.json 不进版本库（可能含你自己的私有地址）。",
+    "",
+    "怎么用：",
+    "  1. 把 Key 存成 密钥/<key_env>.txt（第一行就是 Key），或设成同名环境变量",
+    "  2. 把 default 改成你要用的那家的键名",
+    "  3. 跑 python 本地服务.py，浏览器打开 http://127.0.0.1:8765",
+    "",
+    "中转站 / 自建服务：",
+    "  在 providers 里加一条，base_url 填服务商给你的地址，key_env 填你设的环境变量名。",
+    "  只要它兼容 OpenAI 的 /chat/completions 协议，就能直接用，不用改代码。",
+    "",
+    "⚠️ 模型名是易腐品，不是常量。",
+    "   实测：2026 年两个月内，DeepSeek 与月之暗面各经历一次旧模型名下线。",
+    "   写在代码里的模型名，保质期按月计 —— 所以它必须是配置项（就是这里）。",
+    "   核对日期见 _verified_at；逐家依据见 _verified_doc。",
+    "",
+    "选型提示（本项目面向贫困地区，成本敏感）：",
+    "  - 先用有免费额度的把第一次跑通压到 0 成本：阿里百炼、火山方舟",
+    "  - 再把模型调便宜：智谱 GLM-4.7-Flash、硅基流动 Qwen2.5-7B-Instruct（均标价免费）",
+    "  - 最后做效果对比：DeepSeek（空闲时段半价，工作日 12:00-14:00 与 18:00-次日 9:00）",
+    "  - 蒸馏是短文本 + 低频任务，免费额度的能力已经过剩，不必追最强模型"
+  ],
+
+  "_verified_at": "2026-09-14",
+  "_verified_doc": "查证-大模型服务商接入参数.md",
+
+  "default": "deepseek",
+
+  "providers": {
+    "deepseek": {
+      "base_url": "https://api.deepseek.com",
+      "model": "deepseek-flash",
+      "key_env": "DEEPSEEK_API_KEY",
+      "note": "深度求索。BASE URL 不带 /v1（官方口径）。API 模型名 deepseek-flash 对应的**就是 DeepSeek-V4.1-Flash**。官方脚注：旧名 deepseek-v4-flash 等仍可调用，但对应模型已下线，请求实际由 V4.1-Flash 提供服务并按 Flash 计费 —— 所以旧名调得通不等于旧模型还在。价格（每百万 tokens，缓存未命中）：输入 空闲 1 元 / 高峰 2 元；输出 空闲 4 元 / 高峰 8 元。**高峰时段 = 北京时间周一至周五 9:00-12:00、14:00-18:00；其余（含周末）为空闲时段，价格减半** —— 批量实验排到空闲时段"
+    },
+    "siliconflow": {
+      "base_url": "https://api.siliconflow.cn/v1",
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "key_env": "SILICONFLOW_API_KEY",
+      "note": "硅基流动。聚合平台，一家 key 调多家开源模型。Qwen2.5-7B-Instruct 官方定价页标价 0（本次唯一确证的免费对话模型）"
+    },
+    "moonshot": {
+      "base_url": "https://api.moonshot.cn/v1",
+      "model": "kimi-k2.6",
+      "key_env": "MOONSHOT_API_KEY",
+      "note": "月之暗面 Kimi。国内直连。注意：moonshot-v1 全系列已于 2026-08-31 下线，调用返回 404"
+    },
+    "zhipu": {
+      "base_url": "https://open.bigmodel.cn/api/paas/v4/",
+      "model": "glm-4.7-flash",
+      "key_env": "ZHIPU_API_KEY",
+      "note": "智谱 GLM。GLM-4.7-Flash 官方定价页标价免费。裸名 glm-4-flash 未出现在现行价格表中"
+    },
+    "dashscope": {
+      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "model": "qwen-turbo",
+      "key_env": "DASHSCOPE_API_KEY",
+      "note": "阿里通义（百炼）。有【每模型 100 万 Token / 90 天】免费额度，适合把第一次跑通压到 0 成本。官方建议迁移到新域名 https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/compatible-mode/v1，旧域名仍可用（上面填的是旧域名，稳妥）"
+    },
+    "ark": {
+      "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+      "model": "doubao-seed-2-0-lite-260428",
+      "key_env": "ARK_API_KEY",
+      "note": "字节豆包（火山方舟）。官方已改为直接填模型 ID（如 doubao-seed-2-0-lite-260428），接入点机制仍存在但不再是必须。新用户有免费推理额度"
+    },
+    "hunyuan": {
+      "base_url": "https://api.hunyuan.cloud.tencent.com/v1",
+      "model": "Hunyuan-a13b",
+      "key_env": "HUNYUAN_API_KEY",
+      "note": "腾讯混元。⚠️ 官方公告：混元将逐步迁移至 TokenHub，原平台不再新增模型能力、停止支持新购模型服务 —— 不建议作为新项目主选。hunyuan-lite 已不在现行价格表内"
+    },
+    "qianfan": {
+      "base_url": "https://qianfan.baidubce.com/v2",
+      "model": "ernie-4.5-turbo-128k",
+      "key_env": "QIANFAN_API_KEY",
+      "note": "百度文心（千帆）。v2 确证走标准 OpenAI 协议。ernie-speed-8k 已不在现行模型列表/价格表中。有 20 元无门槛代金券（有效期 1 个月）"
+    },
+    "minimax": {
+      "base_url": "https://api.minimax.cn/v1",
+      "model": "MiniMax-M2.7",
+      "key_env": "MINIMAX_API_KEY",
+      "note": "MiniMax。官方 OPENAI_BASE_URL 为 api.minimax.cn（api.minimax.chat 未在任何官方页出现）。现行模型为 MiniMax-M* 系列，abab6.5s-chat 已不在支持表内"
+    },
+    "openrouter": {
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "nex-agi/nex-n2.5-mini:free",
+      "key_env": "OPENROUTER_API_KEY",
+      "note": "国际聚合平台。有 22 个 :free 模型，上面填的是其中一个免费示例；要别的可查 GET /api/v1/models。国内可直连但不够稳定，必要时挂代理"
+    },
+    "custom": {
+      "base_url": "",
+      "model": "",
+      "key_env": "",
+      "note": "自建服务或中转站：把这三个空填上即可，不用改代码"
+    }
+  }
+}
