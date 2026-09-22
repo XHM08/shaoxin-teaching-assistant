@@ -32,9 +32,6 @@ EDGE们 = [
 最小图 = 20000
 最小DOM = 5000
 
-手机UA = ("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
-         "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1")
-
 
 class 收视图(html.parser.HTMLParser):
 
@@ -186,105 +183,16 @@ def main():
 
             print("    %-8s %7d 字节  md5 %s" % (页, 字节数, 指纹[:12]))
 
-        手机页 = os.path.join(网页目录, "手机.html")
-        自检页 = os.path.join(网页目录, "_手机自检.html")
-        if not os.path.isfile(手机页):
-            问题.append("找不到 网页/手机.html")
-        else:
-            原手机 = io.open(手机页, encoding="utf-8").read()
-            if "</body>" not in 原手机:
-                问题.append("手机.html 里找不到 </body>，注入会静默失效")
-            else:
-                注入 = ("\n<script>window.addEventListener('load',function(){"
-                        "setTimeout(async function(){"
-                        "var 框=document.createElement('div');框.id='__自检';"
-                        "document.body.appendChild(框);"
-                        "try{var d=await 跑能力('用量统计',{});"
-                        "框.textContent='自检结果:OK '+(d.提示||'').slice(0,40);}"
-                        "catch(e){框.textContent='自检结果:失败 '+e.message;}},1200)});"
-                        "</script>\n</body>")
-                改后 = 原手机.replace("</body>", 注入, 1)
-                if len(改后) == len(原手机):
-                    问题.append("手机.html 的注入没生效")
-                else:
-                    io.open(自检页, "w", encoding="utf-8").write(改后)
-                    手机地址 = "http://127.0.0.1:%d%s" % (
-                        端口, urllib.parse.quote("/网页/_手机自检.html"))
-                    图 = os.path.join(产物, "手机版.png")
-                    手机跑 = 手机dom = None
-                    try:
-                        手机跑 = subprocess.run([edge, "--headless=new", "--disable-gpu",
-                                               "--user-data-dir=" + 配置目录,
-                                               "--hide-scrollbars", "--window-size=390,844",
-                                               "--user-agent=" + 手机UA,
-                                               "--virtual-time-budget=20000",
-                                               "--screenshot=" + 图, 手机地址],
-                                              timeout=180, capture_output=True)
-                        手机dom = subprocess.run([edge, "--headless=new", "--disable-gpu",
-                                                "--user-data-dir=" + 配置目录,
-                                                "--user-agent=" + 手机UA,
-                                                "--virtual-time-budget=20000",
-                                                "--dump-dom", 手机地址],
-                                               timeout=180, capture_output=True)
-                    except subprocess.TimeoutExpired:
-                        问题.append("手机版跑了 180 秒还没完")
-                    except OSError as 异常:
-                        问题.append("手机版起不了 Edge：" + str(异常))
-
-                    if 手机跑 is not None and 手机dom is not None:
-                        if 手机跑.returncode != 0:
-                            问题.append("手机版截图时 Edge 退出码 %d" % 手机跑.returncode)
-                        elif not os.path.isfile(图):
-                            问题.append("手机版截图没出来")
-                        else:
-                            字节数 = os.path.getsize(图)
-                            指纹 = hashlib.md5(open(图, "rb").read()).hexdigest()
-                            指纹表["手机版"] = 指纹
-                            if 字节数 < 最小图:
-                                问题.append("手机版截图只有 %d 字节，多半是白屏" % 字节数)
-                            文本 = 手机dom.stdout.decode("utf-8", "replace")
-                            io.open(os.path.join(产物, "手机版.dom.html"), "w",
-                                    encoding="utf-8").write(文本)
-                            if 手机dom.returncode != 0:
-                                问题.append("手机版取 DOM 时 Edge 退出码 %d" % 手机dom.returncode)
-                            elif len(文本) < 最小DOM:
-                                问题.append("手机版 DOM 只有 %d 字符，可能没真渲染" % len(文本))
-                            else:
-                                if "viewport" not in 文本:
-                                    问题.append("手机版没有 viewport（手机上会按桌面宽度缩放）")
-                                for 该有的 in ("我有一道题", "电脑上操作", "学生档案馆", "用量"):
-                                    if 该有的 not in 文本:
-                                        问题.append("手机版里找不到「" + 该有的 + "」")
-                                结果框 = re.search(r'<div id="__自检"[^>]*>(.*?)</div>',
-                                                文本, re.S)
-                                结果文字 = (结果框.group(1) if 结果框 else "").strip()
-                                if not 结果文字.startswith("自检结果:OK"):
-                                    问题.append("手机版的 JS 没拿到接口结果（__自检 里是："
-                                                + (结果文字[:80] or "空") + "）")
-                                print("    %-8s %7d 字节  md5 %s" % ("手机版", 字节数, 指纹[:12]))
-
-        try:
-            分派 = ((手机UA, "我有一道题", "手机 UA 打开根地址"),
-                   ("Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "工作台", "电脑 UA 打开根地址"))
-            for 代理, 该出现, 说明 in 分派:
-                请求 = urllib.request.Request("http://127.0.0.1:%d/" % 端口,
-                                             headers={"User-Agent": 代理})
-                with urllib.request.urlopen(请求, timeout=10) as 响应:
-                    原 = 响应.read().decode("utf-8", "replace")
-                if 该出现 not in 原:
-                    问题.append(说明 + "拿到的不是该有的那一版")
-        except Exception as 异常:
-            问题.append("按 UA 分派页面：" + type(异常).__name__ + "：" + str(异常)[:80])
     finally:
         try:
-            for 一个 in (预览, 自检页):
+            for 一个 in (预览,):
                 if os.path.isfile(一个):
                     os.remove(一个)
         except OSError as 异常:
             残留说明 = str(异常)
         shutil.rmtree(配置目录, ignore_errors=True)
 
-    for 一个 in (预览, 自检页):
+    for 一个 in (预览,):
         if 残留说明 or os.path.isfile(一个):
             问题.append("临时页没删掉，还留在 " + 一个 + "，请手动删"
                         + ("（" + 残留说明 + "）" if 残留说明 else ""))
@@ -302,7 +210,7 @@ def main():
             print("    " + 一条)
         return 1
 
-    print("\n  %d 个页面都画得出来，且两两不是同一张图（含手机版）。" % len(指纹表))
+    print("\n  %d 个页面都画得出来，且两两不是同一张图。" % len(指纹表))
     print("  图在 " + 产物 + " —— 请自己打开看一眼，脚本判断不了好不好看。")
     return 0
 

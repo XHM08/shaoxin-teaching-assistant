@@ -29,8 +29,9 @@ python 本地服务.py
 
 Then open <http://127.0.0.1:8765>.
 
-The server binds to the loopback interface by default. A LAN mode and a mobile-optimised
-page also exist; see `手机版/说明.md`.
+The server binds to the loopback interface by default. A LAN mode also exists; requests
+from another device need the access token that the server prints at startup. There is no
+mobile build.
 
 ## Layout
 

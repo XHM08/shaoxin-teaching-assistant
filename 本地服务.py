@@ -25,12 +25,6 @@ if 绑定局域网 and not 访问令牌:
 
 回环判断 = ipaddress.ip_address
 
-手机标识 = ("iphone", "ipod", "android", "mobile", "harmonyos", "micromessenger")
-
-
-def 是手机(用户代理):
-    return any(词 in (用户代理 or "").lower() for 词 in 手机标识)
-
 
 def 来源可信(来源):
     if 来源 in 本机来源:
@@ -190,10 +184,6 @@ class 请求处理(BaseHTTPRequestHandler):
                                           "令牌每次启动都不一样，看电脑上那个窗口打印的那一行。"})
         try:
             if 路径 in ("/", "/首页.html"):
-                手机页 = os.path.join(网页目录, "手机.html")
-                if (路径 == "/" and os.path.isfile(手机页)
-                        and 是手机(self.headers.get("User-Agent", ""))):
-                    return self.送文件(手机页, "text/html; charset=utf-8")
                 return self.送文件(os.path.join(网页目录, "首页.html"),
                                   "text/html; charset=utf-8")
             if 路径.startswith("/网页/"):
@@ -270,9 +260,9 @@ def 主程序():
         地址们 = 本机地址们()
         if 地址们:
             for 地址 in 地址们:
-                print("  手机打开： http://" + 地址 + ":" + str(端口) + 尾巴, flush=True)
+                print("  局域网上打开： http://" + 地址 + ":" + str(端口) + 尾巴, flush=True)
         else:
-            print("  手机打开： http://<本机局域网的 IP>:" + str(端口) + 尾巴, flush=True)
+            print("  局域网上打开： http://<本机局域网的 IP>:" + str(端口) + 尾巴, flush=True)
         if not 访问令牌:
             print("  ⚠ 没设访问令牌：同一个 Wi-Fi 上任何设备都能驱动本机能力"
                   "（包括电脑服务、执行命令）", flush=True)
