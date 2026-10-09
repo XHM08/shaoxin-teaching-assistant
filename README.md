@@ -57,7 +57,7 @@ Scripts that write to disk require `--确认`: they back up first and restore af
 
 ## Contents of this repository
 
-- 34 abilities, 14 tools, 15 pages
+- 39 abilities, 14 tools, 15 pages
 - No credentials are included
 - The skill packs under `技能包/` are synthetic samples, not recordings of a real teacher
 
