@@ -27,7 +27,7 @@ EDGE们 = [
 首页 = os.path.join(网页目录, "首页.html")
 预览 = os.path.join(网页目录, "_预览.html")
 产物 = os.path.join(根, "_页面截图")
-端口 = int(配置.读取().get("本地服务", {}).get("端口", 8765))
+端口 = 配置.取端口()
 地址 = "http://127.0.0.1:%d%s" % (端口, urllib.parse.quote("/网页/_预览.html"))
 
 最小图 = 20000
@@ -78,7 +78,7 @@ def main():
     try:
         if os.path.isfile(锁) and (time.time() - os.path.getmtime(锁)) < 600:
             主人 = open(锁, encoding="utf-8", errors="replace").read().strip()
-            print("  另一次「页面渲染」自检正在跑（%s）—— 这次跳过，免得两边互相毁证据。" % 主人)
+            print("  另一次「页面渲染」自检正在跑（%s）。这次跳过，免得两边互相毁证据。" % 主人)
             print("  （等它跑完再跑一次；锁超过 10 分钟会自动失效，卡死也不会一直挡着）")
             return 0
         os.makedirs(产物, exist_ok=True)
@@ -107,10 +107,10 @@ def 跑一遍(edge):
     脚本 = re.search(r"const VIEWS\s*=\s*\[([^\]]*)\]", 原)
     页们 = re.findall(r"'([^']+)'", 脚本.group(1)) if 脚本 else []
     if len(页们) < 5:
-        print("  从首页没解析出 VIEWS（只拿到 %d 个）—— 解析逻辑可能已经失效" % len(页们))
+        print("  从首页没解析出 VIEWS（只拿到 %d 个）。解析逻辑可能已经失效" % len(页们))
         return 1
     if "</body>" not in 原:
-        print("  首页里找不到 </body>，注入会静默失效 —— 先看这个")
+        print("  首页里找不到 </body>，注入会静默失效。先看这个")
         return 1
 
     try:
@@ -130,7 +130,7 @@ def 跑一遍(edge):
 
     try:
         if 写预览(原, 页们[0]) is None:
-            print("  注入没生效（长度没变）—— 先看首页的收尾标签")
+            print("  注入没生效（长度没变）：先看首页的收尾标签")
             return 1
         try:
             with urllib.request.urlopen(地址, timeout=10) as 响应:
@@ -140,7 +140,7 @@ def 跑一遍(edge):
         except Exception as 异常:
             预览码 = "连不上（%s）" % type(异常).__name__
         if 预览码 != 200:
-            print("  预览页取不到：HTTP %s —— 地址 %s" % (预览码, 地址))
+            print("  预览页取不到：HTTP %s，地址 %s" % (预览码, 地址))
             return 1
 
         for 页 in 页们:
@@ -236,7 +236,7 @@ def 跑一遍(edge):
         return 1
 
     print("\n  %d 个页面都画得出来，且两两不是同一张图。" % len(指纹表))
-    print("  图在 " + 产物 + " —— 请自己打开看一眼，脚本判断不了好不好看。")
+    print("  图在 " + 产物 + "：请自己打开看一眼，脚本判断不了好不好看。")
     return 0
 
 

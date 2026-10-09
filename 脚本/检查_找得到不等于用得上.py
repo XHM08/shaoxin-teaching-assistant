@@ -52,7 +52,7 @@ def 批处理判据():
             "共 %d 行会执行，没出现 where python" % len(执行行)
             if not 违规 else "执行行里还有：%s" % 违规[:1])
         判据行 = [行 for 行 in 执行行 if 判据样式.search(行)]
-        检查("① %s 的判据是**看输出**（桩返回 0 也挡得住）" % 名, bool(判据行),
+        检查("① %s 的判据是看输出（桩返回 0 也挡得住）" % 名, bool(判据行),
             str(判据行[0])[:76] if 判据行 else "执行行里没找到 print(sys.version_info[0])")
         检查("① %s 是 UTF-8 无 BOM + CRLF（改它时别把编码改掉）" % 名,
             (not 原.startswith(b"\xef\xbb\xbf")) and 原.count(b"\r\n") > 0

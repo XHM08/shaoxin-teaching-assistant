@@ -26,9 +26,9 @@ def 记一条(谁, 内容, 来源="窗口"):
     global _下个序号, _丢过
     内容 = 洗(内容)
     if not 内容:
-        raise ValueError("内容是空的 —— 说点什么再发")
+        raise ValueError("内容是空的：说点什么再发")
     if len(内容) > 内容上限:
-        raise ValueError("太长了（%d 个字，一次最多 %d 个字）—— 拆成几句分开发"
+        raise ValueError("太长了（%d 个字，一次最多 %d 个字）。拆成几句分开发"
                          % (len(内容), 内容上限))
     谁 = 收拾(谁, 谁的上限) or "同学"
     现在 = time.time()

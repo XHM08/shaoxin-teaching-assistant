@@ -72,14 +72,14 @@ def 读JSON(路径, 空值, 名字, 期望类型):
     if not 原文.strip():
         raise ValueError(
             名字 + " 是空的（0 字节）：\n" + 路径
-            + "\n软件不会覆盖它 —— 请先人工核对；确实要当「还没登记」就从备份恢复或删掉它。"
+            + "\n软件不会覆盖它：请先人工核对；确实要当「还没登记」就从备份恢复或删掉它。"
         )
     try:
         内容 = json.loads(原文)
     except json.JSONDecodeError as 异常:
         raise ValueError(
             名字 + " 读不出来（多半是上次写盘被打断留下的半截文件）：\n" + 路径
-            + "\n软件不会覆盖它 —— 请先人工核对或从备份恢复这个文件。"
+            + "\n软件不会覆盖它：请先人工核对或从备份恢复这个文件。"
         ) from 异常
     if not isinstance(内容, 期望类型):
         raise ValueError(
@@ -152,7 +152,7 @@ def 记资料(编号, 姓名, 学号="", 年级="", 班级="", 备注="", 家长
     if not 已注册(编号):
         raise ValueError("这个编号还没注册：" + 编号 + "，先注册再填资料。")
     if not str(姓名 or "").strip():
-        raise ValueError("姓名不能为空 —— 对照表就靠它认人，不许用空值覆盖。")
+        raise ValueError("姓名不能为空：对照表就靠它认人，不许用空值覆盖。")
 
     with 档案锁:
         旧 = 学生信息(编号)

@@ -115,7 +115,7 @@ try:
     with open(坏, "w", encoding="utf-8") as 文件:
         文件.write('{"反馈编号": 1, "内容": "半截')
     好, 说 = 拒了吗(lambda: _教师数据.读JSONL(坏, "反馈.jsonl"), "不会覆盖")
-    记("⑩ 半截 JSON 读不出来时**报错**，不是返回空", 好, 说)
+    记("⑩ 半截 JSON 读不出来时报错，不是返回空", 好, 说)
     if os.path.isfile(坏):
         os.remove(坏)
 

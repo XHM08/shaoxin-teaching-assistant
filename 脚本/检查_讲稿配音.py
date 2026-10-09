@@ -209,7 +209,7 @@ try:
         检查("⑱ 第一次：有讲稿的页各调一次合成（2 页 → 2 次）", 次 == 2, "调了 %d 次；%s" % (次, 话))
 
         次, 话 = 配一次()
-        检查("⑲ 没改过再配一次：**一次都不调**（沿用上次），且话说明了",
+        检查("⑲ 没改过再配一次：一次都不调（沿用上次），且话说明了",
             次 == 0 and "一页都没重配" in 话, "调了 %d 次；%s" % (次, 话))
 
         from pptx import Presentation
@@ -261,7 +261,7 @@ finally:
     shutil.rmtree(临时, ignore_errors=True)
 
 for 序号, (名字, 通过, 说明) in enumerate(结果, 1):
-    print("  %2d. %s %s —— %s" % (序号, "通过" if 通过 else "不过", 名字, 说明))
+    print("  %2d. %s %s：%s" % (序号, "通过" if 通过 else "不过", 名字, 说明))
 通过数 = sum(1 for _名, 通, _说 in 结果 if 通)
 print("\n%d/%d" % (通过数, len(结果)))
 sys.exit(0 if 通过数 == len(结果) else 1)

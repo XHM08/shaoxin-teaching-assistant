@@ -97,12 +97,12 @@
       <h2>电脑服务</h2>
       <div class="body">
         <div class="notice">
-          不会用电脑也没关系 —— 用一句话说，或点下面的按钮。<br>
+          不会用电脑也没关系：用一句话说，或点下面的按钮。<br>
           <b>只看不动的</b>（看内存、看垃圾有多少）点一下就出结果；
           <b>要动手的</b>（清临时文件、清回收站）会先把「会发生什么」摊开给你看，
           你按 <b>确认执行</b> 才会真的做。
           <br><br>
-          <b>先说清楚一件事</b>：Windows 没有可靠的「清理内存」操作 —— 那些号称清内存的软件
+          <b>先说清楚一件事</b>：Windows 没有可靠的「清理内存」操作。那些号称清内存的软件
           是把程序的工作集强行刷走，用起来反而更卡。真正管用的是
           <b>磁盘腾出空间</b>（清临时文件）和 <b>关掉不用的程序</b>；
           该关哪个，「谁最占内存」会告诉你，这一步请你自己关。
@@ -166,12 +166,12 @@
         </div>
         <div id="authBox" class="notice">
           <b>长任务授权</b>：默认没有。没有它的时候，AI 提的每条命令都要你点一下，
-          而且它看不到命令输出 —— 所以装依赖、跑测试、看报错再改这种长任务做不成。
+          而且它看不到命令输出：所以装依赖、跑测试、看报错再改这种长任务做不成。
           开窗期间 AI 能连着跑、也能看到输出；<b>但各档能自动跑的范围不一样</b>：
           安全授权下，会装或卸东西、删或移文件、结束进程、联网下载这类命令<b>仍然要你点</b>；
           普通授权放行这些、但保留禁用清单里那十几条；全部授权连禁用清单也放行。
           <b>窗口不会自己过期</b>，用完请点「收回」
-          （刷新页面后这个页面就管不着它了 —— 要收回请回开窗的那个页面；重启程序也会清掉）。
+          （刷新页面后这个页面就管不着它了：要收回请回开窗的那个页面；重启程序也会清掉）。
           <b>窗口只对这里生效</b>，下面那个「执行这条命令」按钮的规矩不变。
           <div id="authState" style="margin-top:6px">现在没有授权窗口。</div>
           <div style="margin-top:8px" id="authButtons">
@@ -198,7 +198,7 @@
       <div class="body">
         <div class="notice">
           下面是为完成你刚才那句话、AI 想跑的命令。
-          <b>先读一遍说明，看不懂就别点</b> —— 命令没确认之前，一个字符都没跑。
+          <b>先读一遍说明，看不懂就别点</b>。命令没确认之前，一个字符都没跑。
         </div>
         <div id="cmdList"></div>
         <div id="cmdMsg" style="margin-top:12px"></div>
@@ -244,7 +244,7 @@
     <div class="card">
       <h2>教师材料</h2>
       <div class="body">
-        <div class="notice" id="matNotice">只列文件名、格式与大小，<b>不展示材料正文</b> —— 材料属教师本人。</div>
+        <div class="notice" id="matNotice">只列文件名、格式与大小，<b>不展示材料正文</b>。材料属教师本人。</div>
         <button class="ghost" id="btnRefreshMats">刷新</button>
         <table style="margin-top:12px">
           <thead><tr><th style="width:50px">序号</th><th>文件名</th><th style="width:90px">格式</th><th style="width:80px">能不能读</th><th style="width:110px">大小（字节）</th></tr></thead>
@@ -291,7 +291,7 @@
       <h2>技能包校订</h2>
       <div class="body">
         <div class="notice">
-          把这份技能包按 <code>##</code> 拆成一段一段，请老师逐段过一遍 ——
+          把这份技能包按 <code>##</code> 拆成一段一段，请老师逐段过一遍：
           申报材料里写的「该老师<b>本人逐条校对</b>技能包」就是这里。
           改动会直接写回 <code>SKILL.md</code>，但<b>存之前会自动备份</b>到
           <code>_历史\</code>，改坏了可以照着恢复。
@@ -553,7 +553,7 @@
         </div>
         <div id="evalMsg" style="margin-top:12px"></div>
         <div id="evalShowCard" class="hide" style="margin-top:12px">
-          <label>AI 原版（讲解A）—— 给老师看的就是这一段</label>
+          <label>AI 原版（讲解A）。给老师看的就是这一段</label>
           <pre id="evalShowA"></pre>
         </div>
       </div>
@@ -603,7 +603,7 @@
         <div class="notice">
           遇到不好用、算错了、太慢，或者想要什么功能，写在这里会存进 <code>教师数据\反馈.jsonl</code> 等排期。
           <br>
-          <b>学生自己提的意见请由老师转述</b> —— 反馈内容不属《学生数据处理约定》里的三项采集内容，
+          <b>学生自己提的意见请由老师转述</b>。反馈内容不属《学生数据处理约定》里的三项采集内容，
           学生那边<b>不落盘</b>（所以学生用的那两个视图上没有这个入口）。
         </div>
         <div class="row">
@@ -667,7 +667,7 @@
       <div class="body">
         <div class="notice">
           把一条反馈和<b>你点名要看的文件</b>交给模型，产出「定位 / 建议改动 / 要动哪几个文件 / 怎么验证 / 风险」。
-          <b>它不改任何文件、不执行任何命令</b> —— 改不改由人定；改完要过自检 + 双向回归，再 git 提交（所以能回滚）。
+          <b>它不改任何文件、不执行任何命令</b>。改不改由人定；改完要过自检 + 双向回归，再 git 提交（所以能回滚）。
           <br>
           路径里带 <code>..</code> 的一律拒；<code>密钥\</code>、<code>学生数据\</code>、
           <code>教师数据\</code> 里的东西<b>一律不许</b>发给模型。
@@ -697,7 +697,7 @@
       <div class="body">
         <div class="notice">
           两种上法：<b>按技能包生成一份新课件</b>，或者<b>用你自己已有的课件</b>
-          —— 用已有的那份时，先把它复制进 <code>课件输出/</code>，系统只给<b>没有讲稿的页</b>补讲稿，
+          用已有的那份时，先把它复制进 <code>课件输出/</code>，系统只给<b>没有讲稿的页</b>补讲稿，
           已有的讲稿一个字都不动。上起课来一样：一页页讲，学生按 <b>「我有问题」</b> 就会暂停，答完再继续。
         </div>
         <div class="row">
@@ -768,7 +768,7 @@
         <div id="lecOutMsg" style="margin-top:12px"></div>
 
         <div class="askbox hide" id="askBox">
-          <h3>暂停中 —— 请写下你的问题</h3>
+          <h3>暂停中：请写下你的问题</h3>
           <textarea id="askText" rows="2" placeholder="例如：为什么除以分数要倒过来乘？"></textarea>
           <div style="margin-top:10px">
             <button id="btnAskSend">提交问题</button>
@@ -824,7 +824,7 @@
       <h2>模型用量与缓存命中</h2>
       <div class="body">
         <div class="notice">
-          上下文缓存由服务商侧默认开启、不用改代码。这里只展示软件自己记下来的用量 —— 记下来才看得出是哪条路径低。
+          上下文缓存由服务商侧默认开启、不用改代码。这里只展示软件自己记下来的用量：记下来才看得出是哪条路径低。
           <b>官方说明：前两次请求不会命中，第三次起才命中</b>；缓存尽力而为、不保证 100%。
         </div>
         <button class="ghost" id="btnCacheRefresh">刷新用量</button>
@@ -850,7 +850,7 @@ let ABILITIES = null;
 const SETTINGS = { items: [] };
 const LEC = { items: [], index: 0, skill: '', auto: false, timer: null };
 
-/* 服务端 / 磁盘来的字符串拼进 HTML 前必须过这里 —— 大模型写的描述里可能有 < & " */
+/* 服务端 / 磁盘来的字符串拼进 HTML 前必须过这里。大模型写的描述里可能有 < & " */
 function esc(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;')
@@ -889,7 +889,7 @@ async function paramOptions(ability, param) {
 }
 
 // 这个标签页自己的会话标记：长任务授权按会话分键，所以每个请求都带上它。
-// 用随机串而不是固定值 —— 两个标签页各归各的；刷新一次就换新的，
+// 用随机串而不是固定值：两个标签页各归各的；刷新一次就换新的，
 // 于是「刷新页面」天然就把窗口作废了（这正是我们想要的）。
 const SID = Math.random().toString(36).slice(2) + Date.now().toString(36);
 
@@ -911,8 +911,8 @@ function fillSelect(sel, list, emptyText, 默认值) {
     ? list.map(v => '<option value="' + esc(v) + '">' + esc(v) + '</option>').join('')
     : '<option value="">' + esc(emptyText) + '</option>';
   // 选项一填进去，浏览器会默认选中第一项。像「家长同意书」这种字段，
-  // 第一项是「已签回」—— 不显式指定默认值，就等于替老师勾了「已签回」，
-  // 那是伪造合规记录。当初只有手机版传了这第 4 个参数，桌面版漏了 —— 手机版已取消，两个页面都得传。
+  // 第一项是「已签回」：不显式指定默认值，就等于替老师勾了「已签回」，
+  // 那是伪造合规记录。当初只有手机版传了这第 4 个参数，桌面版漏了，手机版已取消，两个页面都得传。
   if (默认值 && list.indexOf(默认值) >= 0) sel.value = 默认值;
 }
 
@@ -1111,7 +1111,7 @@ async function loadDecks() {
   }
 }
 
-/* 事件委托，不用内联 onclick —— 免得把数据里的引号拼进代码 */
+/* 事件委托，不用内联 onclick。免得把数据里的引号拼进代码 */
 $('skillRows').addEventListener('click', e => {
   const 看 = e.target.closest('button[data-skill]');
   if (看) { viewSkill(看.dataset.skill); return; }
@@ -1142,7 +1142,7 @@ async function runDiag() {
       题目: $('diagTopic').value,
       作答: $('diagAnswer').value
     });
-    // 红框只看数据，不去猜提示文字里有没有某个词 ——
+    // 红框只看数据，不去猜提示文字里有没有某个词：
     // 「模型给的类型不在清单里」这件事，能力是放在条目的「备注」里说的
     const 有问题 = (d.条目 || []).some(一 => 一['备注']);
     say($('diagMsg'), d.提示 || '诊断完成。', 有问题 ? 'err' : 'ok');
@@ -1171,8 +1171,8 @@ function 带去档案() {
   $('arcAnswer').value = DIAG.作答;
   show('学生档案馆');
   if (!DIAG.错误类型) return;
-  // 错误类型是下拉，选项在启动时就填好了。设不进去说明选项没填上 ——
-  // 这时**不能**默默留空：留空会被当成「其他」存进档案，类型就错了。
+  // 错误类型是下拉，选项在启动时就填好了。设不进去说明选项没填上：
+  // 这时不能默默留空：留空会被当成「其他」存进档案，类型就错了。
   const 下拉 = $('arcError');
   下拉.value = DIAG.错误类型;
   if (下拉.value !== DIAG.错误类型) {
@@ -1433,7 +1433,7 @@ async function loadArchive() {
   }
 }
 
-/* 事件委托，不用内联 onclick —— 免得把数据里的引号拼进代码 */
+/* 事件委托，不用内联 onclick。免得把数据里的引号拼进代码 */
 $('arcRows').addEventListener('click', e => {
   const btn = e.target.closest('button[data-stu]');
   if (btn) viewStudent(btn.dataset.stu);
@@ -1528,8 +1528,8 @@ function lecRender() {
   lecRenderVoice(it);
 }
 
-/* 显示**真实页面**（从 pptx 导出的图）：老师改过版式、加过图，这里就是他那样子。
-   没图就收起来退回文字版 —— 不能留个破图占着地方。 */
+/* 显示真实页面（从 pptx 导出的图）：老师改过版式、加过图，这里就是他那样子。
+   没图就收起来退回文字版：不能留个破图占着地方。 */
 function lecRenderShot(it) {
   const 图地址 = String(it['页图'] || '');
   const 图 = $('lecShot');
@@ -1564,7 +1564,7 @@ function lecRenderVoice(it) {
     播放器.src = url;                     // 换页就换源，浏览器会自己重新加载
   }
   if ($('lecAudioAuto').checked) {
-    // 翻页是用户点的，一般允许自动播；不给播也不报错 —— 控件就在那儿，老师点一下即可
+    // 翻页是用户点的，一般允许自动播；不给播也不报错。控件就在那儿，老师点一下即可
     const 试 = 播放器.play();
     if (试 && 试.catch) 试.catch(() => {});
   }
@@ -1583,7 +1583,7 @@ function lecNextPage() {
   }
 }
 
-/* 讲稿越长停得越久。**有配音时以音频说完为准** —— 按字数估的 1/6 秒每字
+/* 讲稿越长停得越久。有配音时以音频说完为准：按字数估的 1/6 秒每字
    比配音真实语速（约 0.24 秒/字）短了四成，用它会把每页的尾巴切掉，
    那就不是“翻到哪页播哪页”了。没音频时才退回按字数估。 */
 function lecSchedule() {
@@ -1622,7 +1622,7 @@ async function lecFillDecks() {
   sel.innerHTML = '';
   try {
     await fillSelect(sel, await paramOptions('用已有课件', '课件文件'),
-      '（课件输出/ 里还没有 .pptx —— 先把你那份复制进去，再点刷新列表）');
+      '（课件输出/ 里还没有 .pptx。先把你那份复制进去，再点刷新列表）');
   } catch (e) {
     sel.innerHTML = '<option value="">（读不到课件列表）</option>';
   }
@@ -1644,9 +1644,9 @@ async function doLectureStart() {
   btn.disabled = true;
   const 要配 = $('lecWantVoice').checked;
   say(msg, 已有
-    ? (要配 ? '正在给这份课件补讲稿、导出每页图并配音：热身后约半分钟；刚起服务时可能三分钟以上。**请不要刷新页面**…'
+    ? (要配 ? '正在给这份课件补讲稿、导出每页图并配音：热身后约半分钟；刚起服务时可能三分钟以上。请不要刷新页面…'
            : '正在给这份课件补讲稿并导出每页图，可能要十几秒到一分钟…')
-    : (要配 ? '正在备课、导出每页图并配音：热身后约半分钟；服务刚起、要把 5 GB 模型加载进显存时可能三分钟以上。**请不要刷新页面**…'
+    : (要配 ? '正在备课、导出每页图并配音：热身后约半分钟；服务刚起、要把 5 GB 模型加载进显存时可能三分钟以上。请不要刷新页面…'
            : '正在备课，可能要十几秒到一分钟…'));
   try {
     const d = 已有
@@ -1674,7 +1674,7 @@ async function doLectureStart() {
 }
 
 /* 「我有问题」= 暂停上课。
-   配音也得停 —— 界面上写着“暂停中”，如果喇叭里老师还在念，
+   配音也得停：界面上写着“暂停中”，如果喇叭里老师还在念，
    学生就是一边听一边打字。（恢复时若勾了自动播，就接着念。） */
 function lecPause() {
   lecAuto(false);
@@ -1758,7 +1758,7 @@ async function loadSettings() {
       '</td><td>' + esc(s['接口地址']) + '</td><td>' + esc(s['密钥']) + '</td></tr>'
     ).join('');
     say($('setMsg'), d.提示 || '', '');
-    // 按「当前」那一项选中，不能让它取第一项 —— 否则老师照着表单填密钥、
+    // 按「当前」那一项选中，不能让它取第一项。否则老师照着表单填密钥、
     // 一点保存，就把系统悄悄切回字母序第一个服务商（实测：当前是 deepseek，
     // 表单里填的却是 ark）。
     const 当前服务商 = (SETTINGS.items.find(s => String(s['当前'] || '').trim() === '是') || {})['代号'] || '';
@@ -1872,7 +1872,7 @@ async function doChatSend() {
     cmdShow(d.待确认命令);
     画授权状态(d['授权']);
   } catch (e) {
-    // 失败不往对话记录里塞东西 —— 否则历史只会越错越长，最后彻底发不出去
+    // 失败不往对话记录里塞东西：否则历史只会越错越长，最后彻底发不出去
     say(msg, '失败：' + e.message + '（这句没进对话记录）', 'err');
   } finally {
     btn.disabled = false;
@@ -1892,7 +1892,7 @@ function 画授权状态(a) {
   if (a === undefined) {
     // 切回这一页时并不重新查服务端，所以不能接着显示上次那行（那是句谎话：
     // 同一个页面会话的窗口在服务端可能还开着）
-    el.textContent = '状态未刷新（窗口可能还开着）—— 点下面任一按钮、或发一轮对话就会显示最新。';
+    el.textContent = '状态未刷新（窗口可能还开着）。点下面任一按钮、或发一轮对话就会显示最新。';
     return;
   }
   if (!a || !a['档位']) {
@@ -1902,7 +1902,7 @@ function 画授权状态(a) {
     return;
   }
   if (a['说明'] === '默认档位（测试期）') {
-    // 测试期：默认档位开着 —— 按团队 2026-10-07 的要求，**其他三档先不显示**
+    // 测试期：默认档位开着，按团队 2026-10-07 的要求，其他三档先不显示
     // （地基留着：清掉 配置.json 的 命令.默认档位，这排按钮就回来了）
     el.innerHTML = '测试期：默认 <b>' + esc(a['档位']) + '</b>，AI 提的命令<b>不再逐条问你</b>。'
       + '每条命令照旧进审计。';
@@ -1916,12 +1916,12 @@ function 画授权状态(a) {
   el.innerHTML = '现在开着 <b>' + esc(a['档位']) + '</b>：' + 时间话 + '、'
     + esc(a['剩余几条']) + ' 条。'
     + (a['档位'] === '全部授权'
-      ? '　<b style="color:#c00">禁用清单已放行 —— 格式化磁盘、删注册表那类也拦不住；每条命令都进了审计</b>'
+      ? '　<b style="color:#c00">禁用清单已放行：格式化磁盘、删注册表那类也拦不住；每条命令都进了审计</b>'
       : '');
 }
 
 async function 查授权状态() {
-  // 进创造模式就真查一次（原来故意不查、怕显示旧状态 —— 真查最实在：
+  // 进创造模式就真查一次（原来故意不查、怕显示旧状态。真查最实在：
   // 测试期的默认档位要不要藏那排按钮，也只能靠这一步知道）
   try {
     const d = await run('看授权状态', {});
@@ -2054,7 +2054,7 @@ async function pcRun() {
   }
 }
 
-/* 事件委托，不用内联 onclick —— 免得把数据里的引号拼进代码 */
+/* 事件委托，不用内联 onclick。免得把数据里的引号拼进代码 */
 $('pcMenu').addEventListener('click', e => {
   const btn = e.target.closest('button[data-pc]');
   if (btn) pcPreview(btn.dataset.pc);
@@ -2102,7 +2102,7 @@ function envShow(d) {
     $('envTable').classList.remove('hide');
   }
 
-  // 单项结果只画在下面那张小表里，不动总表 —— 否则点一下就把五项总览冲掉了
+  // 单项结果只画在下面那张小表里，不动总表，否则点一下就把五项总览冲掉了
   if (!isScan && items.length) {
     $('envPlan').innerHTML = kvTable(items);
     $('envPlan').classList.remove('hide');
@@ -2119,7 +2119,7 @@ function envBadge(missingCount, 测不出) {
   const el = $('envState');
   if (!el) return;
   if (测不出) {
-    // 接口取不到时**不能**报「全部就绪」：那是把“测不出来”说成“一切正常”。
+    // 接口取不到时不能报「全部就绪」：那是把“测不出来”说成“一切正常”。
     // 以前失败路径直接 envBadge(0)，而 0 是假值，落进了下面那个 else。
     el.className = 't-state wait';
     el.textContent = '没测出来';
@@ -2352,12 +2352,12 @@ $('setProvider').onchange = fillSettingsForm;
   try {
     const 表 = await api('/api/能力');
     ABILITIES = 表.条目;
-    // 版本号从服务端拿（只在 地基/版本.py 写一处）。页面上不写死数字 ——
+    // 版本号从服务端拿（只在 地基/版本.py 写一处）。页面上不写死数字：
     // 以前这里写的是 0.5，而 MCP 自报的是 1.0，两边对不上（开发日志 D-15）。
     if (表.版本 && $('verNo')) $('verNo').textContent = 表.版本;
     fillSelect($('arcCorrect'), await paramOptions('录入学生记录', '对错'), '（没有选项）', '对');
     // 第 4 个参数才是"默认选中"，第 3 个只是列表为空时的占位。
-    // 以前这八处把默认值传在第 3 位，于是浏览器默认选第一项 ——
+    // 以前这八处把默认值传在第 3 位，于是浏览器默认选第一项：
     // 「错误类型」的首项是「概念不清」而本意是「其他」，不改下拉就静默记错错因
     fillSelect($('arcError'), await paramOptions('录入学生记录', '错误类型'), '（没有选项）', '其他');
     fillSelect($('regConsent'), await paramOptions('学生注册', '家长同意书'), '（无）', '未签回');

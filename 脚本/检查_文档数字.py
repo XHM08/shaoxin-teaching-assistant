@@ -47,7 +47,7 @@ def main():
         for p in 缺的:
             print("     " + p)
     if not 在的:
-        print("  跳过：文档一个都没找到 —— **这一条没验**")
+        print("  跳过：文档一个都没找到，这一条没验")
         return 0
 
     对不上, 放过, 判了 = [], [], 0
@@ -65,7 +65,7 @@ def main():
                     continue
                 判了 += 1
                 if 值 != 数[类别]:
-                    对不上.append("%s:%d 写「%d 个%s」，现场是 %d —— %s"
+                    对不上.append("%s:%d 写「%d 个%s」，现场是 %d。%s"
                               % (os.path.basename(p), 行号, 值, 类别, 数[类别], 行.strip()[:56]))
 
     print("  扫了 %d 个文件：判了 %d 处，豁免 %d 处" % (len(在的), 判了, len(放过)))

@@ -54,6 +54,25 @@ def 读取():
     return 配置表
 
 
+def 取端口(配置表=None):
+    环境 = os.environ.get("SHAOXIN_PORT")
+    if 环境:
+        try:
+            return int(环境)
+        except ValueError:
+            print("！环境变量 SHAOXIN_PORT 不是数字（%r），忽略它，改用配置里的端口" % (环境,),
+                  file=sys.stderr)
+    值 = ((配置表 if 配置表 is not None else 读取()).get("本地服务", {}) or {}).get("端口")
+    if not 值:
+        return 默认配置["本地服务"]["端口"]
+    try:
+        return int(值)
+    except (TypeError, ValueError):
+        print("！配置.json 里的 本地服务.端口 不是数字（%r），改用默认 %s"
+              % (值, 默认配置["本地服务"]["端口"]), file=sys.stderr)
+        return 默认配置["本地服务"]["端口"]
+
+
 def 取目录(目录名, 配置表=None):
     配置表 = 配置表 or 读取()
     if 目录名 not in 配置表["目录"]:

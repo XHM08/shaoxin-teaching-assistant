@@ -24,8 +24,9 @@ def 当前版本号():
 
 本目录 = os.path.dirname(os.path.abspath(__file__))
 网页目录 = os.path.join(本目录, "网页")
-_配置的本地服务 = 配置.读取().get("本地服务", {}) or {}
-端口 = int(os.environ.get("SHAOXIN_PORT") or _配置的本地服务.get("端口") or 8765)
+_配置 = 配置.读取()
+_配置的本地服务 = _配置.get("本地服务", {}) or {}
+端口 = 配置.取端口(_配置)
 请求体上限 = 1024 * 1024
 
 主机 = (os.environ.get("SHAOXIN_HOST")
@@ -367,7 +368,7 @@ def 主程序():
     except OSError as 异常:
         raise SystemExit(
             "启动失败：端口 " + str(端口) + " 绑不上。\n"
-            "  多半是已经开过一个了 —— 看看任务栏有没有「邵新」的服务窗口；\n"
+            "  多半是已经开过一个了：看看任务栏有没有「邵新」的服务窗口；\n"
             "  也可能是别的程序占着这个端口。\n"
             "  原始错误：" + str(异常)
         )

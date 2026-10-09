@@ -89,7 +89,7 @@ try:
     with open(坏路径, "w", encoding="utf-8") as 文件:
         文件.write('{"条目号": 1, "题目": "半截')
     好3, 东西3 = 试(lambda: 评定.读JSONL(坏路径, "待评.jsonl"))
-    检查("⑧ 半截 JSON 读不出来时**报错**，不是返回空",
+    检查("⑧ 半截 JSON 读不出来时报错，不是返回空",
         (not 好3) and isinstance(东西3, ValueError) and "不会覆盖" in str(东西3),
         str(东西3)[:44] if not 好3 else "居然返回了 " + str(东西3))
     if os.path.isfile(坏路径):

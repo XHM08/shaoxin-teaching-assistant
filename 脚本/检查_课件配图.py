@@ -174,7 +174,7 @@ finally:
     shutil.rmtree(临时, ignore_errors=True)
 
 for 序号, (名字, 通过, 说明) in enumerate(结果, 1):
-    print("  %2d. %s %s —— %s" % (序号, "通过" if 通过 else "不过", 名字, 说明))
+    print("  %2d. %s %s：%s" % (序号, "通过" if 通过 else "不过", 名字, 说明))
 通过数 = sum(1 for _名, 通, _说 in 结果 if 通)
 print("\n%d/%d" % (通过数, len(结果)))
 sys.exit(0 if 通过数 == len(结果) else 1)

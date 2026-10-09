@@ -81,7 +81,7 @@ def 挑课件():
   记('④ 真服务上音频取得到（200 且不是空文件）', 音码 === 200 && 音长 > 50000,
      '码=' + 音码 + ' 字节=' + 音长 + ' ' + 音错);
 
-  // 页图真的能解码 —— 不是"有个 src 就算过"
+  // 页图真的能解码：不是"有个 src 就算过"
   const 宽 = await new Promise(r => {
     const i = new Image();
     i.onload = () => r(i.naturalWidth); i.onerror = () => r(0);
@@ -122,7 +122,7 @@ def main():
         return 1
     选中 = 挑课件()
     if not 选中:
-        print("  跳过：课件输出/ 里没有同时带配音与页图的课件 —— **这一条这次没验**")
+        print("  跳过：课件输出/ 里没有同时带配音与页图的课件，这一条这次没验")
         print("  （等生成过一份带配音的课件再跑，或先说清：不要把这个跳过当成通过）")
         return 0
     课件路径, 主干 = 选中
@@ -143,7 +143,7 @@ def main():
     检查("这份真课件挑得出来：%d 页里 %d 页有配音、每页都有页图" % (len(条目), 有音),
         有音 == len(条目) and len(条目) > 1, os.path.basename(课件路径))
     if 有音 != len(条目):
-        print("  跳过：这份课件有的页没有配音，换了另一份再说 —— **这一条这次没验**")
+        print("  跳过：这份课件有的页没有配音，换了另一份再说，这一条这次没验")
         return 0
 
     期音1 = "/配音/" + urllib.parse.quote(主干 + "_配音") + "/" + urllib.parse.quote("第1页.wav")
@@ -155,7 +155,7 @@ def main():
     网页目录 = os.path.join(配置.根目录, "网页")
     原页 = os.path.join(网页目录, "首页.html")
     临时页 = os.path.join(网页目录, 临时页名)
-    端口 = int(配置.读取().get("本地服务", {}).get("端口", 8765))
+    端口 = 配置.取端口()
 
     import socket
     探 = socket.socket()
@@ -163,7 +163,7 @@ def main():
     try:
         探.connect(("127.0.0.1", 端口))
     except Exception:
-        print("  服务没起（127.0.0.1:%d 连不上）—— 先启动服务再跑这个检查。" % 端口)
+        print("  服务没起（127.0.0.1:%d 连不上）。先启动服务再跑这个检查。" % 端口)
         return 1
     finally:
         探.close()
@@ -195,7 +195,7 @@ def main():
             检查("整页渲染出来了", True, "%d 字符" % len(dom))
         找 = re.search(r'id="' + 标记 + r'"[^>]*>(.*?)</div>', dom, re.S)
         if not 找:
-            检查("测试脚本跑到了结尾", False, "没找到结果标记 —— 脚本可能中途抛错了")
+            检查("测试脚本跑到了结尾", False, "没找到结果标记：脚本可能中途抛错了")
         else:
             for 一 in json.loads(html模块.unescape(找.group(1))):
                 检查(一["名前"], 一["过"], 一["说"])

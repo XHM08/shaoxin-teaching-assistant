@@ -52,7 +52,7 @@ def 能导出吗():
     名 = 找放映程序()
     if not 名:
         return False, ("这台电脑上没有找到 WPS 演示或 PowerPoint（导出每页图要借它们的接口）。"
-                    "不装也行 —— 播放页会退回用文字显示这一页。")
+                    "不装也行：播放页会退回用文字显示这一页。")
     return True, 名
 
 
@@ -125,7 +125,7 @@ def 导出各页(课件路径, 警告=None):
                           "-Pptx", os.path.abspath(str(课件路径)), "-Out", os.path.abspath(输出目录)],
                          capture_output=True, text=True, encoding="utf-8", timeout=导出超时)
     except subprocess.TimeoutExpired:
-        raise RuntimeError("导出每页图超时了（%d 秒）—— 放映软件可能卡住了；" % 导出超时
+        raise RuntimeError("导出每页图超时了（%d 秒）：放映软件可能卡住了；" % 导出超时
                          + "把 WPS/PowerPoint 里打开的那份关掉再试")
     finally:
         try:

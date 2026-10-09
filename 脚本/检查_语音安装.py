@@ -59,7 +59,7 @@ else:
             检查("那个 venv 还能导入整条依赖链（搬盘没搬坏）",
                 "IMPORT-OK" in (跑.stdout or ""), (出[-1][:100] if 出 else "没输出"))
         except subprocess.TimeoutExpired:
-            检查("那个 venv 还能导入整条依赖链", False, "导入超时（300 秒）—— 它可能正在加载模型")
+            检查("那个 venv 还能导入整条依赖链", False, "导入超时（300 秒）：它可能正在加载模型")
         except Exception as 异常:
             检查("那个 venv 还能导入整条依赖链", False, type(异常).__name__ + "：" + str(异常)[:80])
 
@@ -73,7 +73,7 @@ for 名字, 过, 说明 in 结果:
 if 语音.服务在吗():
     print("  提示 语音服务正在跑（%s），配音可以直接用。" % 地址)
 else:
-    print("  提示 语音服务没在跑（%s）—— 不配音时不用管；要用就双击 语音/启动语音服务.bat。" % 地址)
+    print("  提示 语音服务没在跑（%s）。不配音时不用管；要用就双击 语音/启动语音服务.bat。" % 地址)
 
 print("全部 %d 项通过" % len(结果) if not 坏 else "%d 项失败" % 坏)
 sys.exit(0 if not 坏 else 1)

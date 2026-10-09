@@ -45,7 +45,7 @@ def main():
             成, 错 = 建联接(链接, 指向)
             建好了.append(成)
         if not all(建好了):
-            print("  跳过：这台机器上建不出 junction（%s 个没建成）—— **这一条这次没验**" % 建好了.count(False))
+            print("  跳过：这台机器上建不出 junction（%s 个没建成），这一条这次没验" % 建好了.count(False))
             print("  （常见原因：没有 PowerShell，或权限不允许建联接）")
             return 0
 
@@ -54,9 +54,9 @@ def main():
         try:
             名字 = [条["文件名"] for 条 in 材料.材料清单()]
             检查("正常文件照旧列得到", "inside/x.txt" in 名字, str(名字))
-            检查("指到 材料/ 外面的联接**不跟着走**（不然会列出外面一堆文件）",
+            检查("指到 材料/ 外面的联接不跟着走（不然会列出外面一堆文件）",
                 not any(n.startswith("link_out") for n in 名字), str(名字))
-            检查("指到里面的联接**不重复列**（真身去过就不再列第二遍）",
+            检查("指到里面的联接不重复列（真身去过就不再列第二遍）",
                 not any(n.startswith("link_in") for n in 名字), str(名字))
             try:
                 材料.材料路径("link_out/y.txt")

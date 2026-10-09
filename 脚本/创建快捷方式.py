@@ -126,7 +126,7 @@ def 主程序():
     print("  目标（回显）：    " + data.get("ECHO_TARGET", "?"))
     print("  工作目录（回显）：" + data.get("ECHO_WORKDIR", "?"))
     print()
-    print("⚠️「双击能不能打开」我无法在这里验证 —— 请到桌面双击一次确认。")
+    print("「双击能不能打开」我无法在这里验证。请到桌面双击一次确认。")
     print("   图标不满意可在「属性 → 更改图标」里换。")
     return 0
 

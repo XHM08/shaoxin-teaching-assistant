@@ -37,7 +37,7 @@ def 找Edge():
   HTMLMediaElement.prototype.play = function () { 调用.push('play'); this.__假播 = true; return Promise.resolve(); };
   HTMLMediaElement.prototype.pause = function () { 调用.push('pause'); this.__假播 = false; };
   // paused 是只读 getter：不模拟它，lecPause 里那句 !播放器.paused 永远是 false，
-  // "刚才在播吗"就永远记不下来，恢复时也不会接着念 —— 那是测试假象，不是代码对错
+  // "刚才在播吗"就永远记不下来，恢复时也不会接着念。那是测试假象，不是代码对错
   Object.defineProperty(HTMLMediaElement.prototype, 'paused', {
     get() { return !this.__假播; }, configurable: true
   });
@@ -150,7 +150,7 @@ def main():
     网页目录 = os.path.join(配置.根目录, "网页")
     原页 = os.path.join(网页目录, "首页.html")
     临时页 = os.path.join(网页目录, 临时页名)
-    端口 = int(配置.读取().get("本地服务", {}).get("端口", 8765))
+    端口 = 配置.取端口()
 
     import socket
     探 = socket.socket()
@@ -158,7 +158,7 @@ def main():
     try:
         探.connect(("127.0.0.1", 端口))
     except Exception:
-        print("  服务没起（127.0.0.1:%d 连不上）—— 先启动服务再跑这个检查。" % 端口)
+        print("  服务没起（127.0.0.1:%d 连不上）。先启动服务再跑这个检查。" % 端口)
         return 1
     finally:
         探.close()
@@ -186,7 +186,7 @@ def main():
             结果.append(("整页渲染出来了", True, "%d 字符" % len(dom)))
         找 = re.search(r'id="' + 标记 + r'"[^>]*>(.*?)</div>', dom, re.S)
         if not 找:
-            结果.append(("测试脚本跑到了结尾", False, "没找到结果标记 —— 脚本可能中途抛错了"))
+            结果.append(("测试脚本跑到了结尾", False, "没找到结果标记：脚本可能中途抛错了"))
         else:
             import html as html模块
             条 = json.loads(html模块.unescape(找.group(1)))

@@ -102,11 +102,11 @@ try:
         _总 = int(_头0.get("Content-Length") or 0)
         _码, _头, _身 = 取(地址, 范围="bytes=-1000", 带令牌=True)
         _区间 = str(_头.get("Content-Range") or "")
-        检查("Range 后缀区间：bytes=-1000 要的是**最后** 1000 字节",
+        检查("Range 后缀区间：bytes=-1000 要的是最后 1000 字节",
            _码 == 206 and len(_身) == 1000 and _区间 == "bytes %d-%d/%d" % (_总 - 1000, _总 - 1, _总),
            "码=%s 字节=%d 区间=%s 总长=%d" % (_码, len(_身), _区间, _总))
     except Exception as _异常:
-        检查("Range 后缀区间：bytes=-1000 要的是**最后** 1000 字节", False,
+        检查("Range 后缀区间：bytes=-1000 要的是最后 1000 字节", False,
            type(_异常).__name__ + "：" + str(_异常)[:60])
 
     原判本机 = 模块.请求处理.是对端本机
@@ -167,7 +167,7 @@ finally:
     shutil.rmtree(临时, ignore_errors=True)
 
 for 序号, (名字, 通过, 说明) in enumerate(结果, 1):
-    print("  %2d. %s %s —— %s" % (序号, "通过" if 通过 else "不过", 名字, 说明))
+    print("  %2d. %s %s：%s" % (序号, "通过" if 通过 else "不过", 名字, 说明))
 通过数 = sum(1 for _名, 通, _说 in 结果 if 通)
 print("\n%d/%d" % (通过数, len(结果)))
 sys.exit(0 if 通过数 == len(结果) else 1)

@@ -31,7 +31,7 @@ def 读JSONL(路径, 名字):
             except json.JSONDecodeError as 异常:
                 raise ValueError(
                     名字 + " 第 " + str(行号) + " 行读不出来（多半是上次写盘被打断）：\n"
-                    + 路径 + "\n软件不会覆盖它 —— 请先人工核对这一行。"
+                    + 路径 + "\n软件不会覆盖它：请先人工核对这一行。"
                 ) from 异常
             if not isinstance(一条, dict):
                 raise ValueError(名字 + " 第 " + str(行号) + " 行不是一条记录：\n" + 路径)

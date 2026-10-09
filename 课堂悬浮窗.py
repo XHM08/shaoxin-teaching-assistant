@@ -123,7 +123,7 @@ class 窗口:
                     self.画(数据)
                 elif 类 == "错":
                     self.连不上 = True
-                    self.状态.configure(text="连不上邵新服务（" + 数据 + "）—— 先双击 启动.bat",
+                    self.状态.configure(text="连不上邵新服务（" + 数据 + "）：先双击 启动.bat",
                                      fg="#a32020")
                 elif 类 == "提示":
                     self.状态.configure(text=数据, fg=("#a32020" if 坏消息 else "#14663a"))
@@ -168,7 +168,7 @@ class 窗口:
             self.已看到 = max(self.已看到, max(int(x.get("序号") or 0) for x in 新的))
         提示 = "服务在跑；共 %d 条" % 共
         if 丢过:
-            提示 += "（**有 %d 条太久没看已被丢掉**）" % 丢过
+            提示 += "（有 %d 条太久没看已被丢掉）" % 丢过
         if not (self.忙 or self.粘住 or self.连不上 or self.出错):
             self.状态.configure(text=提示, fg="#6b7280")
 

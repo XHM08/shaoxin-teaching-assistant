@@ -24,10 +24,10 @@ def 服务活着(端口):
 def main():
     课件目录 = 配置.取目录("课件输出")
     os.makedirs(课件目录, exist_ok=True)
-    端口 = int(配置.读取().get("本地服务", {}).get("端口", 8765))
+    端口 = 配置.取端口()
 
     if not 服务活着(端口):
-        print("  服务没起（127.0.0.1:%d 连不上）—— 先启动服务再跑这个检查。" % 端口)
+        print("  服务没起（127.0.0.1:%d 连不上）。先启动服务再跑这个检查。" % 端口)
         return 1
 
     临时课件 = os.path.join(课件目录, 临时名)
@@ -62,7 +62,7 @@ def main():
         try:
             处置.encode("latin-1")
         except UnicodeEncodeError:
-            问题.append("Content-Disposition 里有非 latin-1 字符 —— 响应会被写成半截")
+            问题.append("Content-Disposition 里有非 latin-1 字符。响应会被写成半截")
     except urllib.error.HTTPError as 异常:
         问题.append("HTTP " + str(异常.code) + "：" + 异常.read().decode("utf-8", "replace")[:120])
     except urllib.error.URLError as 异常:

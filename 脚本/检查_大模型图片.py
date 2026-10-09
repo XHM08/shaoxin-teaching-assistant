@@ -39,7 +39,7 @@ def 该拦(名字, 函数, 关键词表):
         else:
             记(名字, True, "已拦：" + 消息[:70])
         return
-    记(名字, False, "**没拦住**，放过去了：" + str(值)[:70])
+    记(名字, False, "没拦住，放过去了：" + str(值)[:70])
 
 
 def 该放(名字, 函数, 断言=None):
@@ -282,7 +282,7 @@ try:
             assert "读不出来" in str(异常), "报的不是「读不出来」：" + str(异常)[:80]
             return "OSError 被接成人话：" + str(异常)[:44]
         except Exception as 异常:
-            raise AssertionError("抛的不是 ValueError 而是 %s —— 界面上会变成 500：%s"
+            raise AssertionError("抛的不是 ValueError 而是 %s。界面上会变成 500：%s"
                                  % (type(异常).__name__, str(异常)[:60]))
         finally:
             大模型.图片能发吗 = 真判断
@@ -322,9 +322,9 @@ finally:
     shutil.rmtree(临时, ignore_errors=True)
 
 for 序号, (名字, 通过, 说明) in enumerate(结果, 1):
-    print("  %2d. %s %s —— %s" % (序号, "通过" if 通过 else "不过", 名字, 说明))
+    print("  %2d. %s %s：%s" % (序号, "通过" if 通过 else "不过", 名字, 说明))
 for 名字, 原因 in 跳过:
-    print("     跳过 %s —— %s" % (名字, 原因))
+    print("     跳过 %s：%s" % (名字, 原因))
 
 try:
     大模型.取密钥("自检-非法名", {"key_env": "../x"})

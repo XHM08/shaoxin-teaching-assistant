@@ -53,7 +53,7 @@ try:
         repr(头) + "，%.0f KB" % (os.path.getsize(第一个) / 1024 if 第一个 and os.path.isfile(第一个) else 0))
     检查("③ 台账落盘（下次才知道要不要重导）",
         os.path.isfile(os.path.join(一个, 课件图.台账名)))
-    检查("④ 首次导出说的是「已导出」，**不能说「课件变了」**（那是假话）",
+    检查("④ 首次导出说的是「已导出」，不能说「课件变了」（那是假话）",
         any("已导出" in 一句 for 一句 in 警告) and not any("课件变了" in 一句 for 一句 in 警告),
         "；".join(警告)[:80])
 

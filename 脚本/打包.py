@@ -55,7 +55,7 @@ def 核对():
             坏的.append("缺少：" + 相对)
     for 相对 in 绝不能有:
         if os.path.exists(os.path.join(产物目录, 相对)):
-            坏的.append("**不该有的东西在里面**：" + 相对)
+            坏的.append("不该有的东西在里面：" + 相对)
     if not os.path.isfile(exe路径):
         坏的.append("没有 exe：" + exe路径)
     elif os.path.getsize(exe路径) < 1024 * 1024:
@@ -74,11 +74,11 @@ def 核对():
         if isinstance(表, dict):
             原文 = open(配置路径, encoding="utf-8").read()
             if (表.get("命令") or {}).get("默认档位"):
-                坏的.append("**包内 配置.json 还带着「默认档位」** —— 别人一装就什么都不问")
+                坏的.append("包内 配置.json 还带着「默认档位」。别人一装就什么都不问")
             if (表.get("合规") or {}).get("同意书已签") is not False:
                 坏的.append("包内 同意书已签 不是 false（不该继承开发机的状态）")
             if "C:/Users/" in 原文 or "C:\\\\Users\\\\" in 原文:
-                坏的.append("**包内 配置.json 带着开发机路径**")
+                坏的.append("包内 配置.json 带着开发机路径")
     return 坏的
 
 
@@ -170,10 +170,15 @@ def 主程序():
             成, 说明 = 函数()
             print(("冒烟通过「%s」：" % 名字 if 成 else "冒烟失败「%s」：" % 名字) + 说明)
             坏 += 0 if 成 else 1
+        码 = subprocess.run([sys.executable,
+                         os.path.join(项目根, "脚本", "验客户端生命周期.py")]).returncode
+        print(("冒烟通过「关窗清理」" if 码 == 0 else "冒烟失败「关窗清理」")
+              + "：见上面的逐项结果")
+        坏 += 0 if 码 == 0 else 1
         if 坏:
             return 1
     else:
-        print("（没跑 --冒烟；加上它才会真起一次「服务」和「客户端」）")
+        print("（没跑 --冒烟；加上它才会真起一次「服务」和「客户端」，并验关窗清理）")
     return 0
 
 
