@@ -5,7 +5,7 @@
       "名字": "文件",
       "命令": "npx",
       "参数": ["-y", "@modelcontextprotocol/server-filesystem",
-               "C:/path/to/materials"],
+               "C:\\Users\\25768\\Desktop\\样本\\材料"],
       "环境": {},
       "超时": 60
     }

@@ -24,6 +24,16 @@ class 取地址(HTMLParser):
                 self.地址表.append(值)
 
 
+def 查元素id(原文, 页面名, 问题):
+    有定义 = set(re.findall(r'id="([^"]+)"', 原文))
+    被引用 = set(re.findall(r"\$\('([^']+)'\)", 原文))
+    被引用 |= set(re.findall(r'getElementById\("([^"]+)"\)', 原文))
+    缺 = sorted(名字 for 名字 in 被引用 if 名字 not in 有定义)
+    if 缺:
+        问题.append(页面名 + " 里 JS 引用了不存在的 id：" + "、".join(缺[:8]))
+    print("  %s：JS 引用 %d 个 id，缺 %d 个。" % (页面名, len(被引用), len(缺)))
+
+
 def 取脚本段(原文):
     起点 = 原文.find("<script>")
     终点 = 原文.find("</script>")
@@ -149,13 +159,19 @@ def main():
 
     查导航与视图(原文, 问题)
 
+    for 一个 in sorted(os.listdir(os.path.join(根, "网页"))):
+        if not 一个.endswith(".html") or 一个.startswith("_"):
+            continue
+        with open(os.path.join(根, "网页", 一个), encoding="utf-8") as 文件:
+            查元素id(文件.read(), 一个, 问题)
+
     if 问题:
-        print("\n  %d 条取不回来 —— 页面会缺东西，或样式整个丢：" % len(问题))
+        print("\n  %d 条没对上 —— 页面会缺东西、样式丢，或某块功能静默失效：" % len(问题))
         for 一条 in 问题:
             print("    " + 一条)
         return 1
 
-    print("\n  静态地址全部取得回来。")
+    print("\n  静态地址全部取得回来，元素 id 也都对得上。")
     return 0
 
 

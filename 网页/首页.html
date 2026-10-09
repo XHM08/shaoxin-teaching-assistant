@@ -161,7 +161,26 @@
           <b>出课件</b>（生成 HTML 课件文件）、<b>备课</b>（生成整课讲稿）、
           <b>查材料与技能包</b>、<b>录学生记录</b>（需先签同意书）。
           <br>
-          对话只存在这个页面里，<b>刷新即清、服务端不保存</b>；涉及学生时请用编号，不要写姓名。
+          对话只存在这个页面里，<b>刷新即清、服务端不保存</b>；
+          涉及学生可以写姓名（2026-09-22 起），但报告、PPT、截图里仍然不出现姓名。
+        </div>
+        <div id="authBox" class="notice">
+          <b>长任务授权</b>：默认没有。没有它的时候，AI 提的每条命令都要你点一下，
+          而且它看不到命令输出 —— 所以装依赖、跑测试、看报错再改这种长任务做不成。
+          开窗期间 AI 能连着跑、也能看到输出；<b>但各档能自动跑的范围不一样</b>：
+          安全授权下，会装或卸东西、删或移文件、结束进程、联网下载这类命令<b>仍然要你点</b>；
+          普通授权放行这些、但保留禁用清单里那十几条；全部授权连禁用清单也放行。
+          <b>窗口不会自己过期</b>，用完请点「收回」
+          （刷新页面后这个页面就管不着它了 —— 要收回请回开窗的那个页面；重启程序也会清掉）。
+          <b>窗口只对这里生效</b>，下面那个「执行这条命令」按钮的规矩不变。
+          <div id="authState" style="margin-top:6px">现在没有授权窗口。</div>
+          <div style="margin-top:8px" id="authButtons">
+            <button class="ghost" id="btnAuthSafe">安全授权（不限时）</button>
+            <button class="ghost" id="btnAuthNormal">普通授权（不限时）</button>
+            <button class="danger" id="btnAuthFull">全部授权（不限时）</button>
+            <button class="ghost" id="btnAuthOff">收回</button>
+          </div>
+          <div id="authMsg" style="margin-top:6px"></div>
         </div>
         <div class="chatlog" id="chatLog"></div>
         <div class="chatrow">
@@ -194,7 +213,8 @@
       <h2>教师蒸馏</h2>
       <div class="body">
         <div class="notice">
-          材料放在 <code>材料/</code> 目录下，仅支持 <code>.txt</code> / <code>.md</code>。
+          材料放在 <code>材料/</code> 目录下：Word / PPT / Excel / PDF / 文本 / 网页都能直接读，
+          照片与扫描件由本机 OCR 转成文字（不联网、不外发）。
           材料正文只在蒸馏时读取，不上传到任何公开位置。
         </div>
         <div class="row">
@@ -224,11 +244,21 @@
     <div class="card">
       <h2>教师材料</h2>
       <div class="body">
-        <div class="notice">只列文件名与大小，<b>不展示材料正文</b> —— 材料属教师本人。</div>
+        <div class="notice" id="matNotice">只列文件名、格式与大小，<b>不展示材料正文</b> —— 材料属教师本人。</div>
         <button class="ghost" id="btnRefreshMats">刷新</button>
         <table style="margin-top:12px">
-          <thead><tr><th style="width:60px">序号</th><th>文件名</th><th style="width:120px">大小（字节）</th></tr></thead>
-          <tbody id="matRows"><tr><td colspan="3">加载中…</td></tr></tbody>
+          <thead><tr><th style="width:50px">序号</th><th>文件名</th><th style="width:90px">格式</th><th style="width:80px">能不能读</th><th style="width:110px">大小（字节）</th></tr></thead>
+          <tbody id="matRows"><tr><td colspan="5">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>参考资料</h2>
+      <div class="body">
+        <div class="notice" id="refNotice">公开的参考资料：可以查术语口径、当参照，<b>不是蒸馏原料</b>。</div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:50px">序号</th><th>文件</th><th style="width:90px">格式</th><th style="width:80px">能不能读</th><th style="width:110px">大小（字节）</th></tr></thead>
+          <tbody id="refRows"><tr><td colspan="5">加载中…</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -289,8 +319,9 @@
       <h2>录入一条记录</h2>
       <div class="body">
         <div class="notice">
-          这里录的是 <b>编号化的记录</b>：只填编号，<b>不要把姓名写进题目或作答里</b>。
-          姓名属于对照表，不进记录、不进报告、不发送；记录只存本机。
+          记录以<b>编号为键</b>（文件夹与文件名是 S01、S02…）；<b>姓名可以写进题目与作答</b>，
+          也可以随材料发给 AI 服务商（2026-09-22 放宽；两份同意书需要改版重签）。
+          报告、PPT、截图里仍然不出现姓名。明细只存本机。
         </div>
         <div class="row">
           <div>
@@ -372,8 +403,9 @@
         <div class="notice">
           登记 <b>编号</b>（如 S01）与学生的识别信息。编号会分到一个自己的档案文件夹
           （<b>学生数据/&lt;编号&gt;/</b>）。
-          <b>姓名、年级、班级只写进对照表</b>（<b>学生数据/对照表/姓名对照表.json</b>，单独存放），
-          不进问答记录、不进报告、不发送给 AI 服务商。
+          姓名、年级、班级会写进 <b>学生数据/对照表/姓名对照表.json</b>；
+          <b>2026-09-22 起，它们也会随材料发给 AI 服务商</b>（以前承诺的“不出本机”已按团队要求取消）。
+          报告、PPT、截图里仍然不出现姓名。明细只存本机。
         </div>
         <div class="row">
           <div>
@@ -382,11 +414,11 @@
           </div>
           <div>
             <label>姓名</label>
-            <input type="text" id="regName" placeholder="只进对照表，不发送">
+            <input type="text" id="regName" placeholder="真名，会进记录与发送内容">
           </div>
           <div>
             <label>学号</label>
-            <input type="text" id="regNo" placeholder="只进对照表，不发送">
+            <input type="text" id="regNo" placeholder="例如：2026001">
           </div>
         </div>
         <div class="row" style="margin-top:12px">
@@ -664,24 +696,45 @@
       <h2>联动教学 · 备课</h2>
       <div class="body">
         <div class="notice">
-          选一位老师、给定课题，系统按他的讲法生成整课（每页要点 + 讲稿），然后一页页讲。
-          上课时学生按 <b>「我有问题」</b> 就会暂停，答完再继续。
+          两种上法：<b>按技能包生成一份新课件</b>，或者<b>用你自己已有的课件</b>
+          —— 用已有的那份时，先把它复制进 <code>课件输出/</code>，系统只给<b>没有讲稿的页</b>补讲稿，
+          已有的讲稿一个字都不动。上起课来一样：一页页讲，学生按 <b>「我有问题」</b> 就会暂停，答完再继续。
+        </div>
+        <div class="row">
+          <div>
+            <label>这一课怎么来</label>
+            <select id="lecSource">
+              <option value="生成">按技能包生成一份新课件</option>
+              <option value="已有">用我已有的课件</option>
+            </select>
+          </div>
+          <div id="lecDeckBox" class="hide">
+            <label>用哪一份（在 <code>课件输出/</code> 里的）</label>
+            <select id="lecDeck"></select>
+          </div>
         </div>
         <div class="row">
           <div>
             <label>用哪位教师的讲法</label>
             <select id="lecSkill"></select>
           </div>
-          <div>
+          <div id="lecSlidesBox">
             <label>页数（默认 6）</label>
             <input type="text" id="lecSlides" placeholder="6">
           </div>
         </div>
-        <label>课题</label>
-        <input type="text" id="lecTopic" placeholder="例如：分数的除法">
+        <div id="lecTopicBox">
+          <label>课题</label>
+          <input type="text" id="lecTopic" placeholder="例如：分数的除法">
+        </div>
+        <label style="font-weight:400;margin-top:8px">
+          <input type="checkbox" id="lecWantVoice" checked>
+          顺便配音：把每页讲稿合成本地语音（翻开哪页就播哪页）。
+          会多花几十秒，要先把语音服务起起来（双击 语音/启动语音服务.bat）。
+        </label>
         <div style="margin-top:12px">
           <button id="btnLecStart">开始上课</button>
-          <button class="ghost" id="btnRefreshLec">刷新技能包列表</button>
+          <button class="ghost" id="btnRefreshLec">刷新列表（技能包 / 课件）</button>
         </div>
         <div id="lecMsg" style="margin-top:12px"></div>
       </div>
@@ -692,9 +745,18 @@
       <div class="body">
         <div class="stage">
           <div class="stage-no" id="lecNo"></div>
+          <img id="lecShot" class="hide" alt="这一页的幻灯片"
+               style="width:100%;border:1px solid #d6dbe3;border-radius:4px;margin-bottom:10px">
           <h3 id="lecSlideTitle"></h3>
           <ul id="lecPoints"></ul>
           <div class="script"><b>讲稿</b><p id="lecScript"></p></div>
+          <div class="script hide" id="lecVoiceBox" style="margin-top:10px">
+            <b>配音</b>
+            <audio id="lecAudio" controls preload="none" style="width:100%;margin-top:6px"></audio>
+            <label style="font-weight:400;display:block;margin-top:6px">
+              <input type="checkbox" id="lecAudioAuto" checked> 翻页自动播放
+            </label>
+          </div>
         </div>
         <div style="margin-top:12px">
           <button id="btnPrev">上一页</button>
@@ -778,7 +840,7 @@
   <div class="foot">
     <span>主办：开发团队</span><span>|</span>
     <span>技术支持：小l</span><span>|</span>
-    <span>数据仅存本地，不对外提供</span>
+    <span>明细只存本机；随材料发给 AI 服务商时可能含姓名（2026-09-22 起）</span>
   </div>
 </div>
 
@@ -788,6 +850,7 @@ let ABILITIES = null;
 const SETTINGS = { items: [] };
 const LEC = { items: [], index: 0, skill: '', auto: false, timer: null };
 
+/* 服务端 / 磁盘来的字符串拼进 HTML 前必须过这里 —— 大模型写的描述里可能有 < & " */
 function esc(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;')
@@ -797,6 +860,7 @@ function esc(s) {
     .replace(/'/g, '&#39;');
 }
 
+/* 描述最长 1024 字符，整段塞进表格会撑爆。完整内容留给「查看」 */
 function brief(s, n) {
   const t = String(s == null ? '' : s);
   return t.length > n ? t.slice(0, n) + '…' : t;
@@ -824,11 +888,16 @@ async function paramOptions(ability, param) {
   return (p && p.可选项) || [];
 }
 
+// 这个标签页自己的会话标记：长任务授权按会话分键，所以每个请求都带上它。
+// 用随机串而不是固定值 —— 两个标签页各归各的；刷新一次就换新的，
+// 于是「刷新页面」天然就把窗口作废了（这正是我们想要的）。
+const SID = Math.random().toString(36).slice(2) + Date.now().toString(36);
+
 function run(ability, args) {
   return api('/api/run', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 能力: ability, 参数: args || {} })
+    body: JSON.stringify({ 能力: ability, 参数: args || {}, 会话: SID })
   });
 }
 
@@ -841,6 +910,9 @@ function fillSelect(sel, list, emptyText, 默认值) {
   sel.innerHTML = list.length
     ? list.map(v => '<option value="' + esc(v) + '">' + esc(v) + '</option>').join('')
     : '<option value="">' + esc(emptyText) + '</option>';
+  // 选项一填进去，浏览器会默认选中第一项。像「家长同意书」这种字段，
+  // 第一项是「已签回」—— 不显式指定默认值，就等于替老师勾了「已签回」，
+  // 那是伪造合规记录。当初只有手机版传了这第 4 个参数，桌面版漏了 —— 手机版已取消，两个页面都得传。
   if (默认值 && list.indexOf(默认值) >= 0) sel.value = 默认值;
 }
 
@@ -876,6 +948,7 @@ const MSG_OUT = [
   ['fbDiagMsg', 'fbDiagOut']
 ];
 
+/* 切页时清掉上一次结果，否则切回来会被误当成刚才那次的结果 */
 function clearResults() {
   MSG_OUT.forEach(pair => {
     const msg = $(pair[0]);
@@ -915,11 +988,19 @@ function clearResults() {
 
 function lecReset() {
   lecAuto(false);
+  $('lecShot').classList.add('hide');      // 结束上课：把真实页面那张图也收起来
+  $('lecShot').removeAttribute('src');
+  $('lecAudio').pause();               // 结束上课就把声音停掉，别让它在后台接着念
+  $('lecAudio').removeAttribute('src');
+  $('lecVoiceBox').classList.add('hide');
   LEC.items = [];
   LEC.index = 0;
   LEC.skill = '';
   $('lecPlayer').classList.add('hide');
   $('lecSetup').classList.remove('hide');
+  // 备课面板回到初始那条路（生成新课件），别让“用已有课件”的框停在半开关状态
+  $('lecSource').value = '生成';
+  lecSwapSource();
   $('askBox').classList.add('hide');
   $('askOut').classList.add('hide');
   $('askText').value = '';
@@ -947,8 +1028,11 @@ async function show(name) {
     loadEvalLedger();
   }
   if (name === '反馈与优化') loadFeedback();
-  if (name === '联动教学') await fillOptions('联动教学', '技能包', 'lecSkill', '（还没有技能包，先去「教师蒸馏」生成）');
-  if (name === '创造模式') chatRender();
+  if (name === '联动教学') {
+    await fillOptions('联动教学', '技能包', 'lecSkill', '（还没有技能包，先去「教师蒸馏」生成）');
+    lecSwapSource();                     // 进来就按当前选的那条路把框显隐摆对
+  }
+  if (name === '创造模式') { chatRender(); 查授权状态(); }
   if (name === '电脑服务') loadPcMenu();
   if (name === '环境配置') envScan();
   if (name === '设置') { loadSettings(); loadCacheUse(); }
@@ -962,20 +1046,30 @@ document.querySelectorAll('[data-go]').forEach(el => {
   };
 });
 
+/* ── 本地知识库 ── */
+
+function matRow(m, i) {
+  return '<tr><td>' + (i + 1) + '</td><td>' + esc(m['文件名']) + '</td><td>' + esc(m['格式']) + '</td>'
+    + '<td title="' + esc(m['说明']) + '">' + esc(m['能不能读']) + '</td>'
+    + '<td>' + esc(m['大小(字节)']) + '</td></tr>';
+}
 
 async function loadMaterials() {
   const tb = $('matRows');
+  const rb = $('refRows');
   try {
     const d = await run('材料台账', {});
-    if (!d.条目 || !d.条目.length) {
-      tb.innerHTML = '<tr><td colspan="3">暂无材料。把 .txt / .md 放进 材料/ 目录</td></tr>';
-      return;
-    }
-    tb.innerHTML = d.条目.map((m, i) =>
-      '<tr><td>' + (i + 1) + '</td><td>' + esc(m['文件名']) + '</td><td>' + esc(m['大小(字节)']) + '</td></tr>'
-    ).join('');
+    $('matNotice').textContent = d.提示;
+    tb.innerHTML = (d.条目 && d.条目.length)
+      ? d.条目.map(matRow).join('')
+      : '<tr><td colspan="5">暂无材料。把教案、课件、照片放进 材料/ 目录就行</td></tr>';
+    $('refNotice').textContent = d.参考资料提示 || '公开的参考资料：可以当参照，不是蒸馏原料。';
+    rb.innerHTML = (d.参考资料 && d.参考资料.length)
+      ? d.参考资料.map(matRow).join('')
+      : '<tr><td colspan="5">还没有参考资料。把公开的教案、教材、政策文件放进 参考资料/ 目录</td></tr>';
   } catch (e) {
-    tb.innerHTML = '<tr><td colspan="3">读取失败：' + esc(e.message) + '</td></tr>';
+    tb.innerHTML = '<tr><td colspan="5">读取失败：' + esc(e.message) + '</td></tr>';
+    rb.innerHTML = '<tr><td colspan="5">读取失败：' + esc(e.message) + '</td></tr>';
   }
 }
 
@@ -1017,6 +1111,7 @@ async function loadDecks() {
   }
 }
 
+/* 事件委托，不用内联 onclick —— 免得把数据里的引号拼进代码 */
 $('skillRows').addEventListener('click', e => {
   const 看 = e.target.closest('button[data-skill]');
   if (看) { viewSkill(看.dataset.skill); return; }
@@ -1034,6 +1129,7 @@ async function viewSkill(name) {
   }
 }
 
+/* ── 错因诊断 ── */
 
 let DIAG = { 学科: '', 题目: '', 作答: '', 错误类型: '' };
 
@@ -1046,6 +1142,8 @@ async function runDiag() {
       题目: $('diagTopic').value,
       作答: $('diagAnswer').value
     });
+    // 红框只看数据，不去猜提示文字里有没有某个词 ——
+    // 「模型给的类型不在清单里」这件事，能力是放在条目的「备注」里说的
     const 有问题 = (d.条目 || []).some(一 => 一['备注']);
     say($('diagMsg'), d.提示 || '诊断完成。', 有问题 ? 'err' : 'ok');
     tb.innerHTML = (d.条目 || []).map(一 =>
@@ -1066,12 +1164,15 @@ async function runDiag() {
   }
 }
 
+/* 把刚诊断的这条带去学生档案馆的录入表，省得老师把题再打一遍 */
 function 带去档案() {
   $('arcSubject').value = DIAG.学科;
   $('arcQuestion').value = DIAG.题目;
   $('arcAnswer').value = DIAG.作答;
   show('学生档案馆');
   if (!DIAG.错误类型) return;
+  // 错误类型是下拉，选项在启动时就填好了。设不进去说明选项没填上 ——
+  // 这时**不能**默默留空：留空会被当成「其他」存进档案，类型就错了。
   const 下拉 = $('arcError');
   下拉.value = DIAG.错误类型;
   if (下拉.value !== DIAG.错误类型) {
@@ -1086,6 +1187,7 @@ $('btnDiagToArc').onclick = 带去档案;
 $('btnRefreshDiag').onclick = () =>
   fillOptions('错因诊断', '技能包', 'diagSkill', '（还没有技能包，先去「教师蒸馏」生成）');
 
+/* ── 讲解评定（教师审核闭环的前一半） ── */
 
 async function doEvalGen() {
   const btn = $('btnEvalGen');
@@ -1123,6 +1225,7 @@ async function doEvalSave() {
       老师原话: $('evalWords').value
     });
     say($('evalSaveMsg'), d.提示 || '已存下。', 'ok');
+    // 存完就清掉改版和原话：下一条判定不该拖着上一条的尾巴
     $('evalFixed').value = '';
     $('evalWords').value = '';
     loadEvalLedger();
@@ -1159,6 +1262,7 @@ $('btnRefreshEval').onclick = () =>
   fillOptions('讲解评定', '技能包', 'evalSkill', '（还没有技能包，先去「教师蒸馏」生成）');
 $('evalOnly').onchange = loadEvalLedger;
 
+/* ── 技能包校订（教师审核闭环的后一半） ── */
 
 let 在改的包 = '';
 
@@ -1190,10 +1294,12 @@ async function saveSection(节标题) {
   const 选择 = 盒.querySelector('textarea[data-sec="' + CSS.escape(节标题) + '"]');
   const 原话 = 盒.querySelector('input[data-words="' + CSS.escape(节标题) + '"]');
   if (!选择) return;
+  // 空内容在前端也挡一遍：能力那边也挡，但老师不该等跑一趟才知道
   if (!选择.value.trim()) {
     say($('skillEditMsg'), '「' + 节标题 + '」这段不能存空的。', 'err');
     return;
   }
+  // 这一步会直接改写老师的技能包原文，所以再问一句
   if (!confirm('确认把「' + 节标题 + '」这段改写回技能包？\n（改前那一版会自动备份到 _历史\\）')) return;
   say($('skillEditMsg'), '正在存…');
   try {
@@ -1212,6 +1318,7 @@ $('skillEditList').addEventListener('click', e => {
   if (改) saveSection(改.dataset.secsave);
 });
 
+/* ── 反馈与优化（机器只出草稿，改不改由人定） ── */
 
 async function sendFeedback() {
   const btn = $('btnFbSend');
@@ -1301,6 +1408,7 @@ $('btnFbRefresh').onclick = loadFeedback;
 $('fbOnly').onchange = loadFeedback;
 $('fbFilterKind').onchange = loadFeedback;
 
+/* ── 学生档案馆 ── */
 
 async function loadArchive() {
   const tb = $('arcRows');
@@ -1325,6 +1433,7 @@ async function loadArchive() {
   }
 }
 
+/* 事件委托，不用内联 onclick —— 免得把数据里的引号拼进代码 */
 $('arcRows').addEventListener('click', e => {
   const btn = e.target.closest('button[data-stu]');
   if (btn) viewStudent(btn.dataset.stu);
@@ -1370,6 +1479,7 @@ async function doArchiveAdd() {
   }
 }
 
+/* ── PPT 生成 ── */
 
 async function doPpt() {
   const btn = $('btnPpt');
@@ -1404,6 +1514,7 @@ async function doPpt() {
   }
 }
 
+/* ── 联动教学（课堂播放器）── */
 
 function lecRender() {
   const it = LEC.items[LEC.index];
@@ -1413,23 +1524,82 @@ function lecRender() {
   const points = String(it['要点'] || '').split('\n').filter(x => x.trim());
   $('lecPoints').innerHTML = points.map(p => '<li>' + esc(p) + '</li>').join('');
   $('lecScript').textContent = it['讲稿'] || '';
+  lecRenderShot(it);
+  lecRenderVoice(it);
 }
 
+/* 显示**真实页面**（从 pptx 导出的图）：老师改过版式、加过图，这里就是他那样子。
+   没图就收起来退回文字版 —— 不能留个破图占着地方。 */
+function lecRenderShot(it) {
+  const 图地址 = String(it['页图'] || '');
+  const 图 = $('lecShot');
+  if (!图地址) {
+    图.classList.add('hide');
+    图.removeAttribute('src');
+    return;
+  }
+  const url = '/课件图/' + 图地址.replace(/^\/课件图\//, '').split('/').map(encodeURIComponent).join('/');
+  图.classList.remove('hide');
+  if (图.getAttribute('src') !== url) {
+    图.src = url;
+  }
+}
+
+/* 这一页有配音就换上、按需要播；没有就把音频条收起来。
+   注意路径里有中文：服务端那条 /配音/ 路由只取 basename，但地址本身要
+   逐段 encodeURIComponent 才稳（别指望浏览器替我们编码）。 */
+function lecRenderVoice(it) {
+  const 音频 = String(it['音频'] || '');
+  const 盒 = $('lecVoiceBox');
+  const 播放器 = $('lecAudio');
+  if (!音频) {
+    盒.classList.add('hide');
+    播放器.pause();
+    播放器.removeAttribute('src');
+    return;
+  }
+  const url = '/配音/' + 音频.replace(/^\/配音\//, '').split('/').map(encodeURIComponent).join('/');
+  盒.classList.remove('hide');
+  if (播放器.getAttribute('src') !== url) {
+    播放器.src = url;                     // 换页就换源，浏览器会自己重新加载
+  }
+  if ($('lecAudioAuto').checked) {
+    // 翻页是用户点的，一般允许自动播；不给播也不报错 —— 控件就在那儿，老师点一下即可
+    const 试 = 播放器.play();
+    if (试 && 试.catch) 试.catch(() => {});
+  }
+}
+
+/* 讲到下一页去（计时器与音频结束都会走到这） */
+function lecNextPage() {
+  if (LEC.index < LEC.items.length - 1) {
+    LEC.index += 1;
+    lecRender();
+    lecSchedule();
+  } else {
+    lecAuto(false);
+    $('lecAudio').pause();
+    say($('lecOutMsg'), '这一课讲完了。', 'ok');
+  }
+}
+
+/* 讲稿越长停得越久。**有配音时以音频说完为准** —— 按字数估的 1/6 秒每字
+   比配音真实语速（约 0.24 秒/字）短了四成，用它会把每页的尾巴切掉，
+   那就不是“翻到哪页播哪页”了。没音频时才退回按字数估。 */
 function lecSchedule() {
   clearTimeout(LEC.timer);
   if (!LEC.auto || !LEC.items.length) return;
-  const script = String(LEC.items[LEC.index]['讲稿'] || '');
-  const seconds = Math.max(4, Math.round(script.length / 6));
-  LEC.timer = setTimeout(() => {
-    if (LEC.index < LEC.items.length - 1) {
-      LEC.index += 1;
-      lecRender();
-      lecSchedule();
-    } else {
-      lecAuto(false);
-      say($('lecOutMsg'), '这一课讲完了。', 'ok');
-    }
-  }, seconds * 1000);
+  const it = LEC.items[LEC.index];
+  const script = String(it['讲稿'] || '');
+  const 估毫秒 = Math.max(4, Math.round(script.length / 6)) * 1000;
+  const 有音频 = !!(it['音频'] && $('lecAudio').getAttribute('src'));
+  if (有音频) {
+    // 主力是音频的 ended 事件（在初始化时挂的监听里调 lecNextPage）；
+    // 这里给一个兜底上限，免得音频加载失败时这一页永远不翻。
+    LEC.timer = setTimeout(lecNextPage, 估毫秒 * 2 + 3000);
+  } else {
+    LEC.timer = setTimeout(lecNextPage, 估毫秒);
+  }
 }
 
 function lecAuto(on) {
@@ -1438,28 +1608,59 @@ function lecAuto(on) {
   lecSchedule();
 }
 
+function lecSwapSource() {
+  // “这一课怎么来”：生成新课要课题与页数；用已有课件要选一份，那两个框就收起来
+  const 已有 = $('lecSource').value === '已有';
+  $('lecDeckBox').classList.toggle('hide', !已有);
+  $('lecTopicBox').classList.toggle('hide', 已有);
+  $('lecSlidesBox').classList.toggle('hide', 已有);
+  if (已有) lecFillDecks();
+}
+
+async function lecFillDecks() {
+  const sel = $('lecDeck');
+  sel.innerHTML = '';
+  try {
+    await fillSelect(sel, await paramOptions('用已有课件', '课件文件'),
+      '（课件输出/ 里还没有 .pptx —— 先把你那份复制进去，再点刷新列表）');
+  } catch (e) {
+    sel.innerHTML = '<option value="">（读不到课件列表）</option>';
+  }
+}
+
 async function doLectureStart() {
   const btn = $('btnLecStart');
   const msg = $('lecMsg');
+  const 已有 = $('lecSource').value === '已有';
   const topic = $('lecTopic').value.trim();
 
   if (!$('lecSkill').value) { say(msg, '请先选一位教师的技能包', 'err'); return; }
-  if (!topic) { say(msg, '请填课题', 'err'); return; }
+  if (已有 && !$('lecDeck').value) {
+    say(msg, '请先选一份课件（把你那份 pptx 复制进 课件输出/，再点「刷新列表」）', 'err');
+    return;
+  }
+  if (!已有 && !topic) { say(msg, '请填课题', 'err'); return; }
 
   btn.disabled = true;
-  say(msg, '正在备课，可能要十几秒到一分钟…');
+  const 要配 = $('lecWantVoice').checked;
+  say(msg, 已有
+    ? (要配 ? '正在给这份课件补讲稿、导出每页图并配音：热身后约半分钟；刚起服务时可能三分钟以上。**请不要刷新页面**…'
+           : '正在给这份课件补讲稿并导出每页图，可能要十几秒到一分钟…')
+    : (要配 ? '正在备课、导出每页图并配音：热身后约半分钟；服务刚起、要把 5 GB 模型加载进显存时可能三分钟以上。**请不要刷新页面**…'
+           : '正在备课，可能要十几秒到一分钟…'));
   try {
-    const d = await run('联动教学', {
-      技能包: $('lecSkill').value,
-      课题: topic,
-      页数: $('lecSlides').value.trim() || '6'
-    });
-    if (!d.条目 || !d.条目.length) throw new Error('没有生成任何页面');
+    const d = 已有
+      ? await run('用已有课件', { 课件文件: $('lecDeck').value, 技能包: $('lecSkill').value,
+                         要不要配音: 要配 ? '要' : '不' })
+      : await run('联动教学', { 技能包: $('lecSkill').value, 课题: topic,
+                         页数: $('lecSlides').value.trim() || '6',
+                         要不要配音: 要配 ? '要' : '不' });
+    if (!d.条目 || !d.条目.length) throw new Error(已有 ? '这份课件里没有可讲的页' : '没有生成任何页面');
 
     LEC.items = d.条目;
     LEC.index = 0;
     LEC.skill = $('lecSkill').value;
-    $('lecTitle').textContent = '上课中 · ' + (d.课名 || topic);
+    $('lecTitle').textContent = '上课中 · ' + (d.课名 || topic || $('lecDeck').value);
     $('lecSetup').classList.add('hide');
     $('lecPlayer').classList.remove('hide');
     say($('lecOutMsg'), d.提示 || '开始上课', 'ok');
@@ -1472,8 +1673,14 @@ async function doLectureStart() {
   }
 }
 
+/* 「我有问题」= 暂停上课。
+   配音也得停 —— 界面上写着“暂停中”，如果喇叭里老师还在念，
+   学生就是一边听一边打字。（恢复时若勾了自动播，就接着念。） */
 function lecPause() {
   lecAuto(false);
+  const 播放器 = $('lecAudio');
+  LEC.audioWasPlaying = !播放器.paused && !!播放器.getAttribute('src');
+  播放器.pause();
   $('askBox').classList.remove('hide');
   $('askOut').classList.add('hide');
   $('askMsg').className = '';
@@ -1507,9 +1714,18 @@ async function doAskSend() {
 function doResume() {
   $('askBox').classList.add('hide');
   say($('lecOutMsg'), '继续上课。', 'ok');
+  // 答疑期间不自动翻页是有意的：老师还在回答，页面不该自己跳走。
+  // 所以恢复时这一页的等待时间重新计（用音频说完为准，与 lecSchedule 一致）。
+  const 播放器 = $('lecAudio');
+  if (LEC.audioWasPlaying && $('lecAudioAuto').checked && 播放器.getAttribute('src')) {
+    const 试 = 播放器.play();
+    if (试 && 试.catch) 试.catch(() => {});
+  }
+  LEC.audioWasPlaying = false;
   lecAuto(true);
 }
 
+/* ── 模型配置 ── */
 
 async function loadCacheUse() {
   const tb = $('cacheRows');
@@ -1542,6 +1758,9 @@ async function loadSettings() {
       '</td><td>' + esc(s['接口地址']) + '</td><td>' + esc(s['密钥']) + '</td></tr>'
     ).join('');
     say($('setMsg'), d.提示 || '', '');
+    // 按「当前」那一项选中，不能让它取第一项 —— 否则老师照着表单填密钥、
+    // 一点保存，就把系统悄悄切回字母序第一个服务商（实测：当前是 deepseek，
+    // 表单里填的却是 ark）。
     const 当前服务商 = (SETTINGS.items.find(s => String(s['当前'] || '').trim() === '是') || {})['代号'] || '';
     fillSelect($('setProvider'), SETTINGS.items.map(s => s['代号']), '（没有服务商）', 当前服务商);
     fillSettingsForm();
@@ -1584,6 +1803,7 @@ async function doSaveSettings() {
   }
 }
 
+/* ── 教师蒸馏 ── */
 
 async function doDistill() {
   const btn = $('btnDistill');
@@ -1613,6 +1833,7 @@ async function doDistill() {
   }
 }
 
+/* ── 创造模式 ── */
 
 const CHAT = { history: [] };
 
@@ -1641,6 +1862,7 @@ async function doChatSend() {
   btn.disabled = true;
   say(msg, 'AI 正在处理…');
   try {
+    // 长度上限由服务端一家说了算，前端不写第二个数字
     const history = CHAT.history.slice(0, -1)
       .map(m => (m.role === 'user' ? '老师：' : '助手：') + m.content).join('\n');
     const d = await run('创造模式', { 内容: text, 之前的对话: history });
@@ -1648,7 +1870,9 @@ async function doChatSend() {
     say(msg, d.提示 || '', 'ok');
     chatRender();
     cmdShow(d.待确认命令);
+    画授权状态(d['授权']);
   } catch (e) {
+    // 失败不往对话记录里塞东西 —— 否则历史只会越错越长，最后彻底发不出去
     say(msg, '失败：' + e.message + '（这句没进对话记录）', 'err');
   } finally {
     btn.disabled = false;
@@ -1661,6 +1885,96 @@ function doChatClear() {
   say($('chatMsg'), '对话已清空。');
 }
 
+/* ── 创造模式：长任务授权 ── */
+
+function 画授权状态(a) {
+  const el = $('authState');
+  if (a === undefined) {
+    // 切回这一页时并不重新查服务端，所以不能接着显示上次那行（那是句谎话：
+    // 同一个页面会话的窗口在服务端可能还开着）
+    el.textContent = '状态未刷新（窗口可能还开着）—— 点下面任一按钮、或发一轮对话就会显示最新。';
+    return;
+  }
+  if (!a || !a['档位']) {
+    // 后端 2026-10-07 把「为什么」拆成了「结束原因」（拦停理由）+ 「说明」（给人看的一句）
+    el.textContent = '现在没有授权窗口' + (a && a['结束原因'] ? '（' + a['结束原因'] + '）' : '') + '。';
+    $('authButtons').classList.remove('hide');
+    return;
+  }
+  if (a['说明'] === '默认档位（测试期）') {
+    // 测试期：默认档位开着 —— 按团队 2026-10-07 的要求，**其他三档先不显示**
+    // （地基留着：清掉 配置.json 的 命令.默认档位，这排按钮就回来了）
+    el.innerHTML = '测试期：默认 <b>' + esc(a['档位']) + '</b>，AI 提的命令<b>不再逐条问你</b>。'
+      + '每条命令照旧进审计。';
+    $('authButtons').classList.add('hide');
+    return;
+  }
+  $('authButtons').classList.remove('hide');
+  const 时间话 = a['不限时']
+    ? '不限时（到你点「收回」为止）'
+    : ('还剩约 ' + Math.max(1, Math.ceil(a['剩余秒'] / 60)) + ' 分钟');
+  el.innerHTML = '现在开着 <b>' + esc(a['档位']) + '</b>：' + 时间话 + '、'
+    + esc(a['剩余几条']) + ' 条。'
+    + (a['档位'] === '全部授权'
+      ? '　<b style="color:#c00">禁用清单已放行 —— 格式化磁盘、删注册表那类也拦不住；每条命令都进了审计</b>'
+      : '');
+}
+
+async function 查授权状态() {
+  // 进创造模式就真查一次（原来故意不查、怕显示旧状态 —— 真查最实在：
+  // 测试期的默认档位要不要藏那排按钮，也只能靠这一步知道）
+  try {
+    const d = await run('看授权状态', {});
+    画授权状态(d['授权']);
+  } catch (e) {
+    画授权状态(undefined);
+  }
+}
+
+// 不用 say()：它会给元素加 notice 类，而这个 div 本身已在 .notice 里，会套成两个黄框
+function 说授权(文字, 坏) {
+  const el = $('authMsg');
+  el.textContent = 文字;
+  el.style.color = 坏 ? '#c00' : '#2e7d32';
+}
+
+const 授权按钮们 = () => [$('btnAuthSafe'), $('btnAuthNormal'), $('btnAuthFull'), $('btnAuthOff')];
+
+async function 开授权(档位) {
+  const 分钟 = '不限';      // 窗口不设时间上限（2026-09-21 定的）：只靠「收回」与条数封顶
+  授权按钮们().forEach(b => { b.disabled = true; });
+  try {
+    const d = await run('长任务授权', { 档位: 档位, 分钟: 分钟 });
+    说授权(d.提示 || '', false);
+    画授权状态(d['授权']);
+  } catch (e) {
+    说授权('开不了：' + e.message, true);
+  } finally {
+    // 不锁一下的话，双击会把「用了几条」清零（同会话重复开窗是替换）
+    授权按钮们().forEach(b => { b.disabled = false; });
+  }
+}
+
+async function 收回授权() {
+  授权按钮们().forEach(b => { b.disabled = true; });
+  try {
+    const d = await run('长任务授权', { 档位: '安全授权', 分钟: '0' });
+    // 本来就没窗口时说"没窗口"，不该显示成绿底"办好了"
+    说授权(d.提示 || '', !(d['授权'] && d['授权']['档位']));
+    画授权状态(d['授权']);
+  } catch (e) {
+    说授权('收回失败：' + e.message, true);
+  } finally {
+    授权按钮们().forEach(b => { b.disabled = false; });
+  }
+}
+
+$('btnAuthSafe').onclick = () => 开授权('安全授权');
+$('btnAuthNormal').onclick = () => 开授权('普通授权');
+$('btnAuthFull').onclick = () => 开授权('全部授权');
+$('btnAuthOff').onclick = 收回授权;
+
+/* ── 电脑服务 ── */
 
 const PC = { pending: '' };
 
@@ -1740,14 +2054,17 @@ async function pcRun() {
   }
 }
 
+/* 事件委托，不用内联 onclick —— 免得把数据里的引号拼进代码 */
 $('pcMenu').addEventListener('click', e => {
   const btn = e.target.closest('button[data-pc]');
   if (btn) pcPreview(btn.dataset.pc);
 });
 
+/* ── 环境配置 ── */
 
 const ENV = { pending: '' };
 
+/* 单项结果（比如 env_do 的 plan）没有「代号」列，所以不能跟总表混用同一张表 */
 function kvTable(items) {
   const cols = Object.keys(items[0]);
   return '<thead><tr>' + cols.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr></thead><tbody>' +
@@ -1785,6 +2102,7 @@ function envShow(d) {
     $('envTable').classList.remove('hide');
   }
 
+  // 单项结果只画在下面那张小表里，不动总表 —— 否则点一下就把五项总览冲掉了
   if (!isScan && items.length) {
     $('envPlan').innerHTML = kvTable(items);
     $('envPlan').classList.remove('hide');
@@ -1801,6 +2119,8 @@ function envBadge(missingCount, 测不出) {
   const el = $('envState');
   if (!el) return;
   if (测不出) {
+    // 接口取不到时**不能**报「全部就绪」：那是把“测不出来”说成“一切正常”。
+    // 以前失败路径直接 envBadge(0)，而 0 是假值，落进了下面那个 else。
     el.className = 't-state wait';
     el.textContent = '没测出来';
     return;
@@ -1869,6 +2189,7 @@ $('envTable').addEventListener('click', e => {
   if (btn) envPreview(btn.dataset.env);
 });
 
+/* ── AI 想执行的命令（必须人点确认）── */
 
 const CMD = { pending: [] };
 
@@ -1913,6 +2234,7 @@ $('btnRefreshDistill').onclick = () => fillOptions('蒸馏', '文件', 'fileSele
 $('btnRefreshSkills').onclick = loadSkills;
 $('btnRefreshMats').onclick = loadMaterials;
 $('btnRefreshDecks').onclick = loadDecks;
+/* ── 学生问答 ── */
 
 async function loadQaStu() {
   await fillOptions('学生问答', '技能包', 'qaStuSkill',
@@ -1946,6 +2268,7 @@ async function doQaStuAsk() {
   }
 }
 
+/* ── 学生注册 ── */
 
 async function loadReg() {
   const tb = $('regRows');
@@ -1974,7 +2297,7 @@ async function doRegAdd() {
   const 编号 = $('regSid').value.trim();
   const 姓名 = $('regName').value.trim();
   if (!编号) { say(msg, '请先填学生编号', 'err'); return; }
-  if (!姓名) { say(msg, '请填学生姓名（只写进对照表，不发送）', 'err'); return; }
+  if (!姓名) { say(msg, '请填学生姓名', 'err'); return; }
   btn.disabled = true;
   say(msg, '正在注册…');
   try {
@@ -2005,7 +2328,11 @@ $('btnRefreshReg').onclick = loadReg;
 $('btnArcAdd').onclick = doArchiveAdd;
 $('btnPpt').onclick = doPpt;
 $('btnRefreshPpt').onclick = () => fillOptions('课件生成', '技能包', 'pptSkill', '（还没有技能包）');
-$('btnRefreshLec').onclick = () => fillOptions('联动教学', '技能包', 'lecSkill', '（还没有技能包）');
+$('lecSource').onchange = lecSwapSource;
+$('btnRefreshLec').onclick = () => {
+  fillOptions('联动教学', '技能包', 'lecSkill', '（还没有技能包）');
+  if ($('lecSource').value === '已有') lecFillDecks();
+};
 $('btnLecStart').onclick = doLectureStart;
 $('btnPrev').onclick = () => { LEC.index = Math.max(0, LEC.index - 1); lecRender(); lecSchedule(); };
 $('btnNext').onclick = () => { LEC.index = Math.min(LEC.items.length - 1, LEC.index + 1); lecRender(); lecSchedule(); };
@@ -2014,6 +2341,8 @@ $('btnAskPause').onclick = lecPause;
 $('btnAskSend').onclick = doAskSend;
 $('btnResume').onclick = doResume;
 $('btnLecStop').onclick = () => { lecReset(); say($('lecMsg'), '已结束上课。', 'ok'); };
+// 配音说完 → 自动翻下一页（有音频时就是这么推的，见 lecSchedule 的说明）
+$('lecAudio').addEventListener('ended', () => { if (LEC.auto) lecNextPage(); });
 $('btnSaveSettings').onclick = doSaveSettings;
 $('btnReloadSettings').onclick = loadSettings;
 $('btnCacheRefresh').onclick = loadCacheUse;
@@ -2023,16 +2352,21 @@ $('setProvider').onchange = fillSettingsForm;
   try {
     const 表 = await api('/api/能力');
     ABILITIES = 表.条目;
+    // 版本号从服务端拿（只在 地基/版本.py 写一处）。页面上不写死数字 ——
+    // 以前这里写的是 0.5，而 MCP 自报的是 1.0，两边对不上（开发日志 D-15）。
     if (表.版本 && $('verNo')) $('verNo').textContent = 表.版本;
-    fillSelect($('arcCorrect'), await paramOptions('录入学生记录', '对错'), '对');
-    fillSelect($('arcError'), await paramOptions('录入学生记录', '错误类型'), '其他');
+    fillSelect($('arcCorrect'), await paramOptions('录入学生记录', '对错'), '（没有选项）', '对');
+    // 第 4 个参数才是"默认选中"，第 3 个只是列表为空时的占位。
+    // 以前这八处把默认值传在第 3 位，于是浏览器默认选第一项 ——
+    // 「错误类型」的首项是「概念不清」而本意是「其他」，不改下拉就静默记错错因
+    fillSelect($('arcError'), await paramOptions('录入学生记录', '错误类型'), '（没有选项）', '其他');
     fillSelect($('regConsent'), await paramOptions('学生注册', '家长同意书'), '（无）', '未签回');
-    fillSelect($('evalVerdict'), await paramOptions('记讲解评定', '判定'), '可接受');
-    fillSelect($('evalOnly'), await paramOptions('评定台账', '只看'), '全部');
-    fillSelect($('fbKind'), await paramOptions('记反馈', '类型'), '不好用');
-    fillSelect($('fbOnly'), await paramOptions('反馈清单', '只看'), '全部');
-    fillSelect($('fbFilterKind'), await paramOptions('反馈清单', '类型'), '全部');
-    fillSelect($('fbResult'), await paramOptions('记反馈处理', '结果'), '已修');
+    fillSelect($('evalVerdict'), await paramOptions('记讲解评定', '判定'), '（没有选项）', '可接受');
+    fillSelect($('evalOnly'), await paramOptions('评定台账', '只看'), '（没有选项）', '全部');
+    fillSelect($('fbKind'), await paramOptions('记反馈', '类型'), '（没有选项）', '不好用');
+    fillSelect($('fbOnly'), await paramOptions('反馈清单', '只看'), '（没有选项）', '全部');
+    fillSelect($('fbFilterKind'), await paramOptions('反馈清单', '类型'), '（没有选项）', '全部');
+    fillSelect($('fbResult'), await paramOptions('记反馈处理', '结果'), '（没有选项）', '已修');
   } catch (e) {
     say($('arcMsg'), '读取能力列表失败：' + e.message, 'err');
   }

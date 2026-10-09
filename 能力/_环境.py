@@ -1,5 +1,6 @@
 
 import os
+import re
 import shutil
 import subprocess
 
@@ -26,6 +27,34 @@ _按代号索引 = {一项["id"]: 一项 for 一项 in 环境清单}
 
 def 取环境项(环境代号):
     return _按代号索引.get(str(环境代号).strip())
+
+
+版本样式 = {
+    "python": r"^Python \d+\.\d+",
+    "pip": r"^pip \d+",
+    "node": r"^v?\d+\.\d+\.\d+$",
+    "npm": r"^\d+\.\d+\.\d+",
+    "git": r"^git version \d+",
+    "bash": r"^GNU bash, version \d+",
+    "code": r"^\d+\.\d+\.\d+",
+}
+
+跑不起来的提示 = {
+    "python": ("找到的 python 跑不出正常版本号 —— **多半是 Windows 应用商店的那个「别名桩」**："
+               "没装 Python 也会有这个 python.exe，运行它只会打开应用商店，系统这边就永远找不到真的 python。\n"
+               "两种做法（挑一种）：\n"
+               "  · 正常装一个：去 python.org 下载 Python 3，安装时**务必勾上 Add python.exe to PATH**；\n"
+               "  · 已经装过、只是被桩挡住：打开「设置 → 应用 → 高级应用设置 → 应用执行别名」，"
+               "把 python.exe / python3.exe 这两项**关掉**。\n"
+               "两种做法做完，都把本系统关掉重开，再点一次「检测本机环境」。"),
+}
+
+
+def _跑不起来说明(命令名):
+    if _解析可执行文件(命令名) is None:
+        return ""
+    return 跑不起来的提示.get(
+        命令名, "找到了 " + 命令名 + "，但它跑不出正常的版本号 —— 多半是别名桩，或是装坏了。")
 
 
 def _解析可执行文件(命令名):
@@ -55,12 +84,18 @@ def _首行(文本):
     return 行表[0][:70] if 行表 else ""
 
 
-def _版本(命令名, *参数):
+def _版本(命令名, *参数, 样式名=None):
     命令 = _解析可执行文件(命令名)
     if 命令 is None:
         return ""
     状态码, 文本 = _跑(命令 + list(参数), 超时=60)
-    return _首行(文本) if 状态码 == 0 else ""
+    if 状态码 != 0:
+        return ""
+    行 = _首行(文本)
+    样式 = 版本样式.get(样式名 or 命令名)
+    if 样式 and not re.match(样式, 行):
+        return ""
+    return 行
 
 
 def _WSL情况():
@@ -89,21 +124,21 @@ def 检测(环境代号):
     if 环境代号 == "python":
         版本 = _版本("python", "--version")
         if not 版本:
-            return False, ""
-        pip = _版本("python", "-m", "pip", "--version")
+            return False, _跑不起来说明("python")
+        pip = _版本("python", "-m", "pip", "--version", 样式名="pip")
         return True, 版本 + ("（" + pip.split(" from ")[0] + "）" if pip else "（pip 缺失）")
 
     if 环境代号 == "node":
         版本 = _版本("node", "--version")
         if not 版本:
-            return False, ""
+            return False, _跑不起来说明("node")
         npm = _版本("npm", "--version")
         return True, 版本 + ("（npm " + npm + "）" if npm else "（npm 缺失）")
 
     if 环境代号 == "git":
         版本 = _版本("git", "--version")
         if not 版本:
-            return False, ""
+            return False, _跑不起来说明("git")
         bash = _版本("bash", "--version")
         if bash:
             短版本 = bash.replace("GNU bash, version ", "").split("(")[0].strip()

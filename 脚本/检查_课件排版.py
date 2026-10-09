@@ -6,7 +6,7 @@ import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from 地基 import 幻灯片
+from 地基 import 配置, 幻灯片
 
 容差 = 0.06
 画布 = 幻灯片.页宽
@@ -64,13 +64,9 @@ try:
         封面左 <= 容差 and 封面右 >= 画布 - 容差,
         "左 %.2f 右 %.2f（画布 %.2f）" % (封面左, 封面右, 画布))
 
-    最右们 = []
-    最左们 = []
     for 序号, 页 in enumerate(页们[1:], 2):
         右 = max((s.left + s.width) / 914400 for s in 页.shapes)
         左 = min(s.left / 914400 for s in 页.shapes)
-        最右们.append(右)
-        最左们.append(左)
         检查("③ 第 %d 页没有右边空白（右 %.2f ≥ %.2f）" % (序号, 右, 画布 - 边距 - 容差),
             右 >= 画布 - 边距 - 容差)
         检查("④ 第 %d 页没贴到左边缘（左 %.2f）" % (序号, 左), 左 >= 边距 - 容差)
@@ -123,6 +119,68 @@ try:
     except Exception as 异常:
         检查("⑫ 一个页面都没有时也产出可打开的文件", False,
             type(异常).__name__ + "：" + str(异常).splitlines()[0][:90])
+    try:
+        from PIL import Image
+        图目录 = os.path.join(临时目录, "材料")
+        os.makedirs(图目录, exist_ok=True)
+        Image.new("RGB", (800, 400), (30, 90, 160)).save(os.path.join(图目录, "横图.png"))
+        Image.new("RGB", (300, 900), (160, 60, 60)).save(os.path.join(图目录, "竖图.png"))
+
+        带图 = {"title": "配图", "pages": [
+            {"kind": "封面", "title": "封面", "points": ["六年级"], "script": "开场", "图": "横图.png"},
+            {"kind": "知识", "title": "横图", "关键句": "看这张图",
+             "points": ["一条", "两条"], "script": "讲稿", "图": "横图.png"},
+            {"kind": "例题", "title": "竖图", "关键句": "竖着的图",
+             "points": ["一条"], "script": "讲稿", "图": "竖图.png"},
+            {"kind": "练习", "title": "练习页填了图", "points": ["算一算"], "script": "讲稿", "图": "横图.png"},
+            {"kind": "小结", "title": "小结", "关键句": "记住", "points": ["一条"], "script": "讲稿", "图": ""},
+        ]}
+        上下文 = {"图目录": 图目录, "警告": [], "配图页": []}
+        图路径 = os.path.join(临时目录, "配图.pptx")
+        幻灯片.写出(带图, 图路径, 上下文)
+        图prs = Presentation(图路径)
+        图页们 = list(图prs.slides)
+        图片们 = [(序号, s) for 序号, 页 in enumerate(图页们, 1)
+                 for s in 页.shapes if hasattr(s, "image")]
+
+        检查("⑬ 只有能配图的页（知识/例题）出了图，封面/练习/小结都没有",
+            [序号 for 序号, _ in 图片们] == [2, 3],
+            "出图的页：" + str([序号 for 序号, _ in 图片们]))
+        检查("⑭ 非配图页填了图会被忽略，而且出声告诉老师",
+            any("第 1 页（封面）" in 一句 for 一句 in 上下文["警告"]) and
+            any("第 4 页（练习）" in 一句 for 一句 in 上下文["警告"]),
+            "警告：" + "；".join(上下文["警告"])[:100])
+        检查("⑮ 图靠右：右缘贴住图区右边线（竖图也不留一道空）",
+            all(abs((s.left + s.width) / 914400 - (幻灯片.图左 + 幻灯片.图宽)) < 0.03
+                for _, s in 图片们),
+            "右缘：" + "、".join("%.2f" % ((s.left + s.width) / 914400) for _, s in 图片们))
+        检查("⑯ 图不压页脚（下缘 ≤ 6.45）",
+            all((s.top + s.height) / 914400 <= 6.45 + 0.02 for _, s in 图片们),
+            "下缘：" + "、".join("%.2f" % ((s.top + s.height) / 914400) for _, s in 图片们))
+        比例 = [(s.width / 914400) / (s.height / 914400) for _, s in 图片们]
+        检查("⑰ 长宽比没被拉变形（横图 2.0、竖图 0.33）",
+            len(比例) == 2 and abs(比例[0] - 2.0) < 0.05 and abs(比例[1] - 300 / 900) < 0.05,
+            "实际：" + "、".join("%.2f" % 比 for 比 in 比例))
+        缺页脚的 = [序号 for 序号, 页 in enumerate(图页们[1:], 2)
+                  if not any(abs(s.top / 914400 - 6.92) < 0.2
+                             for s in 页.shapes if s.has_text_frame)]
+        检查("⑱ 带图页的页脚还在（配图没把它挤掉）", not 缺页脚的,
+            ("缺页脚的是第 " + "、".join(map(str, 缺页脚的)) + " 页") if 缺页脚的 else "")
+    except ImportError as 异常:
+        检查("⑬~⑱ 配图排版（要 Pillow 现场画图）", False,
+            "ImportError：" + str(异常)[:60] + "（先看是不是这台电脑没有 Pillow）")
+    except Exception as 异常:
+        检查("⑬~⑱ 配图排版", False, type(异常).__name__ + "：" + str(异常).splitlines()[0][:90])
+
+    try:
+        提示词文本 = open(os.path.join(配置.取目录("提示词"), "课件生成.md"), encoding="utf-8").read()
+        检查("⑲ 提示词里说的能配图的两页 == 代码里的 可配图的类型",
+            幻灯片.可配图的类型 == ("知识", "例题")
+            and "只有【知识】【例题】两页可以填" in 提示词文本,
+            "代码：" + str(幻灯片.可配图的类型))
+    except Exception as 异常:
+        检查("⑲ 提示词与代码的两页约定一致", False, type(异常).__name__ + "：" + str(异常)[:80])
+
 finally:
     shutil.rmtree(临时目录, ignore_errors=True)
 

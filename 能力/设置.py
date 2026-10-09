@@ -3,6 +3,7 @@ import json
 import os
 
 from 地基 import 配置, 大模型, 注册表
+from 地基 import 落盘
 
 
 def 密钥状态(服务商条目):
@@ -85,8 +86,7 @@ def 处理保存(服务商, 模型="", 接口地址="", 密钥变量名="", 密�
     if str(设为当前).strip() in ("是", "true", "True", "1"):
         配置表["default"] = 服务商
 
-    with open(路径, "w", encoding="utf-8") as 文件:
-        json.dump(配置表, 文件, ensure_ascii=False, indent=2)
+    落盘.原子写文本(路径, json.dumps(配置表, ensure_ascii=False, indent=2))
 
     提示 = "已保存：" + 服务商
     if 写入的变量名:

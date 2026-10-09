@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -73,6 +74,30 @@ def main():
             print("    " + 一个)
         return 1
 
+    锁 = os.path.join(产物 + ".lock")
+    try:
+        if os.path.isfile(锁) and (time.time() - os.path.getmtime(锁)) < 600:
+            主人 = open(锁, encoding="utf-8", errors="replace").read().strip()
+            print("  另一次「页面渲染」自检正在跑（%s）—— 这次跳过，免得两边互相毁证据。" % 主人)
+            print("  （等它跑完再跑一次；锁超过 10 分钟会自动失效，卡死也不会一直挡着）")
+            return 0
+        os.makedirs(产物, exist_ok=True)
+        with open(锁, "w", encoding="utf-8") as 文件:
+            文件.write("pid=%d 起于 %s" % (os.getpid(), time.strftime("%H:%M:%S")))
+    except OSError:
+        锁 = ""
+
+    try:
+        return 跑一遍(edge)
+    finally:
+        if 锁:
+            try:
+                os.remove(锁)
+            except OSError:
+                pass
+
+
+def 跑一遍(edge):
     if not os.path.isfile(首页):
         print("  找不到首页：" + 首页)
         return 1

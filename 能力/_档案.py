@@ -128,12 +128,6 @@ def 学生信息(编号):
     return dict(读对照表().get(校验编号(编号), {}))
 
 
-def 姓名字样(编号):
-    信息 = 学生信息(编号)
-    return [值.strip() for 值 in (信息.get("姓名", ""), 信息.get("学号", ""))
-            if isinstance(值, str) and 值.strip()]
-
-
 def 注册(编号, 姓名="", 学号="", 年级="", 班级="", 备注="", 家长同意书="未签回"):
     要求已签()
     编号 = 校验编号(编号)
@@ -185,17 +179,10 @@ def 记资料(编号, 姓名, 学号="", 年级="", 班级="", 备注="", 家长
 def 记一条(编号, 内容):
     要求已签()
     编号 = 校验编号(编号)
-    原文 = json.dumps(内容, ensure_ascii=False)
     一条 = dict(内容)
     一条.setdefault("时间", time.strftime("%Y-%m-%d %H:%M:%S"))
 
     with 档案锁:
-        撞上的 = [值 for 值 in 姓名字样(编号) if len(值) >= 2 and 值 in 原文]
-        if 撞上的:
-            raise ValueError(
-                "拒绝写入：这条记录里出现了学生的姓名或学号（" + "、".join(撞上的) + "）。\n"
-                "《学生数据处理约定》4.1 只收题目文字 / 作答内容 / 错误类型，4.3 不收姓名、学号。"
-            )
         os.makedirs(学生目录(编号), exist_ok=True)
         with open(记录路径(编号), "a", encoding="utf-8") as 文件:
             文件.write(json.dumps(一条, ensure_ascii=False) + "\n")

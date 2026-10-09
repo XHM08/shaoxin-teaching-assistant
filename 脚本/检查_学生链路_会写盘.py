@@ -186,7 +186,12 @@ try:
     检查("⑤ 提问返回 200", 带码 == 200)
     回答 = str(正文.get("正文", "")) if isinstance(正文, dict) else ""
     检查("⑤ 返回了非空回答（说明真调到了模型）", len(回答.strip()) >= 10)
-    print("     模型回答前 80 字：" + 回答.strip()[:80].replace("\n", " "))
+    if 带码 == 200 and len(回答.strip()) >= 10:
+        print("     模型回答前 80 字：" + 回答.strip()[:80].replace("\n", " "))
+    else:
+        print("     ‼ 这一步是要联网、要花钱调模型的那一步。失败原文：")
+        print("        带码=" + str(带码) + " 正文=" + json.dumps(正文, ensure_ascii=False)[:200])
+        print("        这类失败**先重跑一次**：单次抖动很常见；连着红再看代码。")
 
     记录路径 = _档案.记录路径(试编号)
     检查("⑥ 记录.jsonl 落在该生文件夹", os.path.isfile(记录路径))

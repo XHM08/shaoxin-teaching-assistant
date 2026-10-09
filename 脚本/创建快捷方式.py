@@ -6,10 +6,20 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BASE = os.path.dirname(HERE)
-TARGET = os.path.join(BASE, "启动.bat")
+
+客户端exe = os.path.join(BASE, "dist", "邵新", "邵新.exe")
+if os.path.isfile(客户端exe):
+    TARGET = 客户端exe
+    WORKDIR = os.path.dirname(客户端exe)
+    SHORTCUT_DESC = "启动「邵新」辅助教育系统（桌面客户端）"
+else:
+    TARGET = os.path.join(BASE, "启动.bat")
+    WORKDIR = BASE
+    SHORTCUT_DESC = "启动「邵新」辅助教育系统（本地服务 + 自动打开浏览器）"
+
 SHORTCUT_NAME = "「邵新」辅助教育系统.lnk"
-SHORTCUT_DESC = "启动「邵新」辅助教育系统（本地服务 + 自动打开浏览器）"
-ICON = r"C:\Windows\System32\shell32.dll,137"
+自备图标 = os.path.join(BASE, "邵新.ico")
+ICON = 自备图标 if os.path.isfile(自备图标) else r"C:\Windows\System32\shell32.dll,137"
 
 
 def ps(script):
@@ -34,7 +44,7 @@ def build_create_script():
     return "\n".join([
         "$ErrorActionPreference = 'Stop'",
         "$target = '" + TARGET.replace("'", "''") + "'",
-        "$workdir = '" + BASE.replace("'", "''") + "'",
+        "$workdir = '" + WORKDIR.replace("'", "''") + "'",
         "if (-not (Test-Path $target))  { throw ('TARGET_MISSING: ' + $target) }",
         "if (-not (Test-Path $workdir)) { throw ('WORKDIR_MISSING: ' + $workdir) }",
         "$desktop = [Environment]::GetFolderPath('Desktop')",
@@ -78,7 +88,10 @@ def 主程序():
     remove = "--remove" in sys.argv[1:]
 
     if not os.path.isfile(TARGET):
-        print("启动.bat 不存在，先确认它在：" + TARGET)
+        print("要指的目标不存在：" + TARGET)
+        return 1
+    if not os.path.isdir(WORKDIR):
+        print("工作目录不存在：" + WORKDIR)
         return 1
     if not os.path.isdir(BASE):
         print("工作目录不存在：" + BASE)
@@ -113,8 +126,8 @@ def 主程序():
     print("  目标（回显）：    " + data.get("ECHO_TARGET", "?"))
     print("  工作目录（回显）：" + data.get("ECHO_WORKDIR", "?"))
     print()
-    print("⚠️ 图标索引与「双击能不能打开浏览器」我无法在这里验证 ——")
-    print("   请到桌面双击一次确认。图标不满意可在「属性 → 更改图标」里换。")
+    print("⚠️「双击能不能打开」我无法在这里验证 —— 请到桌面双击一次确认。")
+    print("   图标不满意可在「属性 → 更改图标」里换。")
     return 0
 
 

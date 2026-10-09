@@ -18,7 +18,7 @@ def 解析键值(片段表):
         if "=" not in 片段:
             raise SystemExit(
                 "参数要写成 键=值 的形式，收到的是：" + repr(片段)
-                + "\n例如：python 主程序.py 运行 蒸馏 文件=a.txt 代号=teacher-a 描述=小学数学"
+                + "\n例如：python 主程序.py 运行 蒸馏 文件=教案.docx 代号=teacher-a 描述=小学数学"
             )
         键, 值 = 片段.split("=", 1)
         实参[键.strip()] = 值
@@ -75,23 +75,58 @@ def 运行(名字, 实参):
 
 
 def 起服务():
-    import 本地服务
+    try:
+        import 本地服务
+    except ImportError as 异常:
+        raise SystemExit("跑不起来：「服务」要用到的模块没找到（" + str(异常) + "）")
     本地服务.主程序()
     return 0
 
 
+角色 = ("客户端", "服务", "悬浮窗")
+老命令 = ("列出", "运行", "工具", "起服务")
+帮助命令 = ("-h", "--help", "help", "帮助")
+
+
+def 认识这个命令(命令):
+    return 命令 in 角色 or 命令 in 老命令 or 命令 in 帮助命令
+
+
+def 不认识怎么说(命令):
+    return ("不认识这个命令：" + 命令
+            + "\n可用：客户端 / 服务 / 悬浮窗 / 列出 / 运行 / 工具 / 起服务")
+
+
 def 主程序(命令行参数):
-    if len(命令行参数) < 2 or 命令行参数[1] in ("-h", "--help", "help"):
+    命令 = 命令行参数[1] if len(命令行参数) > 1 else "客户端"
+
+    if 命令 in 帮助命令:
         print(__doc__.strip())
         return 0
+    if not 认识这个命令(命令):
+        raise SystemExit(不认识怎么说(命令))
+
+    if 命令 == "客户端":
+        try:
+            import 桌面客户端
+        except ImportError as 异常:
+            raise SystemExit("跑不起来：「客户端」要用到的模块没找到（" + str(异常) + "）")
+        return 桌面客户端.主程序()
+    if 命令 == "悬浮窗":
+        try:
+            import 课堂悬浮窗
+        except ImportError as 异常:
+            raise SystemExit("跑不起来：「悬浮窗」要用到的模块没找到（" + str(异常) + "）")
+        课堂悬浮窗.窗口().跑()
+        return 0
+    if 命令 == "服务":
+        return 起服务()
 
     try:
         加载()
     except Exception as 异常:
         raise SystemExit("能力加载失败（能力/ 里有文件写错了）：\n  "
                          + type(异常).__name__ + ": " + str(异常))
-
-    命令 = 命令行参数[1]
 
     try:
         if 命令 == "列出":
@@ -107,8 +142,9 @@ def 主程序(命令行参数):
     except (KeyError, ValueError, OSError, RuntimeError) as 异常:
         raise SystemExit("[" + type(异常).__name__ + "] " + str(异常))
 
-    raise SystemExit("不认识这个命令：" + 命令 + "\n可用：列出 / 运行 / 工具 / 起服务")
+    raise SystemExit(不认识怎么说(命令))
 
 
 if __name__ == "__main__":
     sys.exit(主程序(sys.argv))
+
