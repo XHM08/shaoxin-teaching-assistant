@@ -1,0 +1,13 @@
+{
+  "启用": true,
+  "服务器们": [
+    {
+      "名字": "文件",
+      "命令": "npx",
+      "参数": ["-y", "@modelcontextprotocol/server-filesystem",
+               "C:\\Users\\你的用户名\\Desktop\\样本\\材料"],
+      "环境": {},
+      "超时": 60
+    }
+  ]
+}

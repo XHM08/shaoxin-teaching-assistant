@@ -1,0 +1,72 @@
+{
+  "_说明": "环境配置页「可选接入」列的就是这里。命令都核过来源（见每条的 出处）；核不到的宁可不列，编一条老师点了也起不来、报错还看着像邵新坏了。形态这件事最关键：地基/MCP.py 只支持 stdio（命令 + 参数），只有 stdio 形态的能装上。",
+  "_怎么填凭据": "装上之后，去 MCP服务器.json 里对应那条的 env 里把 token 填上（空着的话服务器起得来但一调工具就报没凭据）。",
+  "可选项": [
+    {
+      "名字": "Notion",
+      "形态": "stdio",
+      "能装上": true,
+      "命令": "cmd",
+      "参数": ["/c", "npx", "-y", "@notionhq/notion-mcp-server"],
+      "环境": {"NOTION_TOKEN": ""},
+      "要填": ["NOTION_TOKEN"],
+      "前置": "装了 Node.js（npx 可用）",
+      "用处": "读写 Notion 页面与数据库（备课笔记、资料库那种）",
+      "出处": "https://github.com/makenotion/notion-mcp-server",
+      "备注": "官方现在主推「远程 HTTP + OAuth」那套，这个本地实现仍能跑，但仓库自己标注不再积极维护。Windows 上 npx 要用 cmd /c 包一层，参数里已经包好了。"
+    },
+    {
+      "名字": "GitHub",
+      "形态": "stdio（走 docker）",
+      "能装上": true,
+      "命令": "docker",
+      "参数": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
+      "环境": {"GITHUB_PERSONAL_ACCESS_TOKEN": ""},
+      "要填": ["GITHUB_PERSONAL_ACCESS_TOKEN"],
+      "前置": "装了 Docker Desktop，并且它正在运行",
+      "用处": "读仓库、查 issue 与 PR、看 Actions 跑成没跑成",
+      "出处": "https://github.com/github/github-mcp-server",
+      "备注": "官方入口就是它；旧的 @modelcontextprotocol/server-github 已归档。它另有一个远程 HTTP 端点（api.githubcopilot.com/mcp/），那要 OAuth，本机这套接不了。"
+    },
+    {
+      "名字": "Supabase",
+      "形态": "远程 HTTP + OAuth",
+      "能装上": false,
+      "状态说明": "这家现在是远程 HTTP + OAuth（https://mcp.supabase.com/mcp），本机这套只支持 stdio，接不了。",
+      "用处": "连数据库、查表、看配置",
+      "出处": "https://github.com/supabase-community/supabase-mcp"
+    },
+    {
+      "名字": "Google 日历",
+      "形态": "远程 HTTP + OAuth",
+      "能装上": false,
+      "状态说明": "参考实现（modelcontextprotocol/servers 里那个）已归档，官方现在走远程 HTTP + OAuth，本机这套接不了。",
+      "用处": "排课、看日程",
+      "出处": "https://github.com/modelcontextprotocol/servers（该家的条目在 Archived 一节里）"
+    },
+    {
+      "名字": "Gmail",
+      "形态": "远程 HTTP + OAuth",
+      "能装上": false,
+      "状态说明": "同上：参考实现已归档，官方走远程 HTTP + OAuth。",
+      "用处": "读邮件、发通知",
+      "出处": "https://github.com/modelcontextprotocol/servers（Archived 一节）"
+    },
+    {
+      "名字": "Google Drive",
+      "形态": "远程 HTTP + OAuth",
+      "能装上": false,
+      "状态说明": "同上：参考实现已归档，官方走远程 HTTP + OAuth。",
+      "用处": "读云端课件与文档",
+      "出处": "https://github.com/modelcontextprotocol/servers（Archived 一节）"
+    },
+    {
+      "名字": "Canva",
+      "形态": "未核到",
+      "能装上": false,
+      "状态说明": "我没核到官方的 stdio 入口（连仓库地址都没确认），所以不给命令 —— 编一条不如空着。",
+      "用处": "做课件配图、海报",
+      "出处": "未核到"
+    }
+  ]
+}
