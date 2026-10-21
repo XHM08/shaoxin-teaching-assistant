@@ -1,0 +1,18 @@
+VSVersionInfo(
+  ffi=FixedFileInfo(filevers={四段}, prodvers={四段}, mask=0x3f, flags=0x0,
+                    OS=0x40004, fileType=0x1, subtype=0x0, date=(0, 0)),
+  kids=[
+    StringFileInfo([
+      StringTable('080404b0', [
+        StringStruct('CompanyName', '邵新'),
+        StringStruct('FileDescription', '邵新 辅助教育系统'),
+        StringStruct('FileVersion', '{号}'),
+        StringStruct('InternalName', '邵新'),
+        StringStruct('OriginalFilename', '邵新.exe'),
+        StringStruct('ProductName', '邵新 辅助教育系统'),
+        StringStruct('ProductVersion', '{号}')
+      ])
+    ]),
+    VarFileInfo([VarStruct('Translation', [2052, 1200])])
+  ]
+)

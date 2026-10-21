@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>「邵新」辅助教育系统</title>
+<link rel="stylesheet" href="/网页/样式.css">
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="brand">
+      <span class="name">「邵新」辅助教育系统</span>
+      <span class="sub">乡村教师经验留存 · 内部使用</span>
+    </div>
+    <div class="meta">版本 <span id="verNo">（读取中）</span> · 本地运行 · <a href="#" data-go="设置">设置</a></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section id="view-首页">
+    <h2 class="page">工作台</h2>
+    <details class="group" open>
+      <summary>上课 <span class="g-hint">备课、放课件、答疑与复盘</span></summary>
+      <div class="tiles">
+        <button class="tile" data-go="创造模式">
+        <span class="t-name">创造模式</span>
+        <span class="t-desc">直接跟 AI 说想做什么：出课件、备课、查材料、录数据</span>
+        <span class="t-state ok">可用</span>
+      </button>
+        <button class="tile" data-go="课件生成">
+        <span class="t-name">PPT 生成</span>
+        <span class="t-desc">按这位教师的风格生成带讲稿的课件</span>
+        <span class="t-state ok">可用</span>
+      </button>
+        <button class="tile" data-go="联动教学">
+        <span class="t-name">联动教学</span>
+        <span class="t-desc">边放课件边讲，随时按「我有问题」暂停答疑</span>
+        <span class="t-state ok">可用</span>
+      </button>
+        <button class="tile" data-go="讲解评定">
+        <span class="t-name">讲解评定</span>
+        <span class="t-desc">老师本人逐条校对 AI 的讲解（教师审核闭环）</span>
+        <span class="t-state ok">可用</span>
+      </button>
+        <button class="tile" data-go="错因诊断">
+        <span class="t-name">错因诊断</span>
+        <span class="t-desc">按这位老师的方法看这道题为什么错、他该怎么讲</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      </div>
+    </details>
+    <details class="group" open>
+      <summary>学生 <span class="g-hint">注册、问答、档案</span></summary>
+      <div class="tiles">
+        <button class="tile" data-go="学生注册">
+        <span class="t-name">学生注册</span>
+        <span class="t-desc">登记学生编号，一人一个档案文件夹</span>
+        <span class="t-state wait">同意书未签 · 阻断</span>
+      </button>
+        <button class="tile" data-go="学生问答">
+        <span class="t-name">学生问答</span>
+        <span class="t-desc">学生输自己的编号提问，问答计入本人档案</span>
+        <span class="t-state wait">同意书未签 · 阻断</span>
+      </button>
+        <button class="tile" data-go="学生档案馆">
+        <span class="t-name">学生档案馆</span>
+        <span class="t-desc">按编号记录作答与错误类型</span>
+        <span class="t-state wait">同意书未签 · 阻断</span>
+      </button>
+      </div>
+    </details>
+    <details class="group" open>
+      <summary>材料与技能包 <span class="g-hint">把教师材料变成可复用的技能包</span></summary>
+      <div class="tiles">
+        <button class="tile" data-go="教师蒸馏">
+        <span class="t-name">教师蒸馏</span>
+        <span class="t-desc">把一位教师的材料整理成 AI 技能包</span>
+        <span class="t-state ok">可用</span>
+      </button>
+        <button class="tile" data-go="本地知识库">
+        <span class="t-name">本地知识库</span>
+        <span class="t-desc">教师材料与已生成的技能包</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      </div>
+    </details>
+    <details class="group" open>
+      <summary>环境与反馈 <span class="g-hint">装环境、让电脑做事、提问题</span></summary>
+      <div class="tiles">
+        <button class="tile" data-go="环境配置">
+        <span class="t-name">环境配置</span>
+        <span class="t-desc">检测并配齐 Python / Node / Git / VS Code / WSL</span>
+        <span class="t-state ok" id="envState">检测中…</span>
+      </button>
+        <button class="tile" data-go="电脑服务">
+        <span class="t-name">电脑服务</span>
+        <span class="t-desc">一句话让电脑做事：看内存、清垃圾、清回收站</span>
+        <span class="t-state ok">可用</span>
+      </button>
+        <button class="tile" data-go="反馈与优化">
+        <span class="t-name">反馈与优化</span>
+        <span class="t-desc">提意见 → 出诊断草稿 → 人决定改不改（机器不动代码）</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      </div>
+    </details>
+  </section>
+
+  <section id="view-电脑服务" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>电脑服务</h2>
+      <div class="body">
+        <div class="notice">
+          不会用电脑也没关系：用一句话说，或点下面的按钮。<br>
+          <b>只看不动的</b>（看内存、看垃圾有多少）点一下就出结果；
+          <b>要动手的</b>（清临时文件、清回收站）会先把「会发生什么」摊开给你看，
+          你按 <b>确认执行</b> 才会真的做。
+          <br><br>
+          <b>先说清楚一件事</b>：Windows 没有可靠的「清理内存」操作。那些号称清内存的软件
+          是把程序的工作集强行刷走，用起来反而更卡。真正管用的是
+          <b>磁盘腾出空间</b>（清临时文件）和 <b>关掉不用的程序</b>；
+          该关哪个，「谁最占内存」会告诉你，这一步请你自己关。
+        </div>
+        <div class="chatrow">
+          <textarea id="pcText" rows="2" placeholder="例如：电脑好卡，帮我清一下垃圾"></textarea>
+          <button id="btnPcAsk">帮我看看</button>
+        </div>
+        <div id="pcMenu" style="margin-top:12px"></div>
+        <div id="pcMsg" style="margin-top:12px"></div>
+        <pre id="pcOut" class="hide"></pre>
+        <table id="pcTable" class="hide" style="margin-top:12px"></table>
+        <div style="margin-top:12px">
+          <button class="danger hide" id="btnPcRun">确认执行</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-环境配置" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>环境配置</h2>
+      <div class="body">
+        <div class="notice">
+          检测这台电脑上有没有 Python / Node / Git / VS Code / WSL。
+          <b>检测</b>只看不动；
+          <b>安装</b>走 Windows 自带的 winget（微软官方包管理器），会先把「装什么、要多久、
+          要不要授权」摊开给你看，你按 <b>确认安装</b> 才开始。
+          <br><br>
+          <b>WSL 不代劳</b>：它需要管理员权限且装完要重启电脑，系统只给命令，请你自己执行。
+          装完后本系统可能要关掉重开，才会检测到新装的东西。
+        </div>
+        <div id="envAlert" class="notice err hide" style="white-space:pre-line"></div>
+        <div style="margin-top:12px">
+          <button id="btnEnvScan">检测本机环境</button>
+        </div>
+        <div id="envMsg" style="margin-top:12px"></div>
+        <pre id="envOut" class="hide"></pre>
+        <table id="envTable" class="hide" style="margin-top:12px"></table>
+        <table id="envPlan" class="hide" style="margin-top:12px"></table>
+        <div style="margin-top:12px">
+          <button class="danger hide" id="btnEnvRun">确认安装</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>可选接入（外部服务）</h2>
+      <div class="body">
+        <div class="notice">
+          这里列的是<b>核过来源</b>的外部服务（走 MCP，给邵新挂外部工具用）。
+          只有 <b>stdio 形态</b>的能装上；Supabase / Google 那几家现在是远程 HTTP + OAuth，
+          本机这套（<code>地基/MCP.py</code>）接不了，所以标灰并写明原因，不给能点的按钮。
+          <br><br>
+          装上之后，去 <code>MCP服务器.json</code> 里那条的 <code>env</code> 里把 token 填上，
+          否则服务器起得来、一调工具就报没凭据。改这个文件之前系统会自动留一份到 <code>_历史/</code>。
+        </div>
+        <div style="margin-top:12px">
+          <button id="btn接入查">看看能接什么</button>
+        </div>
+        <div id="接入提示" style="margin-top:12px"></div>
+        <div id="接入清单" style="margin-top:12px"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-创造模式" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>创造模式</h2>
+      <div class="body">
+        <div class="notice">
+          直接跟 AI 说想做什么，它会自己动手。能做的事：
+          <b>出课件</b>（生成 HTML 课件文件）、<b>备课</b>（生成整课讲稿）、
+          <b>查材料与技能包</b>、<b>录学生记录</b>（需先签同意书）。
+          <br>
+          对话会留在你这台电脑上（保存在「教师数据\网页缓存」里），关掉再开、刷新都不丢；
+          要清掉就点下面的「清空对话」，删得干净。服务端不保存。
+          涉及学生可以写姓名（2026-09-22 起），但报告、PPT、截图里仍然不出现姓名。
+        </div>
+        <div id="authBox" class="notice">
+          <b>测试阶段内开启全部授权</b>（不限时）。
+          <div id="authState" style="margin-top:6px">现在没有授权窗口。</div>
+          <div style="margin-top:8px" id="authButtons">
+            <button class="ghost" id="btnAuthSafe">安全授权（不限时）</button>
+            <button class="ghost" id="btnAuthNormal">普通授权（不限时）</button>
+            <button class="danger" id="btnAuthFull">全部授权（不限时）</button>
+            <button class="ghost" id="btnAuthOff">收回</button>
+          </div>
+          <div id="authMsg" style="margin-top:6px"></div>
+        </div>
+        <div class="chatlog" id="chatLog"></div>
+        <div class="chatrow">
+          <textarea id="chatText" rows="2" placeholder="例如：用 teacher-a 的风格，出一节「分数的除法」的课件"></textarea>
+          <button id="btnChatSend">发送</button>
+        </div>
+        <div style="margin-top:8px">
+          <button class="ghost" id="btnChatClear">清空对话</button>
+        </div>
+        <div id="chatMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>联网查证（教师用）</h2>
+      <div class="body">
+        <div class="notice">
+          给问题就上网搜（每条带来源、时间和权威度），给网址就抓那一页正文。
+          走的是 DeepSeek 官方接口，<b>按次计费</b>（千次约 $0.75，失败和空结果不计费）。
+          <br>
+          <b>别把学生姓名、学号写进问题里</b>——搜出去的内容会离开这台电脑。
+        </div>
+        <label>要查什么</label>
+        <textarea id="netQuestion" rows="2" placeholder="例如：2026 年初中数学新课标有什么变化"></textarea>
+        <div class="row">
+          <div>
+            <label>或者直接给一个网址（给了就只抓这一页）</label>
+            <input type="text" id="netUrl" placeholder="https://api-docs.deepseek.com/">
+          </div>
+          <div>
+            <label>要几条结果（1~10）</label>
+            <input type="number" id="netCount" value="5" min="1" max="10">
+          </div>
+        </div>
+        <div style="margin-top:12px"><button id="btnNetGo">查</button></div>
+        <div id="netOut" style="margin-top:12px; white-space:pre-wrap"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>本地记忆</h2>
+      <div class="body">
+        <div class="notice">
+          已记住 <b id="memCount">0</b> 条长期事实，另有 <b id="memSum">0</b> 段对话小结。
+          都存在这台电脑上，不会发给别人；清空只清记忆，不影响学生档案与课件。
+        </div>
+        <div style="margin-top:12px">
+          <button id="btnMemClear">清空记忆</button>
+          <span id="memMsg" style="margin-left:10px"></span>
+        </div>
+        <div id="memList" style="margin-top:12px; white-space:pre-wrap"></div>
+      </div>
+    </div>
+    <div class="card hide" id="cmdCard">
+      <h2>AI 想执行的命令（等你确认）</h2>
+      <div class="body">
+        <div class="notice">
+          下面是为完成你刚才那句话、AI 想跑的命令。
+          <b>先读一遍说明，看不懂就别点</b>。命令没确认之前，一个字符都没跑。
+        </div>
+        <div id="cmdList"></div>
+        <div id="cmdMsg" style="margin-top:12px"></div>
+        <pre id="cmdOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-教师蒸馏" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>教师蒸馏</h2>
+      <div class="body">
+        <div class="notice">
+          材料放在 <code>材料/</code> 目录下：Word / PPT / Excel / PDF / 文本 / 网页都能直接读，
+          照片与扫描件由本机 OCR 转成文字（不联网、不外发）。
+          材料正文只在蒸馏时读取，不上传到任何公开位置。
+        </div>
+        <div class="row">
+          <div>
+            <label>选择材料</label>
+            <select id="fileSelect"></select>
+          </div>
+          <div>
+            <label>技能包代号（小写字母、数字、连字符）</label>
+            <input type="text" id="skillName" placeholder="例如：math-fraction-teacher-a">
+          </div>
+        </div>
+        <label>技能包描述（写进 SKILL.md，决定「什么时候该用它」）</label>
+        <input type="text" id="skillDesc" placeholder="例如：小学数学分数除法，用乡村场景打比方，先举例后下定义">
+        <div style="margin-top:12px">
+          <button id="btnDistill">开始蒸馏</button>
+          <button class="ghost" id="btnRefreshDistill">刷新材料列表</button>
+        </div>
+        <div id="distillMsg" style="margin-top:12px"></div>
+        <pre id="distillOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-本地知识库" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>教师材料</h2>
+      <div class="body">
+        <div class="notice" id="matNotice">只列文件名、格式与大小，<b>不展示材料正文</b>。材料属教师本人。</div>
+        <button class="ghost" id="btnRefreshMats">刷新</button>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:50px">序号</th><th>文件名</th><th style="width:90px">格式</th><th style="width:80px">能不能读</th><th style="width:110px">大小（字节）</th></tr></thead>
+          <tbody id="matRows"><tr><td colspan="5">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>参考资料</h2>
+      <div class="body">
+        <div class="notice" id="refNotice">公开的参考资料：可以查术语口径、当参照，<b>不是蒸馏原料</b>。</div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:50px">序号</th><th>文件</th><th style="width:90px">格式</th><th style="width:80px">能不能读</th><th style="width:110px">大小（字节）</th></tr></thead>
+          <tbody id="refRows"><tr><td colspan="5">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>技能包</h2>
+      <div class="body">
+        <button class="ghost" id="btnRefreshSkills">刷新</button>
+        <div id="skillMsg" style="margin-top:12px"></div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:60px">序号</th><th style="width:250px">技能包代号</th><th>描述</th><th style="width:90px">操作</th></tr></thead>
+          <tbody id="skillRows"><tr><td colspan="4">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>课件</h2>
+      <div class="body">
+        <button class="ghost" id="btnRefreshDecks">刷新</button>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:60px">序号</th><th>课件文件</th><th style="width:120px">大小（字节）</th><th style="width:160px">生成时间</th><th style="width:90px">操作</th></tr></thead>
+          <tbody id="deckRows"><tr><td colspan="5">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card hide" id="skillViewCard">
+      <h2>技能包内容</h2>
+      <div class="body"><pre id="skillView"></pre></div>
+    </div>
+    <div class="card hide" id="skillEditCard">
+      <h2>技能包校订</h2>
+      <div class="body">
+        <div class="notice">
+          把这份技能包按 <code>##</code> 拆成一段一段，请老师逐段过一遍：
+          申报材料里写的「该老师<b>本人逐条校对</b>技能包」就是这里。
+          改动会直接写回 <code>SKILL.md</code>，但<b>存之前会自动备份</b>到
+          <code>_历史\</code>，改坏了可以照着恢复。
+        </div>
+        <div id="skillEditMsg" style="margin-top:12px"></div>
+        <div id="skillEditList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-学生档案馆" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>学生档案馆</h2>
+      <div class="body">
+        <div id="arcGate" class="notice" style="white-space:pre-line"></div>
+        <button class="ghost" id="btnRefreshArc">刷新</button>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:50px">序号</th><th style="width:90px">编号</th><th style="width:110px">姓名</th><th style="width:90px">记录条数</th><th>最近一条</th><th style="width:90px">操作</th></tr></thead>
+          <tbody id="arcRows"><tr><td colspan="6">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h2>录入一条记录</h2>
+      <div class="body">
+        <div class="notice">
+          记录以<b>编号为键</b>（文件夹与文件名是 S01、S02…）；<b>姓名可以写进题目与作答</b>，
+          也可以随材料发给 AI 服务商（2026-09-22 放宽；两份同意书需要改版重签）。
+          报告、PPT、截图里仍然不出现姓名。明细只存本机。
+        </div>
+        <div class="row">
+          <div>
+            <label>学生编号</label>
+            <input type="text" id="arcSid" placeholder="例如：S01">
+          </div>
+          <div>
+            <label>学科</label>
+            <input type="text" id="arcSubject" placeholder="例如：数学">
+          </div>
+        </div>
+        <label>题目</label>
+        <textarea id="arcQuestion" rows="2"></textarea>
+        <label style="margin-top:12px">学生作答</label>
+        <textarea id="arcAnswer" rows="2"></textarea>
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label>对错</label>
+            <select id="arcCorrect"></select>
+          </div>
+          <div>
+            <label>错误类型</label>
+            <select id="arcError"></select>
+          </div>
+        </div>
+        <div style="margin-top:12px"><button id="btnArcAdd">录入</button></div>
+        <div id="arcMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card hide" id="arcViewCard">
+      <h2 id="arcViewTitle">某个学生的档案</h2>
+      <div class="body">
+        <div id="arcViewInfo" class="notice"></div>
+        <table>
+          <thead><tr><th style="width:70px">类型</th><th>内容</th><th>补充</th><th style="width:160px">时间</th></tr></thead>
+          <tbody id="arcViewRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-学生问答" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>学生问答</h2>
+      <div class="body">
+        <div class="notice">
+          填你自己的编号，选一位老师，然后提问。回答会按这位老师的讲法。
+          <b>这次问答会记进你自己的档案</b>（《学生数据处理约定》4.1 采集清单第 1 项）。
+          需先取得监护人签署的《家长知情同意书》。
+        </div>
+        <div class="row">
+          <div>
+            <label>你的编号</label>
+            <input type="text" id="qaStuSid" placeholder="例如：S01">
+          </div>
+          <div>
+            <label>请哪位老师来答</label>
+            <select id="qaStuSkill"></select>
+          </div>
+        </div>
+        <label>你的问题</label>
+        <textarea id="qaStuQuestion" rows="3" placeholder="例如：老师，为什么除以分数要倒过来乘？"></textarea>
+        <div style="margin-top:12px">
+          <button id="btnQaStuAsk">提问</button>
+          <button class="ghost" id="btnRefreshQaStu">刷新老师列表</button>
+        </div>
+        <div id="qaStuMsg" style="margin-top:12px"></div>
+        <pre id="qaStuOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-学生注册" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>学生注册</h2>
+      <div class="body">
+        <div class="notice">
+          登记 <b>编号</b>（如 S01）与学生的识别信息。编号会分到一个自己的档案文件夹
+          （<b>学生数据/&lt;编号&gt;/</b>）。
+          姓名、年级、班级会写进 <b>学生数据/对照表/姓名对照表.json</b>；
+          <b>2026-09-22 起，它们也会随材料发给 AI 服务商</b>（以前承诺的“不出本机”已按团队要求取消）。
+          报告、PPT、截图里仍然不出现姓名。明细只存本机。
+        </div>
+        <div class="row">
+          <div>
+            <label>学生编号</label>
+            <input type="text" id="regSid" placeholder="例如：S03">
+          </div>
+          <div>
+            <label>姓名</label>
+            <input type="text" id="regName" placeholder="真名，会进记录与发送内容">
+          </div>
+          <div>
+            <label>学号</label>
+            <input type="text" id="regNo" placeholder="例如：2026001">
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label>年级</label>
+            <input type="text" id="regGrade" placeholder="例如：八年级">
+          </div>
+          <div>
+            <label>班级</label>
+            <input type="text" id="regClass" placeholder="例如：3 班">
+          </div>
+          <div>
+            <label>家长同意书</label>
+            <select id="regConsent"></select>
+          </div>
+        </div>
+        <label style="margin-top:12px">备注</label>
+        <textarea id="regNote" rows="2" placeholder="例如：家长 9/15 已签回。别写电话、住址"></textarea>
+        <div style="margin-top:12px">
+          <button id="btnRegAdd">注册</button>
+          <button class="ghost" id="btnRefreshReg">刷新名册</button>
+        </div>
+        <div id="regMsg" style="margin-top:12px"></div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:40px">序号</th><th style="width:72px">编号</th><th style="width:100px">姓名</th><th style="width:90px">学号</th><th style="width:74px">年级</th><th style="width:64px">班级</th><th style="width:96px">家长同意书</th><th style="width:74px">记录条数</th><th>最近一条</th></tr></thead>
+          <tbody id="regRows"><tr><td colspan="9">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-课件生成" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>PPT 生成</h2>
+      <div class="body">
+        <div class="notice">
+          按所选技能包里 <b>那位老师的风格</b> 生成 <b>PowerPoint 课件（.pptx）</b>：
+          要点在幻灯片上，讲稿放在该页的<b>备注</b>里（放映时用演讲者视图看得到）。
+          下载后可用 PowerPoint 或 WPS 打开修改。
+          想在上课时逐页讲解、随时答疑，用「联动教学」。
+        </div>
+        <div class="row">
+          <div>
+            <label>用哪位教师的风格</label>
+            <select id="pptSkill"></select>
+          </div>
+          <div>
+            <label>页数（默认 8）</label>
+            <input type="text" id="pptSlides" placeholder="8">
+          </div>
+        </div>
+        <label>课题</label>
+        <input type="text" id="pptTopic" placeholder="例如：分数的除法">
+        <div style="margin-top:12px">
+          <button id="btnPpt">生成课件</button>
+          <button class="ghost" id="btnRefreshPpt">刷新技能包列表</button>
+        </div>
+        <div id="pptMsg" style="margin-top:12px"></div>
+        <div id="pptOpen" class="hide" style="margin-top:8px">
+          <a id="pptLink" href="#">下载课件（.pptx） →</a>
+        </div>
+        <pre id="pptOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-错因诊断" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>错因诊断</h2>
+      <div class="body">
+        <div class="notice">
+          判断这道题<b>为什么错</b>，并按所选技能包里<b>那位老师的方法</b>重讲一遍。
+          结果<b>不落盘</b>（它不在采集清单三项里）；要留档就把它带到「学生档案馆」再录一条。
+        </div>
+        <div class="row">
+          <div>
+            <label>用哪位教师的方法</label>
+            <select id="diagSkill"></select>
+          </div>
+          <div>
+            <label>学科</label>
+            <input type="text" id="diagSubject" placeholder="例如：数学">
+          </div>
+        </div>
+        <label>题目</label>
+        <textarea id="diagTopic" rows="2"></textarea>
+        <label style="margin-top:12px">学生的作答</label>
+        <textarea id="diagAnswer" rows="2"></textarea>
+        <div style="margin-top:12px">
+          <button id="btnDiag">诊断</button>
+          <button class="ghost" id="btnRefreshDiag">刷新技能包列表</button>
+        </div>
+        <div id="diagMsg" style="margin-top:12px"></div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:110px">项</th><th>内容</th><th style="width:210px">备注</th></tr></thead>
+          <tbody id="diagRows"><tr><td colspan="3">还没有诊断过。</td></tr></tbody>
+        </table>
+        <div class="hide" id="diagToArcWrap" style="margin-top:12px">
+          <button id="btnDiagToArc">把这一条带去「学生档案馆」录入 →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-讲解评定" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>讲解评定 · 出题</h2>
+      <div class="body">
+        <div class="notice">
+          用<b>项目组自备的题目</b>让 AI 按这位老师的方法写一段讲解（<b>不经学生</b>），
+          再由<b>老师本人</b>看这段讲解对不对。他的改版会和 AI 原版一起留下，
+          供实验五做盲评对照。（依据：知情同意书-教师 第三节第 6 项。）
+        </div>
+        <div class="row">
+          <div>
+            <label>用哪位老师的方法</label>
+            <select id="evalSkill"></select>
+          </div>
+          <div>
+            <label>条目号（下面在评哪一条）</label>
+            <input type="text" id="evalNo" placeholder="出题后自动填好">
+          </div>
+        </div>
+        <label>题目（项目组自备，不要写学生姓名）</label>
+        <textarea id="evalTopic" rows="2"></textarea>
+        <div style="margin-top:12px">
+          <button id="btnEvalGen">按这位老师的讲法出一段讲解</button>
+          <button class="ghost" id="btnRefreshEval">刷新技能包列表</button>
+        </div>
+        <div id="evalMsg" style="margin-top:12px"></div>
+        <div id="evalShowCard" class="hide" style="margin-top:12px">
+          <label>AI 原版（讲解A）。给老师看的就是这一段</label>
+          <pre id="evalShowA"></pre>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>老师判定</h2>
+      <div class="body">
+        <div class="row">
+          <div>
+            <label>老师怎么看这段讲解</label>
+            <select id="evalVerdict"></select>
+          </div>
+        </div>
+        <label>老师改后的版本（没改就留空）</label>
+        <textarea id="evalFixed" rows="4"></textarea>
+        <label style="margin-top:12px">老师说的话（<b>原话</b>，不要润色）</label>
+        <textarea id="evalWords" rows="2"></textarea>
+        <div style="margin-top:12px"><button id="btnEvalSave">存下这条判定</button></div>
+        <div id="evalSaveMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>评定台账</h2>
+      <div class="body">
+        <div class="row">
+          <div>
+            <label>只看</label>
+            <select id="evalOnly"></select>
+          </div>
+          <div style="align-self:flex-end">
+            <button class="ghost" id="btnEvalLedger">刷新台账</button>
+          </div>
+        </div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:60px">号</th><th style="width:80px">状态</th><th style="width:90px">判定</th><th>题目</th><th style="width:90px">老师改过</th><th>老师原话</th></tr></thead>
+          <tbody id="evalRows"><tr><td colspan="6">还没有条目。上面出第一题就有了。</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-反馈与优化" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>提一条反馈</h2>
+      <div class="body">
+        <div class="notice">
+          遇到不好用、算错了、太慢，或者想要什么功能，写在这里会存进 <code>教师数据\反馈.jsonl</code> 等排期。
+          <br>
+          <b>学生自己提的意见请由老师转述</b>。反馈内容不属《学生数据处理约定》里的三项采集内容，
+          学生那边<b>不落盘</b>（所以学生用的那两个视图上没有这个入口）。
+        </div>
+        <div class="row">
+          <div>
+            <label>属于哪一类</label>
+            <select id="fbKind"></select>
+          </div>
+          <div>
+            <label>影响到什么（可选）</label>
+            <input type="text" id="fbScope" placeholder="例如：创造模式">
+          </div>
+        </div>
+        <label>具体是什么（写清楚你在做什么时遇到的）</label>
+        <textarea id="fbText" rows="3"></textarea>
+        <div style="margin-top:12px"><button id="btnFbSend">存下这条反馈</button></div>
+        <div id="fbMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>反馈清单</h2>
+      <div class="body">
+        <div class="row">
+          <div>
+            <label>只看</label>
+            <select id="fbOnly"></select>
+          </div>
+          <div>
+            <label>按类型筛</label>
+            <select id="fbFilterKind"></select>
+          </div>
+          <div style="align-self:flex-end">
+            <button class="ghost" id="btnFbRefresh">刷新清单</button>
+          </div>
+        </div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:50px">号</th><th style="width:70px">状态</th><th style="width:90px">类型</th><th>内容</th><th style="width:80px">结果</th><th style="width:90px">提交号</th><th style="width:90px">用时</th></tr></thead>
+          <tbody id="fbRows"><tr><td colspan="7">还没有反馈。</td></tr></tbody>
+        </table>
+        <div class="row" style="margin-top:16px">
+          <div>
+            <label>要处理哪一条（填号）</label>
+            <input type="text" id="fbHandleNo" placeholder="例如：1">
+          </div>
+          <div>
+            <label>结果</label>
+            <select id="fbResult"></select>
+          </div>
+          <div>
+            <label>提交号（已修时填）</label>
+            <input type="text" id="fbCommit" placeholder="例如：3e811c8">
+          </div>
+        </div>
+        <label>补一句（可选）</label>
+        <input type="text" id="fbNote">
+        <div style="margin-top:12px"><button id="btnFbMark">记下处理结果</button></div>
+        <div id="fbMarkMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>诊断草稿（只出主意，不动代码）</h2>
+      <div class="body">
+        <div class="notice">
+          把一条反馈和<b>你点名要看的文件</b>交给模型，产出「定位 / 建议改动 / 要动哪几个文件 / 怎么验证 / 风险」。
+          <b>它不改任何文件、不执行任何命令</b>。改不改由人定；改完要过自检 + 双向回归，再 git 提交（所以能回滚）。
+          <br>
+          路径里带 <code>..</code> 的一律拒；<code>密钥\</code>、<code>学生数据\</code>、
+          <code>教师数据\</code> 里的东西<b>一律不许</b>发给模型。
+        </div>
+        <div class="row">
+          <div>
+            <label>诊断哪一条（填号）</label>
+            <input type="text" id="fbDiagNo" placeholder="例如：1">
+          </div>
+          <div>
+            <label>先看哪些文件（相对路径，逗号分隔；可留空）</label>
+            <input type="text" id="fbDiagFiles" placeholder="例如：能力/学生问答.py,网页/首页.html">
+          </div>
+        </div>
+        <div style="margin-top:12px"><button id="btnFbDiag">出一份诊断草稿</button></div>
+        <div id="fbDiagMsg" style="margin-top:12px"></div>
+        <pre id="fbDiagOut" class="hide"></pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-联动教学" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+
+    <div class="card" id="lecSetup">
+      <h2>联动教学 · 备课</h2>
+      <div class="body">
+        <div class="notice">
+          两种上法：<b>按技能包生成一份新课件</b>，或者<b>用你自己已有的课件</b>
+          用已有的那份时，先把它复制进 <code>课件输出/</code>，系统只给<b>没有讲稿的页</b>补讲稿，
+          已有的讲稿一个字都不动。上起课来一样：一页页讲，学生按 <b>「我有问题」</b> 就会暂停，答完再继续。
+        </div>
+        <div class="row">
+          <div>
+            <label>这一课怎么来</label>
+            <select id="lecSource">
+              <option value="生成">按技能包生成一份新课件</option>
+              <option value="已有">用我已有的课件</option>
+            </select>
+          </div>
+          <div id="lecDeckBox" class="hide">
+            <label>用哪一份（在 <code>课件输出/</code> 里的）</label>
+            <select id="lecDeck"></select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>用哪位教师的讲法</label>
+            <select id="lecSkill"></select>
+          </div>
+          <div id="lecSlidesBox">
+            <label>页数（默认 6）</label>
+            <input type="text" id="lecSlides" placeholder="6">
+          </div>
+        </div>
+        <div id="lecTopicBox">
+          <label>课题</label>
+          <input type="text" id="lecTopic" placeholder="例如：分数的除法">
+        </div>
+        <label style="font-weight:400;margin-top:8px">
+          <input type="checkbox" id="lecWantVoice" checked>
+          顺便配音：把每页讲稿合成本地语音（翻开哪页就播哪页）。
+          会多花几十秒，要先把语音服务起起来（双击 语音/启动语音服务.bat）。
+        </label>
+        <div style="margin-top:12px">
+          <button id="btnLecStart">开始上课</button>
+          <button class="ghost" id="btnRefreshLec">刷新列表（技能包 / 课件）</button>
+        </div>
+        <div id="lecMsg" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <div class="card hide" id="lecPlayer">
+      <h2 id="lecTitle">上课中</h2>
+      <div class="body">
+        <div class="stage">
+          <div class="stage-no" id="lecNo"></div>
+          <img id="lecShot" class="hide" alt="这一页的幻灯片"
+               style="width:100%;border:1px solid #d6dbe3;border-radius:4px;margin-bottom:10px">
+          <h3 id="lecSlideTitle"></h3>
+          <ul id="lecPoints"></ul>
+          <div class="script"><b>讲稿</b><p id="lecScript"></p></div>
+          <div class="script hide" id="lecVoiceBox" style="margin-top:10px">
+            <b>配音</b>
+            <audio id="lecAudio" controls preload="none" style="width:100%;margin-top:6px"></audio>
+            <label style="font-weight:400;display:block;margin-top:6px">
+              <input type="checkbox" id="lecAudioAuto" checked> 翻页自动播放
+            </label>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <button id="btnPrev">上一页</button>
+          <button id="btnNext">下一页</button>
+          <button class="ghost" id="btnAuto">自动播放</button>
+          <button class="danger" id="btnAskPause">我有问题</button>
+          <button class="ghost" id="btnLecStop">结束上课</button>
+        </div>
+        <div id="lecOutMsg" style="margin-top:12px"></div>
+
+        <div class="askbox hide" id="askBox">
+          <h3>暂停中：请写下你的问题</h3>
+          <textarea id="askText" rows="2" placeholder="例如：为什么除以分数要倒过来乘？"></textarea>
+          <div style="margin-top:10px">
+            <button id="btnAskSend">提交问题</button>
+            <button class="ghost" id="btnResume">继续上课</button>
+          </div>
+          <div id="askMsg" style="margin-top:10px"></div>
+          <pre id="askOut" class="hide"></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-设置" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>模型配置</h2>
+      <div class="body">
+        <div class="notice">
+          改了立即生效，不用重启。密钥只写入本机 <code>密钥/</code> 目录，界面不回显、日志不记录。
+        </div>
+        <table>
+          <thead><tr><th style="width:130px">服务商</th><th style="width:60px">当前</th><th style="width:170px">模型</th><th>接口地址</th><th style="width:140px">密钥</th></tr></thead>
+          <tbody id="setRows"><tr><td colspan="5">加载中…</td></tr></tbody>
+        </table>
+        <div style="margin-top:16px">
+          <div class="row">
+            <div>
+              <label>服务商</label>
+              <select id="setProvider"></select>
+            </div>
+            <div>
+              <label>设为当前使用</label>
+              <select id="setDefault"><option>是</option><option>否</option></select>
+            </div>
+          </div>
+          <label>模型名</label>
+          <input type="text" id="setModel" placeholder="例如：deepseek-flash">
+          <label style="margin-top:12px">接口地址</label>
+          <input type="text" id="setBase" placeholder="例如：https://api.deepseek.com">
+          <label style="margin-top:12px">密钥环境变量名</label>
+          <input type="text" id="setKeyEnv" placeholder="例如：DEEPSEEK_API_KEY">
+          <label style="margin-top:12px">密钥（留空则不改动）</label>
+          <input type="password" id="setKey" placeholder="粘贴 API Key，保存后只存本机">
+          <div style="margin-top:12px">
+            <button id="btnSaveSettings">保存</button>
+            <button class="ghost" id="btnReloadSettings">重新读取</button>
+          </div>
+          <div id="setMsg" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>模型用量与缓存命中</h2>
+      <div class="body">
+        <div class="notice">
+          上下文缓存由服务商侧默认开启、不用改代码。这里只展示软件自己记下来的用量：记下来才看得出是哪条路径低。
+          <b>官方说明：前两次请求不会命中，第三次起才命中</b>；缓存尽力而为、不保证 100%。
+        </div>
+        <button class="ghost" id="btnCacheRefresh">刷新用量</button>
+        <div id="cacheMsg" style="margin-top:12px"></div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:140px">来源</th><th style="width:100px">计入的调用次数</th><th style="width:110px">命中 token</th><th style="width:120px">未命中 token</th><th style="width:110px">推理 token</th><th>命中率</th></tr></thead>
+          <tbody id="cacheRows"><tr><td colspan="6">点「刷新用量」看看</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>主办：开发团队</span><span>|</span>
+    <span>技术支持：小l</span><span>|</span>
+    <span>明细只存本机；随材料发给 AI 服务商时可能含姓名（2026-09-22 起）</span>
+  </div>
+</div>
+
+<script src="/网页/首页.js"></script>
+</body>
+</html>
