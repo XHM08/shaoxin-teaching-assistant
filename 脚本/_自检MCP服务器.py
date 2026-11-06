@@ -59,8 +59,6 @@ for 行 in sys.stdin:
     elif 方法 == "notifications/initialized":
         pass
     elif 方法 == "notifications/cancelled":
-
-
         收到的取消.append((消息.get("params") or {}).get("requestId"))
     elif 方法 == "tools/list":
         回(号, {"tools": 工具们})

@@ -86,7 +86,6 @@ def 进程还在吗(进程号):
 起着的 = None
 临时目录 = tempfile.mkdtemp(prefix="MCP自检_")
 try:
-
     服 = 查("01 握手成功（含协商版本）", 起服务器,
            lambda 个: (bool(个.服务器信息) and bool(个.协商版本),
                       "对方自称「%s」，版本 %s"
@@ -107,7 +106,6 @@ try:
           lambda 答: (答[0] == "你说的是：你好" and 答[1] is False,
                      "实际：" + str(答[0])[:60]))
 
-
         查("05 认得服务器自报的 isError（且不把它当成功）",
           lambda: 服.调工具("报错", {}),
           lambda 答: ("服务器说这次工具执行出错" in 答[0] and "故意失败" in 答[0]
@@ -118,7 +116,6 @@ try:
         查("06 对方写两万行 stderr 也不卡死", lambda: 服.调工具("写日志", {}),
           lambda 答: ("写了两万行日志" in 答[0] and 答[1] is False,
                      "用了 %.1f 秒" % (time.monotonic() - 开始)))
-
 
         try:
             服.超时 = 2.0
@@ -137,7 +134,6 @@ try:
         finally:
             服.超时 = 20
 
-
         查("08 超时后会发取消通知", lambda: 服.调工具("查取消", {}),
           lambda 答: ("收到过的取消：[]" not in 答[0],
                      "对方说：" + str(答[0])[:80]))
@@ -146,7 +142,6 @@ try:
           lambda: 服.调工具("根本没有这个工具", {}),
           判据=lambda 答: ("没有这个工具" in str(答), str(答)[:80]),
           抓=MCP.出错)
-
 
         替身 = None
         try:
@@ -168,7 +163,6 @@ try:
             finally:
                 试(替身.关闭)
 
-
         早就关掉的 = 服
         进程对象 = 服.进程
         服 = None
@@ -182,10 +176,8 @@ try:
             检查("11 关闭之后子进程真的退出了", 进程对象.poll() is not None,
                 "子进程还活着" if 进程对象.poll() is None else "已退出")
 
-
         查("12 关闭后再调用会明确报错",
           lambda: 早就关掉的.调工具("回声", {"话": "x"}), 判据=None, 抓=MCP.出错)
-
 
     读回来 = 查("13 没有配置文件时 = 不挂任何服务器",
                lambda: MCP.读配置(os.path.join(临时目录, "根本没有这个文件.json")),
@@ -208,8 +200,6 @@ try:
                lambda: MCP.起全部(MCP.读配置(坏的配置), 记录=日志.append),
                lambda 起的: (len(起的) == 1 and any("没起来" in 一条 for 一条 in 日志),
                             "起了一个；日志：" + " ｜ ".join(日志)[:130]))
-
-
     if 起着的 is not 没拿到:
         for 一个 in 起着的:
             试(一个.关闭)
@@ -219,7 +209,6 @@ try:
     写文件(坏json, '{"启用": true,,}')
     查("16 配置文件写坏时明确报错，不静默当没有",
        lambda: MCP.读配置(坏json), 判据=None, 抓=MCP.出错)
-
 
     pid文件 = os.path.join(临时目录, "哑巴.pid")
     哑巴脚本 = ("import os,time,sys;"
@@ -241,7 +230,6 @@ try:
        "子进程 %s；现在 %s" % (子进程号 or "（没拿到 pid）",
                              "还活着 ✗" if 还活着 else "已收掉 ✓"))
 
-
     接不上的 = os.path.join(临时目录, "接不上.json")
     写文件(接不上的, '{"启用": true,,}')
     第一次说话 = []
@@ -259,7 +247,6 @@ try:
     for 一个 in 第二回:
         试(一个.关闭)
 except Exception as 异常:
-
     检查("自检半路出错", False, 简述(异常))
 finally:
     if 服 is not None:
@@ -270,8 +257,6 @@ finally:
 
 坏的 = 0
 print()
-
-
 try:
     from 能力 import 接入 as _接入
     _接入路 = _接入.MCP路径
@@ -329,7 +314,6 @@ except Exception as _异常:
 for 名字, 通过, 说明 in 结果:
     print(("  通过  " if 通过 else "  失败  ") + 名字 + ("　→　" + 说明 if 说明 else ""))
     坏的 += 0 if 通过 else 1
-
 _跑命令类 = next((x for x in 工具箱.全部名字() if "命令" in x), None)
 if _跑命令类 is None:
     检查("补齐参数：认对的按名字留下、不认的按序补到空位上（不顶掉）", False,

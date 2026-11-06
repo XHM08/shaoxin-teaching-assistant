@@ -2,7 +2,6 @@
 chcp 65001 >nul
 title 给「邵新」装 WSL 里的 Ubuntu
 
-rem 先确认有没有管理员权限：没有就别白跑一趟
 net session >nul 2>&1
 if errorlevel 1 (
   echo.

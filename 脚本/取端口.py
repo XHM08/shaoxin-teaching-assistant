@@ -9,8 +9,6 @@ def main():
         from 地基 import 配置
         print(配置.取端口())
     except Exception as 错:
-
-
         print("（读不到端口：%r。检查 地基/配置.py 与 配置.json）" % (错,), file=sys.stderr)
         return 1
     return 0

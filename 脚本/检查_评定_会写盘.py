@@ -41,7 +41,6 @@ def 试(动作):
 原来就有 = os.path.isdir(教师数据)
 if 原来就有:
     shutil.copytree(教师数据, os.path.join(备份根, "教师数据"))
-
     shutil.rmtree(教师数据, ignore_errors=True)
 
 真问 = P.大模型.问
@@ -143,9 +142,7 @@ except Exception as 异常:
     检查("自检半路出错", False, type(异常).__name__ + "：" + str(异常))
 finally:
     P.大模型.问 = 真问
-
     shutil.rmtree(技能包.技能包目录(试包), ignore_errors=True)
-
     shutil.rmtree(教师数据, ignore_errors=True)
     if 原来就有:
         shutil.copytree(os.path.join(备份根, "教师数据"), 教师数据)

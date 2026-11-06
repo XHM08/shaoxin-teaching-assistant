@@ -11,7 +11,6 @@ import urllib.parse
 import urllib.request
 from tkinter import simpledialog
 
-
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from 地基 import 配置
 
@@ -20,11 +19,9 @@ from 地基 import 配置
 请求超时 = 5
 回应超时 = 60
 
-
 连不上怎么办 = ("先看任务栏里「邵新」还在不在；不在就重开桌面上那个「邵新」"
              if getattr(sys, "frozen", False)
              else "先双击 启动.bat")
-
 
 from 能力._反馈 import 反馈类型
 
@@ -57,7 +54,6 @@ class 窗口:
 
         条 = tk.Frame(self.根)
         条.pack(fill="x", padx=10, pady=(0, 10))
-
         self.接键 = tk.Button(条, text="接受学生发言（按一下）", command=self.接受学生发言,
                              background="#1b4f9c", foreground="white",
                              font=("Microsoft YaHei", 10, "bold"), relief="flat",
@@ -65,22 +61,17 @@ class 窗口:
         self.接键.pack(side="left")
         tk.Button(条, text="清屏", command=self.清屏).pack(side="left", padx=6)
         tk.Button(条, text="现在刷新", command=self.催一下).pack(side="left")
-
-
         tk.Button(条, text="提反馈", command=self.提反馈, relief="flat",
                   font=("Microsoft YaHei", 9), padx=6).pack(side="right")
 
         self.已看到 = 0
         self.队 = queue.Queue()
         self.要停 = False
-
-
         self.忙 = False
         self.粘住 = False
         self.连不上 = False
         self.出错 = False
         self.根.protocol("WM_DELETE_WINDOW", self.关)
-
         自检秒数 = os.environ.get("WINDOW_SELFTEST_SECONDS")
         if 自检秒数:
             try:
@@ -90,15 +81,12 @@ class 窗口:
         self.根.after(200, self.收队)
         threading.Thread(target=self.轮询, daemon=True).start()
 
-
     def 轮询(self):
         while not self.要停:
             self.取()
             time.sleep(轮询间隔毫秒 / 1000.0)
 
     def 取(self):
-
-
         try:
             请求 = urllib.request.Request(地址 + urllib.parse.quote("/api/取留言")
                                      + "?since=%d" % self.已看到)
@@ -121,7 +109,6 @@ class 窗口:
             except Exception:
                 详情 = ""
             raise RuntimeError(详情 or ("服务回了 " + str(异常.code)))
-
 
     def 接受学生发言(self):
         谁 = simpledialog.askstring("接受学生发言", "谁说的？（可以不填）", parent=self.根)
@@ -146,7 +133,6 @@ class 窗口:
         finally:
             self.队.put(("复位", ""))
 
-
     def 收队(self):
         try:
             while True:
@@ -159,7 +145,6 @@ class 窗口:
                     self.状态.configure(text="连不上邵新服务（" + 数据 + "）：" + 连不上怎么办,
                                      fg="#a32020")
                 elif 类 == "提示":
-
                     self.状态.configure(text=数据, fg=("#a32020" if 坏消息 else "#14663a"))
                     self.粘住 = True
                     self.根.after(15000, self.解粘)
@@ -184,8 +169,6 @@ class 窗口:
         except queue.Empty:
             pass
         except Exception as 异常:
-
-
             try:
                 self.出错 = True
                 self.状态.configure(text="窗口刷新出错了（" + type(异常).__name__ + "："
@@ -199,8 +182,6 @@ class 窗口:
     def 画(self, 数据):
         self.连不上 = False
         self.出错 = False
-
-
         新的 = 数据.get("留言") or []
         共 = int(数据.get("共") or 0)
         丢过 = int(数据.get("丢过") or 0)
@@ -218,7 +199,6 @@ class 窗口:
             提示 += "（有 %d 条太久没看已被丢掉）" % 丢过
         if not (self.忙 or self.粘住 or self.连不上 or self.出错):
             self.状态.configure(text=提示, fg="#6b7280")
-
 
     def 提反馈(self):
         窗 = tk.Toplevel(self.根)

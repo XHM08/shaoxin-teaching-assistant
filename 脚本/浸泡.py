@@ -7,13 +7,12 @@ import subprocess
 import sys
 import time
 
-根 = r"C:/Users/你的用户名/Desktop/样本"
+根 = r"C:/Users/25768/Desktop/样本"
 出目录 = r"C:/tmp/浸泡4"
 失败源 = r"C:/tmp/跑全部_失败"
 
 sys.path.insert(0, 根)
 from 地基 import 配置
-
 
 口 = 配置.取端口()
 口语音 = 9880
@@ -54,7 +53,6 @@ def 主程序():
     if not os.path.isfile(表):
         with io.open(表, "w", encoding="utf-8", newline="") as f:
             f.write("\t".join(首行) + "\n")
-
     现场表 = os.path.join(出目录, "端口现场.tsv")
     if not os.path.isfile(现场表):
         with io.open(现场表, "w", encoding="utf-8", newline="") as f:
@@ -85,8 +83,6 @@ def 主程序():
                 原 = 跑.communicate(timeout=超时秒)[0] or ""
                 码 = 跑.returncode
             except subprocess.TimeoutExpired:
-
-
                 subprocess.run(["taskkill", "/F", "/T", "/PID", str(跑.pid)],
                                capture_output=True)
                 try:
@@ -95,7 +91,6 @@ def 主程序():
                     pass
                 码 = 124
         except Exception as 错:
-
             码 = -1
             原 = "本轮跑法异常：%r" % (错,)
 
@@ -107,8 +102,6 @@ def 主程序():
         m = 摘要.search(原)
         if m:
             共, 用了 = m.group(1), m.group(2)
-
-
         四 = {"通过": "0", "失败": "0", "跳过": "0", "超时": "0", "无计数": "0"}
         汇总行 = ""
         行们 = 原.splitlines()
@@ -127,7 +120,6 @@ def 主程序():
 
         跑后有 = 有人听吗()
         跑后语音 = 有人听吗(口语音)
-
 
         有失败 = 解析不出 or any(v and v != "0" for k, v in 四.items() if k != "通过")
         if 有失败 or 码 not in (0, None):
@@ -154,7 +146,6 @@ def 主程序():
                                "有" if 跑后语音 else "空"]) + "\n")
 
         if i < 轮数:
-
             睡 = max(0.0, 间隔分 * 60 - (time.time() - 这轮起))
             print("  下一轮隔 %.1f 分钟" % (睡 / 60.0), flush=True)
             time.sleep(睡)

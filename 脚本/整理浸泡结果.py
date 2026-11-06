@@ -1,5 +1,3 @@
-
-
 import io
 import os
 import re
@@ -21,7 +19,6 @@ def 解析一轮(文本):
         if 行.strip():
             汇总 = 行.strip()
             break
-
     if not re.fullmatch(r"(?:(?:通过|失败|跳过|超时|无计数)\s*\d+\s*)+", 汇总):
         return None
     计 = {"通过": 0, "失败": 0, "跳过": 0, "超时": 0, "无计数": 0}
@@ -40,13 +37,11 @@ def 读一轮(路):
     果 = 解析一轮(文本)
     if 果 is None:
         return None
-
     if "原来没服务，跑法自己起了一个" in 文本:
         果["服务"] = "自己起"
     elif "已经有一个服务" in 文本:
         果["服务"] = "用现成的"
     else:
-
         果["服务"] = "**没起成**"
     return 果
 
@@ -67,7 +62,6 @@ def 自测():
     崩了 = "共 32 条自检，用了 10 秒\n  ✓ 检查_MCP.py   通过   全部 19 项通过\n"
     assert 解析一轮(崩了) is None, "**没有汇总行却被当成了能解析**"
 
-
     骗 = ("共 32 条自检，用了 10 秒\n"
          "  检查_某条.py 说：通过 3\n")
     assert 解析一轮(骗) is None, "**拿字符串当计数证据了**"
@@ -80,8 +74,6 @@ def 主程序():
     global 出目录
     if "--自测" in sys.argv:
         return 自测()
-
-
     参数 = [一 for 一 in sys.argv[1:] if not 一.startswith("--")]
     if 参数:
         出目录 = 参数[0]
@@ -108,7 +100,6 @@ def 主程序():
             总[k] += 果[k]
         if 果["服务"] == "**没起成**":
             没起服务.append(n)
-
         if 果["失败"] or 果["超时"] or 果["无计数"] or 果["跳过"]:
             非绿轮.append(n)
         行.append("| %s | %d | %d | %d | %d | %d | %d | %d | %s | %s |" % (
@@ -131,7 +122,6 @@ def 主程序():
     io.open(写, "w", encoding="utf-8", newline="").write(文 + "\n")
     print()
     print("（也写到了 " + 写 + "）")
-
     if 解析不出 or len(若) != 期望轮数:
         return 1
     return 0

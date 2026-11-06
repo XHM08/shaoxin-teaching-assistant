@@ -84,7 +84,6 @@ def 读台账(输出目录):
         with open(路径, "r", encoding="utf-8") as 文件:
             return json.load(文件)
     except Exception:
-
         return {}
 
 
@@ -130,7 +129,6 @@ def 合成整份(课件路径, 语速=1.0, 警告=None):
         备注印 = 课件.文本指纹(一页["备注"])
         文字印 = 课件.文本指纹(一页["文字"])
         旧这页 = 旧页.get(号) or {}
-
         能用旧 = (旧这页.get("备注指纹") == 备注印
                 and 旧这页.get("文件") == 文件名
                 and 旧语速 == 语速

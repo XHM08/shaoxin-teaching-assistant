@@ -47,7 +47,6 @@ def 问(口, 数据):
 def 主程序():
     结论 = []
 
-
     结论.append(("产物里有 邵新.exe", os.path.isfile(exe路径)))
     配置路径 = os.path.join(产物目录, "服务商.json")
     结论.append(("产物里有 服务商.json", os.path.isfile(配置路径)))
@@ -71,7 +70,6 @@ def 主程序():
     if not 当前服务商:
         return 报(结论, "服务商.json 里 default 是空的")
 
-
     口 = 空端口()
     把手 = open(os.path.join("C:/tmp", "演示就绪.log"), "w", encoding="utf-8")
     跑 = subprocess.Popen([exe路径, "服务"], cwd=产物目录,
@@ -85,7 +83,6 @@ def 主程序():
                 with urllib.request.urlopen("http://127.0.0.1:%d/" % 口, timeout=2) as 答:
                     通了 = "邵新" in 答.read().decode("utf-8", "ignore")
             except Exception:
-
                 pass
             if 通了:
                 break
@@ -103,10 +100,8 @@ def 主程序():
                     len(当条) == 1))
         if 当条:
             状态 = str(当条[0].get("密钥") or "")
-
             结论.append(("当前那家（%s）的密钥状态是「%s」，不是未配置" % (当条[0]["代号"], 状态),
                         bool(状态) and "未配置" not in 状态))
-
 
         漏了 = [k for k in 密钥们 if k and k in 正文]
         结论.append(("返回的正文里不出现任何一把真密钥（比了 %d 把）" % len(密钥们), not 漏了))
@@ -119,7 +114,6 @@ def 主程序():
         if 跑.poll() is None:
             subprocess.run(["taskkill", "/F", "/T", "/PID", str(跑.pid)], capture_output=True)
         把手.close()
-
 
     过, 说明 = 不接管陌生服务()
     结论.append(("跑法不接管陌生服务（私人端口上装个冒充的，它应当拒绝并退出 2）" + 说明, 过))

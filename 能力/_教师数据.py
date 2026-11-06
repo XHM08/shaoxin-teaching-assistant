@@ -6,7 +6,6 @@ import time
 
 from 地基 import 配置
 
-
 教师数据锁 = threading.RLock()
 
 

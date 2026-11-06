@@ -16,7 +16,6 @@ sys.path.insert(0, 根)
 要确认的 = "_会写盘.py"
 超时秒 = 290
 
-
 服务_我起的 = None
 日志把手 = []
 
@@ -74,8 +73,6 @@ def 关服务():
 def 起服务():
     global 服务_我起的, 跑法端口
     if 服务在吗():
-
-
         print("（%d 上已经有一个邵新的服务；**判据分不出它是哪个 build**，所以不借它）" % 端口号())
         跑法端口 = 空端口()
         os.environ["SHAOXIN_PORT"] = str(跑法端口)
@@ -83,7 +80,6 @@ def 起服务():
     else:
         跑法端口 = 端口号()
     if 端口被占():
-
         print("！%d 上有个东西在听，但它不是邵新的服务（拿不到含「邵新」的页面）。" % 端口号())
         print("  先把它关掉再跑。查是谁：netstat -ano | findstr :%d" % 端口号())
         print("  再 taskkill /F /T /PID <上面那个 PID>。这次不接它，免得结果说不清是谁的问题。")
@@ -105,8 +101,6 @@ def 起服务():
 
 
 def 分类(码, 输出):
-
-
     结论词 = (r"项通过|通过数|都对得上|都画得出来|(?<!不)正常。|个能力和|与现场一致|处对不上"
          r"|\d+\s*/\s*\d+|通过\s*\d+\s*/\s*共")
     if 码 == 0:
@@ -114,12 +108,8 @@ def 分类(码, 输出):
         if 说跳过 and not re.search(结论词, 输出):
             return "跳过", "它自己说了跳过/没验"
         if not re.search(结论词, 输出):
-
-
             return "无计数", "退出码 0，但没有可解析的收尾行。要看一眼"
         if 说跳过:
-
-
             return "通过", "（它同时说了跳过/没验，自己看一眼那几句）"
         return "通过", ""
     if 码 == 3:
@@ -150,8 +140,6 @@ def main():
                 try:
                     码 = 跑.wait(timeout=超时秒)
                 except subprocess.TimeoutExpired:
-
-
                     subprocess.run(["taskkill", "/F", "/T", "/PID", str(跑.pid)],
                                    capture_output=True)
                     try:

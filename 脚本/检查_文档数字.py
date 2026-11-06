@@ -12,11 +12,10 @@ from 地基 import 配置, 注册表, 工具箱
 桌面 = os.path.dirname(根)
 
 相对文档 = [
-    os.path.join("内部文档", "README.md"),
-    os.path.join("内部文档", "knowledge", "00-项目概要.md"),
+    os.path.join("科赛", "README.md"),
+    os.path.join("科赛", "knowledge", "00-项目概要.md"),
 ]
 简报样式 = os.path.join(桌面, "邵新-交接简报-*.md")
-
 
 快照文件 = ("邵新-交接简报-",)
 
@@ -39,7 +38,6 @@ def main():
     数 = 现场数字()
     print("  现场：%d 个能力 / %d 个工具 / %d 个页面" % (数["能力"], 数["工具"], 数["页面"]))
     if min(数.values()) <= 0:
-
         print("  ✗ 加载失败：现场数字算出来是 0，先查 能力/ 与 网页/首页.html 是不是读不到")
         return 1
 

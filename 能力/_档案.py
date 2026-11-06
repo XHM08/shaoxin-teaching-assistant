@@ -6,9 +6,7 @@ import time
 
 from 地基 import 落盘, 配置
 
-
 档案锁 = threading.RLock()
-
 
 保留设备名 = ({"CON", "PRN", "AUX", "NUL", "CLOCK$"}
             | {"COM%d" % 号 for 号 in range(1, 10)}
@@ -19,9 +17,7 @@ from 地基 import 落盘, 配置
 对照表目录名 = "对照表"
 对照表文件名 = "姓名对照表.json"
 
-
 保留目录 = {对照表目录名}
-
 
 阻断说明 = (
     "本模块涉及学生数据。\n"
@@ -74,8 +70,6 @@ def 读JSON(路径, 空值, 名字, 期望类型):
     with open(路径, "r", encoding="utf-8") as 文件:
         原文 = 文件.read()
     if not 原文.strip():
-
-
         raise ValueError(
             名字 + " 是空的（0 字节）：\n" + 路径
             + "\n软件不会覆盖它：请先人工核对；确实要当「还没登记」就从备份恢复或删掉它。"
@@ -96,7 +90,6 @@ def 读JSON(路径, 空值, 名字, 期望类型):
 
 
 def 校验编号(编号):
-
     编号 = str(编号 or "").strip().upper()
     if not 编号:
         raise ValueError("学生编号不能为空。")
@@ -139,18 +132,12 @@ def 注册(编号, 姓名="", 学号="", 年级="", 班级="", 备注="", 家长
     要求已签()
     编号 = 校验编号(编号)
     if not str(姓名 or "").strip():
-
-
         raise ValueError("姓名不能为空。")
     with 档案锁:
-
-
         if 已注册(编号):
             raise ValueError("这个编号已经注册过了：" + 编号)
 
         名册 = 读名册()
-
-
         名册.append({"编号": 编号, "注册时间": time.strftime("%Y-%m-%d %H:%M:%S")})
         os.makedirs(数据目录(), exist_ok=True)
         写名册(名册)
@@ -160,15 +147,11 @@ def 注册(编号, 姓名="", 学号="", 年级="", 班级="", 备注="", 家长
 
 
 def 记资料(编号, 姓名, 学号="", 年级="", 班级="", 备注="", 家长同意书=""):
-
-
     要求已签()
     编号 = 校验编号(编号)
     if not 已注册(编号):
         raise ValueError("这个编号还没注册：" + 编号 + "，先注册再填资料。")
     if not str(姓名 or "").strip():
-
-
         raise ValueError("姓名不能为空：对照表就靠它认人，不许用空值覆盖。")
 
     with 档案锁:
@@ -198,7 +181,6 @@ def 记一条(编号, 内容):
     编号 = 校验编号(编号)
     一条 = dict(内容)
     一条.setdefault("时间", time.strftime("%Y-%m-%d %H:%M:%S"))
-
 
     with 档案锁:
         os.makedirs(学生目录(编号), exist_ok=True)

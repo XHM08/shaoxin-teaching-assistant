@@ -44,7 +44,6 @@ def 读或初始化():
         with open(路径, "r", encoding="utf-8") as 文件:
             return 路径, json.load(文件)
 
-
     示例 = os.path.join(配置.根目录, "服务商.示例.json")
     if not os.path.isfile(示例):
         raise ValueError("既没有 服务商.json 也没有 服务商.示例.json，无法初始化。")
@@ -86,7 +85,6 @@ def 处理保存(服务商, 模型="", 接口地址="", 密钥变量名="", 密�
 
     if str(设为当前).strip() in ("是", "true", "True", "1"):
         配置表["default"] = 服务商
-
 
     落盘.原子写文本(路径, json.dumps(配置表, ensure_ascii=False, indent=2))
 

@@ -18,6 +18,7 @@ exe路径 = os.path.join(产物目录, "邵新.exe")
     os.path.join("网页", "首页.html"),
     os.path.join("网页", "样式.css"),
     os.path.join("网页", "首页.js"),
+    os.path.join("网页", "形象", "待机.webp"),
     os.path.join("地基", "版本.py"),
     os.path.join("地基", "本机OCR.ps1"),
     os.path.join("能力", "课件生成.py"),
@@ -28,8 +29,9 @@ exe路径 = os.path.join(产物目录, "邵新.exe")
     "邵新.ico",
 ]
 绝不能有 = ["密钥", "学生数据", "材料", "课件输出", "技能包", "日志", "教师数据",
+        os.path.join("网页", "形象预览.html"),
+        os.path.join("网页", "形象预览.js"),
         "设计", ".git", os.path.join("语音", "参考音")]
-
 
 发布版配置 = '{\n  "合规": {\n    "同意书已签": false\n  }\n}\n'
 
@@ -78,6 +80,17 @@ def 换发布版配置():
     return 路径
 
 
+开发用文件 = [os.path.join("网页", "形象预览.html"), os.path.join("网页", "形象预览.js")]
+
+
+def 清理开发用文件():
+    for 相对 in 开发用文件:
+        路 = os.path.join(产物目录, 相对)
+        if os.path.isfile(路):
+            os.remove(路)
+            print("  已从包里删掉开发用文件：" + 相对)
+
+
 def 核对():
     坏的 = []
     for 相对 in 必须有:
@@ -91,7 +104,6 @@ def 核对():
     elif os.path.getsize(exe路径) < 1024 * 1024:
         坏的.append("exe 太小（%d 字节），像是打包被截断了"
                    % os.path.getsize(exe路径))
-
 
     配置路径 = os.path.join(产物目录, "配置.json")
     if not os.path.isfile(配置路径):
@@ -147,7 +159,6 @@ def 冒烟服务():
                     if "邵新" in 答.read().decode("utf-8", "ignore"):
                         return True, "「服务」在空端口 %d 上应答了" % 口
             except Exception:
-
                 pass
             time.sleep(0.5)
         return False, "「服务」30 秒没应答（原文见 " + 日志 + "）"
@@ -182,6 +193,7 @@ def 主程序():
         return 1
 
     换发布版配置()
+    清理开发用文件()
     坏的 = 核对()
     if 坏的:
         print("产物核对不通过：")
@@ -202,7 +214,6 @@ def 主程序():
             成, 说明 = 函数()
             print(("冒烟通过「%s」：" % 名字 if 成 else "冒烟失败「%s」：" % 名字) + 说明)
             坏 += 0 if 成 else 1
-
         码 = subprocess.run([sys.executable,
                          os.path.join(项目根, "脚本", "验客户端生命周期.py")]).returncode
         print(("冒烟通过「关窗清理」" if 码 == 0 else "冒烟失败「关窗清理」")

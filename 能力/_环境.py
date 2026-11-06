@@ -18,7 +18,6 @@ VSCODE安装位置 = (
      "winget": "Git.Git"},
     {"id": "vscode", "名称": "VS Code", "用途": "写代码的编辑器",
      "winget": "Microsoft.VisualStudioCode"},
-
     {"id": "wsl", "名称": "WSL（Linux 子系统）", "用途": "在 Windows 里跑 Linux",
      "winget": ""},
 ]
@@ -40,7 +39,6 @@ def 取环境项(环境代号):
     "code": r"^\d+\.\d+\.\d+",
 }
 
-
 跑不起来的提示 = {
     "python": ("找到的 python 跑不出正常版本号。多半是 Windows 应用商店的那个「别名桩」："
                "没装 Python 也会有这个 python.exe，运行它只会打开应用商店，系统这边就永远找不到真的 python。\n"
@@ -60,7 +58,6 @@ def _跑不起来说明(命令名):
 
 
 def _解析可执行文件(命令名):
-
     路径 = shutil.which(命令名)
     if not 路径:
         return None

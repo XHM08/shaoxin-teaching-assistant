@@ -27,8 +27,6 @@ def 检查(名字, 通过, 说明=""):
 
 
 def 取(基址, 路径, 方法="GET", 体=None, 带令牌=True, 来源="默认"):
-
-
     路径部分, _, 查询 = 路径.partition("?")
     对 = dict(parse_qsl(查询)) if 查询 else {}
     if 带令牌:
@@ -79,8 +77,6 @@ for 坏例, 关键词, 说明 in (("   ", "空的", "空内容"), ("字" * 300, 
            str(异常)[:44])
 
 课堂留言.清空()
-
-
 起 = 课堂留言.取新的(0)
 起共 = 起["共"]
 号首 = None
@@ -95,7 +91,6 @@ for 号 in range(520):
     % (满["共"], 起共, 满["丢过"], 满["留言"][0]["序号"], 号首))
 课堂留言.清空()
 
-
 规格 = importlib.util.spec_from_file_location(
     "本地服务模块", os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "本地服务.py"))
 模块 = importlib.util.module_from_spec(规格)
@@ -103,7 +98,6 @@ for 号 in range(520):
 服务 = http.server.ThreadingHTTPServer(("127.0.0.1", 0), 模块.请求处理)
 基址 = "http://127.0.0.1:%d" % 服务.server_address[1]
 threading.Thread(target=服务.serve_forever, daemon=True).start()
-
 模块.本机来源 = tuple(模块.本机来源) + (基址,)
 
 原问 = 模块.大模型.问
@@ -117,7 +111,6 @@ def 假问(*a, **k):
 
 模块.大模型.问 = 假问
 try:
-
     码1, 文1 = 取(基址, "/api/记留言", "POST", {"谁": "老师转述", "内容": "学生问：为什么交换分子分母"})
     码2, 文2 = 取(基址, "/api/记留言", "POST", {"谁": "老师转述", "内容": "学生问：零为什么没有倒数"})
     检查("⑦ 按键后记一条：200 且有回执（回的来源是「窗口」）",
@@ -129,7 +122,6 @@ try:
     检查("⑧ 按序号增量取：拿第 1 条的序号去取，只回第 2 条",
         码 == 200 and len(增量) == 1 and int(增量[0]["序号"]) > int(首序号),
         "码=%s 回 %d 条（序号 %s）" % (码, len(增量), [x["序号"] for x in 增量]))
-
 
     检查("⑨ 按键之前，模型一次都没被调过（触发式的命门：不按不花钱）",
         len(问过) == 0, "已调 %d 次" % len(问过))
@@ -160,21 +152,17 @@ try:
     检查("⑭ 网络来路：不带令牌 403 / 坏来源 403 / 好来源 200",
         码不 == 403 and 码坏 == 403 and 码好 == 200, "不带=%s 坏源=%s 好源=%s" % (码不, 码坏, 码好))
 
-
     码1, _ = 取(基址, "/api/学生留言", "POST", {"内容": "x"})
     码2, _ = 取(基址, "/api/学生入口")
     检查("⑮ 手机那条路已经删掉（/api/学生留言 与 /api/学生入口 都 404）",
         码1 == 404 and 码2 == 404, "码=%s/%s" % (码1, 码2))
     页 = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "网页", "学生.html")
     检查("⑯ 学生自助页也没留下（学校禁手机，就不该有这个页面）", not os.path.isfile(页), 页)
-
-
     样本根 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     规格2 = importlib.util.spec_from_file_location("课堂悬浮窗模块", os.path.join(样本根, "课堂悬浮窗.py"))
     窗模块 = importlib.util.module_from_spec(规格2)
     规格2.loader.exec_module(窗模块)
     窗模块.地址 = 基址
-
 
     class 假窗:
         已看到 = 0
@@ -207,8 +195,6 @@ try:
     坏了 = bool(余清 and 余清[0])
     检查("⑳ 清屏没成时说出来、而且标成坏消息（用红字，不再用成功色）",
         类清 == "提示" and "清屏没成" in 文清 and 坏了, "%s：%s 坏消息=%s" % (类清, 文清[:40], 坏了))
-
-
     发出去的 = {}
     假递 = type("假递", (), {})()
     假递.队 = queue.Queue()
@@ -227,7 +213,6 @@ try:
                                              (发出去的.get("数据") or {}).get("能力"),
                                              sorted(参), 类反, 成了))
 
-
     能力目录 = os.path.join(样本根, "能力")
     注册表.全部加载(能力目录)
     检查("㉑b 注册表里真有「记反馈」这个能力（窗口与网页写的是同一个代号）",
@@ -243,13 +228,11 @@ finally:
         os.environ["SHAOXIN_TOKEN"] = 原令牌环境
     课堂留言.清空()
 
-
 窗源码 = io.open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                            "课堂悬浮窗.py"), encoding="utf-8").read()
 缺键 = [x for x in ("接受学生发言（按一下）", "清屏", "现在刷新", "提反馈") if x not in 窗源码]
 检查("⑰ 窗口源码里四个键都在（静态核对：触发键与提反馈是额外新增的，不是把旧的换掉）",
     not 缺键, "缺：" + str(缺键) if 缺键 else "接受学生发言 / 清屏 / 现在刷新 / 提反馈")
-
 
 try:
     课堂留言.清空()

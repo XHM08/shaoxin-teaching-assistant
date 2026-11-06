@@ -25,11 +25,7 @@ class 取地址(HTMLParser):
 
 
 def 查元素id(原文, 页面名, 问题):
-
-
     有定义 = set(re.findall(r'id="([^"]+)"', 原文))
-
-
     被引用 = set(名字 for 名字 in re.findall(r"\$\('([^']+)'\)", 原文)
                 if not 名字.startswith((".", "#", "[", " ")))
     被引用 |= set(re.findall(r'getElementById\("([^"]+)"\)', 原文))
@@ -54,7 +50,6 @@ def 查导航与视图(原文, 问题):
     脚本 = re.search(r"const VIEWS\s*=\s*\[([^\]]*)\]", 原文)
     声明们 = re.findall(r"'([^']+)'", 脚本.group(1)) if 脚本 else []
     入口 = re.findall(r'data-go="([^"]+)"', 原文)
-
 
     if not 视图:
         问题.append("一个 <section id=view-*> 都没解析到。解析逻辑可能已经失效")
@@ -84,14 +79,11 @@ def main():
         print("  找不到首页：" + 首页)
         return 1
 
-
     import _页面文本
     标记文 = _页面文本.读标记()
     原文 = _页面文本.读页面()
 
     解析器 = 取地址()
-
-
     解析器.feed(标记文)
 
     从首页抽到的 = []
@@ -109,7 +101,6 @@ def main():
 
     if not 从首页抽到的:
         print("  提示：从首页一个本地地址都没抽到，抽地址的逻辑可能已经失效")
-
 
     要查的 = ["/", "/网页/首页.html", "/网页/首页.js", "/网页/样式.css"]
     for 一个 in 从首页抽到的:
@@ -129,7 +120,6 @@ def main():
         磁盘 = 首页 if 地址 in ("/", "") else os.path.join(
             根, 地址.lstrip("/").replace("/", os.sep))
         磁盘OK = os.path.isfile(磁盘)
-
 
         期望类型 = None
         if 地址.endswith(".css"):
@@ -151,15 +141,12 @@ def main():
         else:
             网页码 = "（服务没起）"
 
-
         类型OK = (期望类型 is None or 实际类型.lower() == 期望类型.lower())
         好 = 磁盘OK and 类型OK and 网页码 == 200
         标注 = ""
         if not 磁盘OK:
             标注 = "← 磁盘上没这个文件"
         elif not 服务活着:
-
-
             标注 = "← 服务没起，这一项根本没验到"
         elif not 类型OK:
             标注 = "← 内容类型应是 %s，实际 %s" % (期望类型, 实际类型)
@@ -170,14 +157,12 @@ def main():
         if not 磁盘OK:
             问题.append(地址 + "（磁盘上没这个文件）")
         elif 服务活着 and not 好:
-
             问题.append(地址)
 
     if 相对引用:
         print("\n  以下地址是相对引用，按页面目录解析，这次没查（抽地址的逻辑只认站点绝对路径）：")
         for 一条 in sorted(set(相对引用)):
             print("    " + 一条)
-
 
     脚本段 = 取脚本段(原文)
     if 脚本段 is None:
@@ -192,9 +177,7 @@ def main():
     else:
         print("\n  JS 里没有现场拼的本地地址。")
 
-
     查导航与视图(原文, 问题)
-
 
     for 一个 in sorted(os.listdir(os.path.join(根, "网页"))):
         if not 一个.endswith(".html") or 一个.startswith("_"):
@@ -209,8 +192,6 @@ def main():
         return 1
 
     if not 服务活着:
-
-
         print("\n  磁盘、id、导航都对得上；服务没起，HTTP 与内容类型这半没验到。")
         print("  （按约定返回 3 = 跳过：先双击 启动.bat 或 python 本地服务.py，再跑这一条）")
         return 3

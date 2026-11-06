@@ -23,7 +23,6 @@ from 地基 import 材料
 
 
 def 记(名字, 通过, 说明):
-
     结果.append((名字, bool(通过), 说明))
 
 
@@ -46,6 +45,7 @@ def 拒了吗(动作, 关键词=""):
             return False, "拒是拒了，但话不对：" + str(异常)[:50]
         return True, "拒了：" + str(异常)[:50]
     return False, "居然放行了，拿到：" + str(值)[:50]
+
 
 
 def 写docx(路径, 段落表):
@@ -86,7 +86,6 @@ def 写xlsx共享(路径):
         包.writestr("[Content_Types].xml", "<Types/>")
         包.writestr("xl/workbook.xml",
                   "<workbook xmlns=\"" + 表 + "\"><sheets><sheet name=\"成绩\"/></sheets></workbook>")
-
         包.writestr("xl/sharedStrings.xml",
                   "<sst xmlns=\"" + 表 + "\"><si><t>张三</t></si>"
                   "<si><r><t>李</t></r><r><t>四</t></r></si></sst>")
@@ -102,8 +101,6 @@ def _一格(表, 文):
 
 
 def 写xlsx错序(路径):
-
-
     表 = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
     关系 = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"
     包件 = "http://schemas.openxmlformats.org/package/2006/relationships"
@@ -123,7 +120,6 @@ def 写xlsx错序(路径):
 
 
 def 写xlsx空列(路径):
-
     表 = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
     with zipfile.ZipFile(路径, "w") as 包:
         包.writestr("[Content_Types].xml", "<Types/>")
@@ -149,7 +145,6 @@ def 读(name):
 
 
 def 取提示块(页面文本, 起点):
-
     头 = 页面文本.find(起点)
     if 头 < 0:
         return None
@@ -173,11 +168,9 @@ def 假取目录(目录名, 配置表=None):
 try:
     配置.取目录 = 假取目录
 
-
     该能读 = [".docx", ".pptx", ".xlsx", ".pdf", ".txt", ".md", ".csv", ".json", ".html", ".htm"]
     错 = [e for e in 该能读 if not 材料.能读("x" + e)[0]]
     记("格式表：常见的这十来种都算能读", not 错, "不能读的：" + str(错) if 错 else "十种全部判为能读")
-
 
     越权 = ["../x.txt", "a/../../b.txt", "/etc/passwd", "C:/Windows/win.ini", "C:x.txt",
            "..", "a//b.txt", "a/./b.txt", ""]
@@ -186,7 +179,6 @@ try:
       "放行的：" + str(没拦住) if 没拦住 else str(len(越权)) + " 种全被拒")
     记("一级子目录的相对名是合法的（口径统一成子目录也算之后）",
      材料.校验材料名("a/b.txt") == "a/b.txt", repr(材料.校验材料名("a/b.txt")))
-
 
     with open(os.path.join(临时, "GBK的.txt"), "wb") as 文件:
         文件.write("中文编码测试".encode("gbk"))
@@ -198,26 +190,22 @@ try:
     读出来的 = 读("带BOM.md")
     记("带 BOM 的 .md 能读", 读出来的 == "带BOM的正文", "读到：" + repr(读出来的))
 
-
     with open(os.path.join(临时, "没后缀的稿子"), "wb") as 文件:
         文件.write("这是一份没有后缀的纯文本".encode("utf-8"))
     读出来的 = 读("没后缀的稿子")
     记("没有后缀的文件按文本读（不因缺后缀就拒）",
       读出来的 == "这是一份没有后缀的纯文本", "读到：" + repr(读出来的))
 
-
     写docx(os.path.join(临时, "教案.docx"), ["第一段正文", "Second para"])
     读出来的 = 读("教案.docx")
     记(".docx 抽出段落文字", "第一段正文" in 读出来的 and "Second para" in 读出来的,
       "读到：" + repr(读出来的[:60]))
-
 
     写pptx(os.path.join(临时, "课件.pptx"), ["第一页的话", "第二页的话"])
     读出来的 = 读("课件.pptx")
     记(".pptx 按页抽文字且页序对",
       读出来的.find("第一页的话") >= 0 and 读出来的.find("第一页的话") < 读出来的.find("第二页的话"),
       "读到：" + repr(读出来的[:80]))
-
 
     写xlsxinline(os.path.join(临时, "花名册.xlsx"), [["张三", "李四"], ["王五", 95]])
     读出来的 = 读("花名册.xlsx")
@@ -230,7 +218,6 @@ try:
     记(".xlsx（sharedStrings 那种，且一格里的富文本拼得起来）",
       "张三" in 读出来的 and "李四" in 读出来的 and "95" in 读出来的,
       "读到：" + repr(读出来的[:80]))
-
 
     with open(os.path.join(临时, "网页.html"), "w", encoding="utf-8") as 文件:
         文件.write("<html><head><style>p{color:red}</style></head><body>"
@@ -245,7 +232,6 @@ try:
         文件.write("姓名,分数\n张三,95\n")
     读出来的 = 读("成绩.csv")
     记("csv 能读", "张三" in 读出来的 and "95" in 读出来的, "读到：" + repr(读出来的[:40]))
-
 
     造PDF的库 = None
     for 名字 in ("pymupdf", "fitz"):
@@ -282,7 +268,6 @@ try:
             记("PDF：没有文字层 + 本机没有 OCR → 报清楚而不是崩栈",
               (not 好) and isinstance(值, ValueError) and "没有文字层" in str(值),
               "拿到：" + type(值).__name__ + "：" + str(值)[:60])
-
 
     with open(os.path.join(临时, "一张图.png"), "wb") as 文件:
         文件.write(一号PNG)
@@ -343,11 +328,9 @@ try:
           "拿到：" + type(值).__name__ + "：" + str(值)[:60])
         跳过一项("图片：本机 OCR 认得出图上的字", "这台机器没有可用的本机 OCR")
 
-
     可读, 说明 = 材料.能读("老教案.doc")
     记("旧版 .doc：判为不能读，且让人「另存为」", (not 可读) and "另存为" in 说明,
       "提示：" + 说明[:50])
-
 
     with open(os.path.join(临时, "太大.txt"), "wb") as 文件:
         文件.truncate(材料.单文件上限 + 1024)
@@ -355,7 +338,6 @@ try:
     记("超过单文件上限就拒，且提示里带上实际大小",
       (not 好) and isinstance(值, ValueError) and "MB" in str(值),
       "拿到：" + type(值).__name__ + "：" + str(值)[:60])
-
 
     with open(os.path.join(临时, "假的.docx"), "wb") as 文件:
         文件.write(b"this is plain text pretending to be a docx")
@@ -371,7 +353,6 @@ try:
     记("包里的条目数超上限就拒", (not 好) and isinstance(值, ValueError) and "超过上限" in str(值),
       "拿到：" + str(值)[:60])
 
-
     with open(os.path.join(临时, "很长.txt"), "w", encoding="utf-8") as 文件:
         文件.write("啊" * (材料.抽取字上限 + 500))
     读出来的 = 读("很长.txt")
@@ -379,7 +360,6 @@ try:
       材料.抽取字上限 <= len(读出来的) <= 材料.抽取字上限 + 80 and "已截断" in 读出来的,
       "长度 " + str(len(读出来的)) + "（上限 " + str(材料.抽取字上限) + "），末尾："
       + repr(读出来的[-24:]))
-
 
     with open(os.path.join(临时, "说明.md"), "w", encoding="utf-8") as 文件:
         文件.write("说明不该算材料")
@@ -389,7 +369,6 @@ try:
     记("材料清单：排除 说明.md、带格式与能不能读",
       "说明.md" not in 名字集 and 字段齐 and ("教案.docx" in 名字集),
       "共 " + str(len(清单)) + " 条，字段齐=" + str(字段齐) + "，含 教案.docx=" + str("教案.docx" in 名字集))
-
 
     with open(os.path.join(临时, "UTF16的.txt"), "wb") as 文件:
         文件.write("记事本存出来的Unicode文本".encode("utf-16"))
@@ -438,7 +417,6 @@ try:
     记("xlsx 空单元格也占位（后面的列不串到前面）",
       "甲\t\t一班" in 读出来的, "读到：" + repr(读出来的[:60]))
 
-
     os.makedirs(os.path.join(参考临时, "政策文件"), exist_ok=True)
     with open(os.path.join(临时, "老师自己的教案.txt"), "w", encoding="utf-8") as 文件:
         文件.write("这位老师的讲法")
@@ -461,7 +439,6 @@ try:
       "别人公开的教案.txt" not in 材料名 and "政策文件/省文件.docx" not in 材料名
       and "老师自己的教案.txt" not in 参考名,
       "材料侧 " + str(len(材料名)) + " 条，参考侧 " + str(len(参考名)) + " 条")
-
 
     子 = os.path.join(临时, "水循环")
     os.makedirs(子, exist_ok=True)
@@ -514,7 +491,6 @@ try:
     finally:
         配置.取目录 = 假取目录
 
-
     try:
         缓冲 = io.StringIO()
         with contextlib.redirect_stdout(缓冲):
@@ -522,8 +498,6 @@ try:
         选项 = 本地服务.取选项("材料")
         记("下拉框能列出新格式的材料", "教案.docx" in 选项 and "课件.pptx" in 选项,
           "共 " + str(len(选项)) + " 项，含新格式=" + str("教案.docx" in 选项))
-
-
         进了 = [名 for 名 in ("别人公开的教案.txt", "政策文件/省文件.docx") if 名 in 选项]
         记("公开参考资料不进蒸馏下拉", not 进了,
           "下拉 " + str(len(选项)) + " 项" + ("，混进去的：" + str(进了) if 进了 else "，一个都没混进去"))
@@ -531,14 +505,12 @@ try:
         跳过一项("下拉框能列出新格式的材料", "没法安全导入本地服务：" + type(异常).__name__)
         跳过一项("公开参考资料不进蒸馏下拉", "同上")
 
-
     脚本字节 = open(os.path.join(根, "地基", "本机OCR.ps1"), "rb").read()
     非ASCII = [b for b in 脚本字节 if b > 127]
     记("OCR 脚本是纯 ASCII（那条硬规则有测试守着，不靠注释自律）",
       not 非ASCII,
       ("非 ASCII 字节 " + str(len(非ASCII)) + " 个") if 非ASCII
       else ("全部 " + str(len(脚本字节)) + " 字节都在 0-127"))
-
 
     def 在仓库里():
         try:
@@ -560,7 +532,6 @@ try:
         记("参考资料默认不进版本库，但 说明.md 能进",
           教材被挡 and 说明能进,
           "某教材.pdf 被忽略=" + str(教材被挡) + "，说明.md 可提交=" + str(说明能进))
-
 
     页面 = _页面文本.读页面()
     蒸馏块 = 取提示块(页面, "材料放在 <code>材料/</code>")

@@ -1,5 +1,4 @@
 
-
 import os
 import sys
 
@@ -35,21 +34,17 @@ def 主程序():
         print("字形尺寸反常（%dx%d）：多半是字体里没有「%s」这个字" % (宽, 高, 字))
         return 1
 
-
     笔.text(((画布 - 宽) / 2 - 左, (画布 - 高) / 2 - 上), 字, font=font, fill=字色)
 
     直方图 = 图.convert("L").histogram()
     墨迹 = sum(直方图[201:])
     占比 = 墨迹 / float(画布 * 画布)
-
-
     if not 0.15 <= 占比 <= 0.40:
         print("墨迹占比 %.4f 不在 0.15~0.40。图标可能是空白，或糊成一团" % 占比)
         return 1
 
     图.save(图标路径, format="ICO", sizes=要的尺寸)
     图.resize((256, 256), Image.LANCZOS).save(预览路径)
-
 
     回 = Image.open(图标路径)
     实际 = sorted(回.info.get("sizes", []))

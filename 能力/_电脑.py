@@ -1,8 +1,9 @@
 
 import os
+import tempfile
+import shutil
 import subprocess
 import time
-
 
 需确认动作 = ("清临时文件", "清空回收站")
 
@@ -42,11 +43,20 @@ import time
 
 
 def 跑PowerShell(脚本, 超时=120):
-
-    结果 = subprocess.run(
-        ["powershell", "-NoProfile", "-NonInteractive", "-Command", 脚本],
-        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=超时)
-    return (结果.stdout or "").strip(), (结果.stderr or "").strip()
+    if any(ord(字) > 127 for 字 in 脚本):
+        raise ValueError("PowerShell 脚本必须纯 ASCII（PowerShell 5.1 读无 BOM 脚本按 ANSI 解码）")
+    目录 = tempfile.mkdtemp(prefix="邵新-ps-")
+    路 = os.path.join(目录, "跑.ps1")
+    try:
+        with open(路, "w", encoding="ascii", newline=chr(13) + chr(10)) as 文件:
+            文件.write(脚本)
+        结果 = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
+             "-File", 路],
+            capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=超时)
+        return (结果.stdout or "").strip(), (结果.stderr or "").strip()
+    finally:
+        shutil.rmtree(目录, ignore_errors=True)
 
 
 def 临时目录表():
@@ -171,9 +181,7 @@ def 要确认吗(代号):
 
 
 def 预览(代号):
-
     if 代号 == "清临时文件":
-
         信息 = 扫临时文件(缓存秒数=30)
         return 信息, ("将要清理 " + 信息["清理范围"] + " 下 1 小时没动过的文件，"
                       "预计释放 " + str(信息["可释放(MB)"]) + " MB。正在使用中的会跳过。\n"

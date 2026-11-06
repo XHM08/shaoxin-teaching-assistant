@@ -36,7 +36,6 @@ shutil.copyfile(真课件, 副本)
 shutil.rmtree(一个, ignore_errors=True)
 
 try:
-
     警告 = []
     开始 = time.time()
     位置 = 课件图.导出各页(副本, 警告)
@@ -58,14 +57,12 @@ try:
         any("已导出" in 一句 for 一句 in 警告) and not any("课件变了" in 一句 for 一句 in 警告),
         "；".join(警告)[:80])
 
-
     时间甲 = os.path.getmtime(第一个)
     time.sleep(1.1)
     警告 = []
     课件图.导出各页(副本, 警告)
     检查("⑤ 课件没变 → 不重导（图的原样时间没动）",
         os.path.getmtime(第一个) == 时间甲 and not 警告, "；".join(警告)[:60])
-
 
     from pptx import Presentation
     演示 = Presentation(副本)
@@ -77,7 +74,6 @@ try:
     检查("⑥ 课件变了 → 重导，而且这时才该说「课件改了」",
         os.path.getmtime(第一个) > 时间甲 and any("课件改了" in 一句 for 一句 in 警告),
         "；".join(警告)[:80])
-
 
     检查("⑦ 页图地址形状对（/课件图/<目录>/pageN.png，未编码）",
         课件图.页图地址(目录名, 2) == "/课件图/" + 目录名 + "/page2.png",

@@ -1,12 +1,9 @@
-
-
 import os
 import shutil
 import sys
 import tempfile
 
 根 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 代码类 = {".py": "Python", ".html": "网页", ".css": "样式", ".bat": "启动脚本",
         ".ps1": "PowerShell", ".spec": "打包配置", ".md": "文档与提示词",
@@ -76,7 +73,6 @@ def 自测():
         绿1 = 进了 == 该进
         绿2 = all(not 他.startswith(("dist/", "build/", "密钥/", "学生数据/", "材料/",
                                  "_备份/", "__pycache__/")) for 他 in 文件们)
-
         绿3 = "忽略.xyz" in 文件们 and ".xyz" not in 进了
 
         原先 = 不算的目录
@@ -131,7 +127,6 @@ def main():
           % (sum(n for _, n in 逐项) / 1048576))
     for d, n in 逐项:
         print("      %-12s %7.1f MB" % (d, n / 1048576))
-
 
     全量 = 0
     for 头, _, 文件们 in os.walk(根):

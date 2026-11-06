@@ -10,11 +10,40 @@ from 地基 import 审计, 配置
 
 默认超时 = 120
 
+import threading as _threading
+
+_本线程 = _threading.local()
+
+
+def _箱():
+    if not hasattr(_本线程, "思考"):
+        _本线程.思考 = []
+    return _本线程.思考
+
+
+def 解析思考(消息):
+    if not isinstance(消息, dict):
+        return ""
+    for 键 in ("reasoning_content", "reasoning", "thinking"):
+        值 = 消息.get(键)
+        if isinstance(值, str) and 值.strip():
+            return 值.strip()
+    return ""
+
+
+def 清空思考():
+    _本线程.思考 = []
+
+
+def 思考块们():
+    return [一 for 一 in _箱() if 一]
+
+
+def 取思考():
+    return (chr(10) + chr(10)).join(思考块们())
 
 图片类型 = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
           ".gif": "image/gif", ".webp": "image/webp"}
-
-
 单张图上限 = 8 * 1024 * 1024
 一批图上限 = 24 * 1024 * 1024
 图片边长上限 = 8192
@@ -50,7 +79,6 @@ def 边超限(路径):
 
 def 收拾一张图(路径):
     if not 图片能发吗(路径):
-
         raise ValueError("这张图不能发：不在 材料/ 或 参考资料/ 里，或者文件已不在、不是文件："
                          + os.path.basename(str(路径)))
     类型 = 图片类型.get(os.path.splitext(str(路径))[1].lower())
@@ -61,8 +89,6 @@ def 收拾一张图(路径):
         with open(路径, "rb") as 文件:
             字节 = 文件.read()
     except OSError:
-
-
         raise ValueError("这张图读不出来（被删掉、改了名，或没有读权限）："
                          + os.path.basename(str(路径))) from None
     if len(字节) <= 单张图上限 and not 边超限(路径):
@@ -94,8 +120,6 @@ def 拼内容(提示词, 图=None):
     if 图 is None or 图 == []:
         return 提示词
     if isinstance(图, (str, bytes)) or not isinstance(图, (list, tuple)):
-
-
         raise ValueError("图要传一串路径（列表），不能传单个字符串。")
     图表 = list(图)
     if len(图表) > 一次最多几张图:
@@ -107,20 +131,16 @@ def 拼内容(提示词, 图=None):
     for 一张 in 图表:
         标签 = None
         if isinstance(一张, (list, tuple)) and len(一张) == 2:
-
             标签, 一张 = str(一张[0]), 一张[1]
         字节, 类型 = 收拾一张图(一张)
         名字 = os.path.basename(str(一张))
         明细.append("%s %.1f MB" % (名字, len(字节) / 1048576))
-
-
         累计 = 累计 + len(字节)
         if 累计 > 一批图上限:
             raise ValueError("这批图加起来超过一次能发的 %.0f MB，请少选几张或先压缩。"
                              "已计入：%s"
                              % (一批图上限 / 1048576, "、".join(明细)))
         if 标签:
-
             块表.append({"type": "text", "text": 标签})
         块表.append({"type": "image_url",
                    "image_url": {"url": "data:" + 类型 + ";base64,"
@@ -142,7 +162,6 @@ def 取子表(表, 键):
     值 = 表.get(键) if isinstance(表, dict) else None
     return 值 if isinstance(值, dict) else {}
 
-
 假回复 = """---
 name: demo-teacher
 description: 演示用技能包，由假模式产生，用于验证流水线，不是真实教师。
@@ -162,7 +181,6 @@ description: 演示用技能包，由假模式产生，用于验证流水线，�
 def 读配置(配置文件路径=None):
     路径 = 配置文件路径 or 配置.服务商配置路径()
     if not os.path.exists(路径):
-
         示例 = os.path.join(配置.根目录, "服务商.示例.json")
         if not os.path.exists(示例):
             raise RuntimeError(
@@ -192,7 +210,6 @@ def 选服务商(配置表, 指定=None):
 
 
 def 校验服务商(名字, 条目):
-
     缺的 = [字段 for 字段 in 必填字段 if not str(条目.get(字段, "")).strip()]
     if 缺的:
         raise RuntimeError(
@@ -202,7 +219,6 @@ def 校验服务商(名字, 条目):
 
 
 def 查环境变量名(环境变量名):
-
     if 环境变量名 in ("", ".", "..") or any(字符 in 环境变量名 for 字符 in ("/", "\\", ":")):
         raise ValueError("密钥环境变量名不合法：" + repr(环境变量名))
 
@@ -226,7 +242,6 @@ def 取密钥(名字, 条目):
     if not 环境变量名:
         raise RuntimeError("服务商 " + repr(名字) + " 没写 key_env")
 
-
     密钥 = os.environ.get(环境变量名)
     if 密钥 and 密钥.strip():
         return 密钥.strip()
@@ -247,6 +262,87 @@ def 取密钥(名字, 条目):
     )
 
 
+def 流式问(提示词, 收到=None, 服务商=None, 随机度=0.3, 假模式=False,
+          超时=默认超时, 配置文件路径=None, 图=None):
+    if 假模式:
+        if 收到:
+            收到("回答", 假回复)
+        return 假回复
+
+    配置表 = 读配置(配置文件路径)
+    名字, 条目 = 选服务商(配置表, 服务商)
+    校验服务商(名字, 条目)
+    if 图 and not 服务商支持图(条目):
+        raise ValueError(
+            "服务商「" + str(名字) + "」（模型 " + str(条目.get("model")) + "）没标「支持图片」，"
+            "不能带图发。")
+    密钥 = 取密钥(名字, 条目)
+    网址 = 条目["base_url"].rstrip("/") + "/chat/completions"
+    内容 = 拼内容(提示词, 图)
+    请求体 = {
+        "model": 条目["model"],
+        "temperature": 随机度,
+        "messages": [{"role": "user", "content": 内容}],
+        "stream": True,
+        "stream_options": {"include_usage": True},
+    }
+    请求 = urllib.request.Request(
+        网址,
+        data=json.dumps(请求体).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + 密钥,
+            "Accept": "text/event-stream",
+        },
+    )
+
+    思考们, 回答们 = [], []
+    try:
+        with urllib.request.urlopen(请求, timeout=超时) as 响应:
+            for 原始 in 响应:
+                行 = 原始.decode("utf-8", "replace").strip()
+                if not 行 or 行.startswith(":"):
+                    continue
+                if not 行.startswith("data:"):
+                    continue
+                载荷 = 行[5:].strip()
+                if 载荷 == "[DONE]":
+                    break
+                try:
+                    片 = json.loads(载荷)
+                except json.JSONDecodeError:
+                    continue
+                选择 = (片.get("choices") or [{}])[0]
+                增量 = 选择.get("delta") or {}
+                想 = 增量.get("reasoning_content") or 增量.get("reasoning") or ""
+                说 = 增量.get("content") or ""
+                if 想:
+                    思考们.append(想)
+                    if 收到:
+                        _安全回调(收到, "思考", 想)
+                if 说:
+                    回答们.append(说)
+                    if 收到:
+                        _安全回调(收到, "回答", 说)
+    except urllib.error.HTTPError as 异常:
+        详情 = 异常.read().decode("utf-8", "replace")[:300]
+        raise RuntimeError("服务商 " + 名字 + " 返回 " + str(异常.code) + "：" + 详情) from 异常
+    except urllib.error.URLError as 异常:
+        raise RuntimeError("连不上 " + 名字 + "（网络或代理问题）：" + str(异常.reason)) from 异常
+
+    思考 = "".join(思考们).strip()
+    if 思考:
+        _箱().append(思考)
+    return "".join(回答们)
+
+
+def _安全回调(收到, 类型, 文本):
+    try:
+        收到(类型, 文本)
+    except Exception:
+        pass
+
+
 def 问(提示词, 服务商=None, 随机度=0.3, 假模式=False,
        超时=默认超时, 配置文件路径=None, 图=None):
     if 假模式:
@@ -255,7 +351,6 @@ def 问(提示词, 服务商=None, 随机度=0.3, 假模式=False,
     配置表 = 读配置(配置文件路径)
     名字, 条目 = 选服务商(配置表, 服务商)
     校验服务商(名字, 条目)
-
 
     if 图 and not 服务商支持图(条目):
         raise ValueError(
@@ -266,8 +361,6 @@ def 问(提示词, 服务商=None, 随机度=0.3, 假模式=False,
     密钥 = 取密钥(名字, 条目)
     网址 = 条目["base_url"].rstrip("/") + "/chat/completions"
     内容 = 拼内容(提示词, 图)
-
-
     图片张数 = (sum(1 for 块 in 内容
                 if isinstance(块, dict) and 块.get("type") == "image_url")
               if isinstance(内容, list) else 0)
@@ -289,7 +382,6 @@ def 问(提示词, 服务商=None, 随机度=0.3, 假模式=False,
         with urllib.request.urlopen(请求, timeout=超时) as 响应:
             数据 = json.loads(响应.read().decode("utf-8"))
     except urllib.error.HTTPError as 异常:
-
         详情 = 异常.read().decode("utf-8", "replace")[:300]
         raise RuntimeError(
             "服务商 " + 名字 + " 返回 " + str(异常.code) + "：" + 详情
@@ -298,7 +390,6 @@ def 问(提示词, 服务商=None, 随机度=0.3, 假模式=False,
         raise RuntimeError(
             "连不上 " + 名字 + "（网络或代理问题）：" + str(异常.reason)
         ) from 异常
-
 
     try:
         用量 = 取子表(数据, "usage")
@@ -312,8 +403,6 @@ def 问(提示词, 服务商=None, 随机度=0.3, 假模式=False,
         审计.记一笔("模型调用", {
             "服务商": 名字,
             "来源": 审计.当前能力(),
-
-
             "图片张数": 图片张数,
             "输入token": 输入,
             "输出token": 取整数(用量.get("completion_tokens")),
@@ -325,9 +414,15 @@ def 问(提示词, 服务商=None, 随机度=0.3, 假模式=False,
         pass
 
     try:
+        思考段 = 解析思考(数据["choices"][0]["message"])
+        if 思考段:
+            _箱().append(思考段)
+    except (KeyError, IndexError, TypeError):
+        pass
+
+    try:
         return 数据["choices"][0]["message"]["content"]
     except (KeyError, IndexError, TypeError) as 异常:
-
         raise RuntimeError(
             "返回的结构看不懂，原始内容：" + json.dumps(数据, ensure_ascii=False)[:500]
         ) from 异常

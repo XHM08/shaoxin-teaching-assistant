@@ -24,7 +24,6 @@ async function api(path, opts) {
   try {
     r = await fetch(path, opts);
   } catch (e) {
-    
     if (location.protocol === 'file:') {
       throw new Error('这个页面是用文件方式双击打开的（file://），连不上本地服务。'
         + '请双击「邵新.exe」；或在命令行运行 本地服务.py，按它打印的地址在浏览器里打开。');
@@ -52,9 +51,6 @@ async function paramOptions(ability, param) {
   return (p && p.可选项) || [];
 }
 
-
-
-
 const SID = Math.random().toString(36).slice(2) + Date.now().toString(36);
 
 function run(ability, args) {
@@ -74,9 +70,6 @@ function fillSelect(sel, list, emptyText, 默认值) {
   sel.innerHTML = list.length
     ? list.map(v => '<option value="' + esc(v) + '">' + esc(v) + '</option>').join('')
     : '<option value="">' + esc(emptyText) + '</option>';
-  
-  
-  
   if (默认值 && list.indexOf(默认值) >= 0) sel.value = 默认值;
 }
 
@@ -153,9 +146,9 @@ function clearResults() {
 
 function lecReset() {
   lecAuto(false);
-  $('lecShot').classList.add('hide');      
+  $('lecShot').classList.add('hide');      // 结束上课：把真实页面那张图也收起来
   $('lecShot').removeAttribute('src');
-  $('lecAudio').pause();               
+  $('lecAudio').pause();               // 结束上课就把声音停掉，别让它在后台接着念
   $('lecAudio').removeAttribute('src');
   $('lecVoiceBox').classList.add('hide');
   LEC.items = [];
@@ -163,7 +156,6 @@ function lecReset() {
   LEC.skill = '';
   $('lecPlayer').classList.add('hide');
   $('lecSetup').classList.remove('hide');
-  
   $('lecSource').value = '生成';
   lecSwapSource();
   $('askBox').classList.add('hide');
@@ -175,14 +167,15 @@ function lecReset() {
   $('askMsg').textContent = '';
 }
 
-const VIEWS = ['首页', '创造模式', '学生问答', '学生注册', '电脑服务', '环境配置', '教师蒸馏', '本地知识库', '学生档案馆', '课件生成', '错因诊断', '讲解评定', '反馈与优化', '联动教学', '设置'];
+const VIEWS = ['首页', '创造模式', '学生问答', '学生注册', '电脑服务', '环境配置', '教师蒸馏', '资料与记忆', '学生档案馆', '课件生成', '错因诊断', '讲解评定', '识图', '审查者', '反馈与优化', '联动教学', '设置'];
 
 async function show(name) {
   VIEWS.forEach(v => $('view-' + v).classList.toggle('hide', v !== name));
   clearResults();
   if (name !== '联动教学') lecReset();
   if (name === '教师蒸馏') await fillOptions('蒸馏', '文件', 'fileSelect', '（材料/ 目录暂无材料）');
-  if (name === '本地知识库') { loadMaterials(); loadSkills(); loadDecks(); }
+  if (name === '资料与记忆') { loadMaterials(); loadSkills(); loadDecks(); 刷新记忆(); }
+  if (name === '审查者') { 刷新审查记录(); }
   if (name === '学生档案馆') loadArchive();
   if (name === '学生问答') loadQaStu();
   if (name === '学生注册') loadReg();
@@ -195,9 +188,9 @@ async function show(name) {
   if (name === '反馈与优化') loadFeedback();
   if (name === '联动教学') {
     await fillOptions('联动教学', '技能包', 'lecSkill', '（还没有技能包，先去「教师蒸馏」生成）');
-    lecSwapSource();                     
+    lecSwapSource();                     // 进来就按当前选的那条路把框显隐摆对
   }
-  if (name === '创造模式') { chatRender(); 查授权状态(); 刷新记忆(); }
+  if (name === '创造模式') { chatRender(); 查授权状态(); }
   if (name === '电脑服务') loadPcMenu();
   if (name === '环境配置') envScan();
   if (name === '设置') { loadSettings(); loadCacheUse(); }
@@ -228,6 +221,8 @@ async function loadMaterials() {
     tb.innerHTML = (d.条目 && d.条目.length)
       ? d.条目.map(matRow).join('')
       : '<tr><td colspan="5">暂无材料。把教案、课件、照片放进 材料/ 目录就行</td></tr>';
+    $('sumMats').textContent = (d.条目 || []).length;
+    $('sumRefs').textContent = (d.参考资料 || []).length;
     $('refNotice').textContent = d.参考资料提示 || '公开的参考资料：可以当参照，不是蒸馏原料。';
     rb.innerHTML = (d.参考资料 && d.参考资料.length)
       ? d.参考资料.map(matRow).join('')
@@ -242,6 +237,7 @@ async function loadSkills() {
   const tb = $('skillRows');
   try {
     const d = await run('技能包管理', {});
+    $('sumSkills').textContent = (d.条目 || []).length;
     if (!d.条目 || !d.条目.length) {
       tb.innerHTML = '<tr><td colspan="4">暂无技能包。先去做一次蒸馏</td></tr>';
       return;
@@ -262,6 +258,7 @@ async function loadDecks() {
   const tb = $('deckRows');
   try {
     const d = await run('课件台账', {});
+    $('sumDecks').textContent = (d.条目 || []).length;
     if (!d.条目 || !d.条目.length) {
       tb.innerHTML = '<tr><td colspan="5">还没有生成过课件。去「PPT 生成」或「联动教学」做一份（.pptx）</td></tr>';
       return;
@@ -314,8 +311,6 @@ async function runDiag() {
       题目: $('diagTopic').value,
       作答: $('diagAnswer').value
     });
-    
-    
     const 有问题 = (d.条目 || []).some(一 => 一['备注']);
     say($('diagMsg'), d.提示 || '诊断完成。', 有问题 ? 'err' : 'ok');
     tb.innerHTML = (d.条目 || []).map(一 =>
@@ -343,8 +338,6 @@ function 带去档案() {
   $('arcAnswer').value = DIAG.作答;
   show('学生档案馆');
   if (!DIAG.错误类型) return;
-  
-  
   const 下拉 = $('arcError');
   下拉.value = DIAG.错误类型;
   if (下拉.value !== DIAG.错误类型) {
@@ -397,7 +390,6 @@ async function doEvalSave() {
       老师原话: $('evalWords').value
     });
     say($('evalSaveMsg'), d.提示 || '已存下。', 'ok');
-    
     $('evalFixed').value = '';
     $('evalWords').value = '';
     loadEvalLedger();
@@ -466,12 +458,10 @@ async function saveSection(节标题) {
   const 选择 = 盒.querySelector('textarea[data-sec="' + CSS.escape(节标题) + '"]');
   const 原话 = 盒.querySelector('input[data-words="' + CSS.escape(节标题) + '"]');
   if (!选择) return;
-  
   if (!选择.value.trim()) {
     say($('skillEditMsg'), '「' + 节标题 + '」这段不能存空的。', 'err');
     return;
   }
-  
   if (!confirm('确认把「' + 节标题 + '」这段改写回技能包？\n（改前那一版会自动备份到 _历史\\）')) return;
   say($('skillEditMsg'), '正在存…');
   try {
@@ -730,10 +720,9 @@ function lecRenderVoice(it) {
   const url = '/配音/' + 音频.replace(/^\/配音\//, '').split('/').map(encodeURIComponent).join('/');
   盒.classList.remove('hide');
   if (播放器.getAttribute('src') !== url) {
-    播放器.src = url;                     
+    播放器.src = url;                     // 换页就换源，浏览器会自己重新加载
   }
   if ($('lecAudioAuto').checked) {
-    
     const 试 = 播放器.play();
     if (试 && 试.catch) 试.catch(() => {});
   }
@@ -761,8 +750,6 @@ function lecSchedule() {
   const 估毫秒 = Math.max(4, Math.round(script.length / 6)) * 1000;
   const 有音频 = !!(it['音频'] && $('lecAudio').getAttribute('src'));
   if (有音频) {
-    
-    
     LEC.timer = setTimeout(lecNextPage, 估毫秒 * 2 + 3000);
   } else {
     LEC.timer = setTimeout(lecNextPage, 估毫秒);
@@ -776,7 +763,6 @@ function lecAuto(on) {
 }
 
 function lecSwapSource() {
-  
   const 已有 = $('lecSource').value === '已有';
   $('lecDeckBox').classList.toggle('hide', !已有);
   $('lecTopicBox').classList.toggle('hide', 已有);
@@ -879,8 +865,6 @@ async function doAskSend() {
 function doResume() {
   $('askBox').classList.add('hide');
   say($('lecOutMsg'), '继续上课。', 'ok');
-  
-  
   const 播放器 = $('lecAudio');
   if (LEC.audioWasPlaying && $('lecAudioAuto').checked && 播放器.getAttribute('src')) {
     const 试 = 播放器.play();
@@ -923,9 +907,6 @@ async function loadSettings() {
       '</td><td>' + esc(s['接口地址']) + '</td><td>' + esc(s['密钥']) + '</td></tr>'
     ).join('');
     say($('setMsg'), d.提示 || '', '');
-    
-    
-    
     const 当前服务商 = (SETTINGS.items.find(s => String(s['当前'] || '').trim() === '是') || {})['代号'] || '';
     fillSelect($('setProvider'), SETTINGS.items.map(s => s['代号']), '（没有服务商）', 当前服务商);
     fillSettingsForm();
@@ -1005,7 +986,11 @@ function 读对话缓存() {
     const 原 = JSON.parse(localStorage.getItem('shao_xin_chat') || '[]');
     if (!Array.isArray(原)) return [];
     return 原.filter(m => m && (m.role === 'user' || m.role === 'assistant')
-      && typeof m.content === 'string').slice(-40);
+      && typeof m.content === 'string')
+      .map(m => ({ role: m.role, content: m.content,
+        思考: typeof m.思考 === 'string' ? m.思考 : '',
+        思考块: Array.isArray(m.思考块) ? m.思考块 : [] }))
+      .slice(-40);
   } catch (e) { return []; }
 }
 
@@ -1023,9 +1008,15 @@ function chatRender() {
       '比如「用 teacher-a 的风格出一节分数的除法的课件」。</div>';
     return;
   }
-  $('chatLog').innerHTML = CHAT.history.map(m =>
-    '<div class="msg ' + (m.role === 'user' ? 'me' : 'ai') + '">' + esc(m.content) + '</div>'
-  ).join('');
+  $('chatLog').innerHTML = CHAT.history.map(m => {
+    const 块们 = (m.思考块 && m.思考块.length) ? m.思考块
+      : (m.思考 && m.思考.trim() ? [m.思考] : []);
+    const 思考 = 块们.map((段, 号) => {
+      const 题 = 块们.length > 1 ? ('思考 ' + (号 + 1) + '/' + 块们.length) : '思考过程';
+      return '<details class="think"><summary>' + 题 + '</summary><pre>' + esc(段) + '</pre></details>';
+    }).join('');
+    return '<div class="msg ' + (m.role === 'user' ? 'me' : 'ai') + '">' + 思考 + esc(m.content) + '</div>';
+  }).join('');
   $('chatLog').scrollTop = $('chatLog').scrollHeight;
 }
 
@@ -1043,22 +1034,84 @@ async function doChatSend() {
   btn.disabled = true;
   say(msg, 'AI 正在处理…');
   try {
-    
     const history = CHAT.history.slice(0, -1)
       .map(m => (m.role === 'user' ? '老师：' : '助手：') + m.content).join('\n');
-    const d = await run('创造模式', { 内容: text, 之前的对话: history });
-    CHAT.history.push({ role: 'assistant', content: d.正文 || '（没有返回内容）' });
+    const d = await 流式创造模式(text, history);
+    CHAT.history.push({ role: 'assistant', content: d.正文 || '（没有返回内容）',
+      思考: d.思考 || '', 思考块: Array.isArray(d.思考块) ? d.思考块 : [] });
     存对话缓存();
     say(msg, d.提示 || '', 'ok');
     chatRender();
     cmdShow(d.待确认命令);
     画授权状态(d['授权']);
   } catch (e) {
-    
     say(msg, '失败：' + e.message + '（这句没进对话记录）', 'err');
   } finally {
     btn.disabled = false;
   }
+}
+
+async function 流式创造模式(text, history) {
+  const 气泡 = document.createElement('div');
+  气泡.className = 'msg ai';
+  气泡.innerHTML = '<details class="think" open><summary>思考中…</summary><pre></pre></details>'
+    + '<div class="live"></div>';
+  $('chatLog').appendChild(气泡);
+  $('chatLog').scrollTop = $('chatLog').scrollHeight;
+  const 思考框 = 气泡.querySelector('details.think');
+  const 思考文 = 气泡.querySelector('details.think pre');
+  const 回答框 = 气泡.querySelector('.live');
+  let 当前思考 = '', 最终 = null;
+
+  const 处理一段 = (段) => {
+    const 行们 = 段.split(/\r?\n/);
+    const 名行 = 行们.find(l => l.startsWith('event: '));
+    const 数行 = 行们.find(l => l.startsWith('data: '));
+    if (!名行 || !数行) return;
+    const 名 = 名行.slice(7).trim();
+    let 体 = {};
+    try { 体 = JSON.parse(数行.slice(6)); } catch (e) { return; }
+    if (名 === '片段') {
+      if (体.类型 === '思考') {
+        当前思考 += 体.文本;
+        思考文.textContent = 当前思考;
+      } else {
+        回答框.textContent += 体.文本;
+      }
+      $('chatLog').scrollTop = $('chatLog').scrollHeight;
+    } else if (名 === '完成') {
+      思考框.querySelector('summary').textContent = '思考过程';
+      思考框.open = false;
+      最终 = 体.结果;
+    } else if (名 === '出错') {
+      throw new Error(体.错误 || '流式中断');
+    }
+  };
+
+  const 响应 = await fetch('/api/创造模式流', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 内容: text, 之前的对话: history }),
+  });
+  if (!响应.ok || !响应.body) throw new Error('服务端没有开流：' + 响应.status);
+  const 读 = 响应.body.getReader();
+  const 解 = new TextDecoder('utf-8');
+  let 缓存 = '';
+  while (true) {
+    const { value, done } = await 读.read();
+    if (done) break;
+    缓存 += 解.decode(value, { stream: true });
+    let 切 = 缓存.search(/\r?\n\r?\n/);
+    while (切 >= 0) {
+      const 段 = 缓存.slice(0, 切);
+      缓存 = 缓存.slice(切 + 2);
+      处理一段(段);
+      切 = 缓存.search(/\r?\n\r?\n/);
+    }
+  }
+  气泡.remove();          // 换成正式渲染，避免留一块临时气泡
+  if (!最终) throw new Error('流结束了但没收到最终结果');
+  return 最终;
 }
 
 function doChatClear() {
@@ -1073,20 +1126,15 @@ function doChatClear() {
 function 画授权状态(a) {
   const el = $('authState');
   if (a === undefined) {
-    
-    
     el.textContent = '状态未刷新（窗口可能还开着）。点下面任一按钮、或发一轮对话就会显示最新。';
     return;
   }
   if (!a || !a['档位']) {
-    
     el.textContent = '现在没有授权窗口' + (a && a['结束原因'] ? '（' + a['结束原因'] + '）' : '') + '。';
     $('authButtons').classList.remove('hide');
     return;
   }
   if (a['说明'] === '默认档位（测试期）') {
-    
-    
     el.innerHTML = '测试期：默认 <b>' + esc(a['档位']) + '</b>，AI 提的命令<b>不再逐条问你</b>。'
       + '每条命令照旧进审计。';
     $('authButtons').classList.add('hide');
@@ -1104,8 +1152,6 @@ function 画授权状态(a) {
 }
 
 async function 查授权状态() {
-  
-  
   try {
     const d = await run('看授权状态', {});
     画授权状态(d['授权']);
@@ -1114,17 +1160,16 @@ async function 查授权状态() {
   }
 }
 
-
 function 说授权(文字, 坏) {
   const el = $('authMsg');
   el.textContent = 文字;
   el.style.color = 坏 ? '#c00' : '#2e7d32';
 }
 
-const 授权按钮们 = () => [$('btnAuthSafe'), $('btnAuthNormal'), $('btnAuthFull'), $('btnAuthOff')];
+const 授权按钮们 = () => [$('btnAuthFull'), $('btnAuthOff')];
 
 async function 开授权(档位) {
-  const 分钟 = '不限';      
+  const 分钟 = '不限';      // 窗口不设时间上限（2026-09-21 定的）：只靠「收回」与条数封顶
   授权按钮们().forEach(b => { b.disabled = true; });
   try {
     const d = await run('长任务授权', { 档位: 档位, 分钟: 分钟 });
@@ -1133,7 +1178,6 @@ async function 开授权(档位) {
   } catch (e) {
     说授权('开不了：' + e.message, true);
   } finally {
-    
     授权按钮们().forEach(b => { b.disabled = false; });
   }
 }
@@ -1141,8 +1185,7 @@ async function 开授权(档位) {
 async function 收回授权() {
   授权按钮们().forEach(b => { b.disabled = true; });
   try {
-    const d = await run('长任务授权', { 档位: '安全授权', 分钟: '0' });
-    
+    const d = await run('长任务授权', { 档位: '全部授权', 分钟: '0' });
     说授权(d.提示 || '', !(d['授权'] && d['授权']['档位']));
     画授权状态(d['授权']);
   } catch (e) {
@@ -1152,8 +1195,6 @@ async function 收回授权() {
   }
 }
 
-$('btnAuthSafe').onclick = () => 开授权('安全授权');
-$('btnAuthNormal').onclick = () => 开授权('普通授权');
 $('btnAuthFull').onclick = () => 开授权('全部授权');
 $('btnAuthOff').onclick = 收回授权;
 
@@ -1285,7 +1326,6 @@ function envShow(d) {
     $('envTable').classList.remove('hide');
   }
 
-  
   if (!isScan && items.length) {
     $('envPlan').innerHTML = kvTable(items);
     $('envPlan').classList.remove('hide');
@@ -1302,8 +1342,6 @@ function envBadge(missingCount, 测不出) {
   const el = $('envState');
   if (!el) return;
   if (测不出) {
-    
-    
     el.className = 't-state wait';
     el.textContent = '没测出来';
     return;
@@ -1370,7 +1408,7 @@ async function 接入做(名字, 动作) {
     const d = await run('装接入', { 接入名: 名字, 动作: 动作, 确认: 确认 });
     if (d.需要确认) {
       待接入 = { 名字: 名字, 动作: 动作 };
-      say($('接入提示'), (d.正文 || '') + '　——再点一次那个按钮就真做。', 'err');
+      say($('接入提示'), (d.正文 || '') + '　再点一次那个按钮就真做。', 'err');
     } else {
       待接入 = null;
       say($('接入提示'), d.提示 || '', 'ok');
@@ -1581,7 +1619,6 @@ $('btnAskPause').onclick = lecPause;
 $('btnAskSend').onclick = doAskSend;
 $('btnResume').onclick = doResume;
 $('btnLecStop').onclick = () => { lecReset(); say($('lecMsg'), '已结束上课。', 'ok'); };
-
 $('lecAudio').addEventListener('ended', () => { if (LEC.auto) lecNextPage(); });
 $('btnSaveSettings').onclick = doSaveSettings;
 $('btnReloadSettings').onclick = loadSettings;
@@ -1592,20 +1629,14 @@ $('setProvider').onchange = fillSettingsForm;
   try {
     const 表 = await api('/api/能力');
     ABILITIES = 表.条目;
-    
-    
     if (表.版本 && $('verNo')) $('verNo').textContent = 表.版本;
     fillSelect($('arcCorrect'), await paramOptions('录入学生记录', '对错'), '（没有选项）', '对');
-    
-    
-    
     fillSelect($('arcError'), await paramOptions('录入学生记录', '错误类型'), '（没有选项）', '其他');
     fillSelect($('regConsent'), await paramOptions('学生注册', '家长同意书'), '（无）', '未签回');
     fillSelect($('evalVerdict'), await paramOptions('记讲解评定', '判定'), '（没有选项）', '可接受');
     fillSelect($('evalOnly'), await paramOptions('评定台账', '只看'), '（没有选项）', '全部');
     fillSelect($('fbKind'), await paramOptions('记反馈', '类型'), '（没有选项）', '不好用');
 
-    
     $('btnNetGo').addEventListener('click', async () => {
       const 出 = $('netOut');
       出.textContent = '查着…';
@@ -1638,13 +1669,34 @@ async function 刷新记忆() {
     $('memCount').textContent = d['关键条数'] ?? 0;
     $('memSum').textContent = d['摘要条数'] ?? 0;
     const 条 = d['关键记忆'] || [];
-    $('memList').textContent = 条.length
-      ? 条.map((x, i) => (i + 1) + '. [' + (x['类别'] || '关键') + '] ' + x['内容']).join(String.fromCharCode(10))
-      : '（还没有记住什么）';
+    const 身 = $('memRows');
+    if (!条.length) {
+      身.innerHTML = '<tr><td colspan="5">（还没有记住什么）</td></tr>';
+    } else {
+      身.innerHTML = 条.map((x, i) =>
+        '<tr><td>' + (i + 1) + '</td><td>' + (x['类别'] || '关键') + '</td>' +
+        '<td>' + esc(x['内容'] || '') + '</td><td>' + esc(x['时间'] || '') + '</td>' +
+        '<td><button class="ghost" data-memdel="' + esc(x['内容'] || '') + '">删掉</button></td></tr>'
+      ).join('');
+      身.querySelectorAll('[data-memdel]').forEach(键 => {
+        键.onclick = async () => {
+          try {
+            const r = await run('记忆库', { 动作: '删除', 确认: 键.dataset.memdel });
+            $('memMsg').textContent = r['说明'] || '';
+            刷新记忆();
+          } catch (e) { $('memMsg').textContent = e.message; }
+        };
+      });
+    }
+    const 结 = d['最近小结'] || [];
+    $('memList').textContent = 结.length ? 结.map((x, i) => (i + 1) + '. ' + x).join(String.fromCharCode(10))
+                                          : '（还没有对话小结）';
   } catch (e) {
     $('memMsg').textContent = '读不到记忆：' + e.message;
   }
 }
+
+$('btnMemRefresh').onclick = () => 刷新记忆();
 
 $('btnMemClear').onclick = async () => {
   const 确认 = prompt('清空后不可恢复。确实要清，请输入四个字：确认清空');
@@ -1657,3 +1709,243 @@ $('btnMemClear').onclick = async () => {
     $('memMsg').textContent = e.message;
   }
 };
+
+const 形象剪辑 = {
+  待机: { 轮数: 0, 时长: 2830 },
+  说话: { 轮数: 0, 时长: 520 },
+  挥手: { 轮数: 2, 时长: 1650 },
+  举手: { 轮数: 2, 时长: 1660 },
+  指向: { 轮数: 2, 时长: 1660 },
+};
+const 形象动作们 = ['挥手', '举手', '指向'];
+
+const 形象 = (() => {
+  let 计时 = null;
+  let 覆盖 = '待机';
+
+  function 取图() { return document.getElementById('形象图'); }
+
+  function 画(名, 强制) {
+    const 图 = 取图();
+    if (!图 || !形象剪辑[名]) return;
+    图.setAttribute('src', '/网页/形象/' + 名 + '.webp' + (强制 ? '?r=' + Date.now() : ''));
+  }
+
+  function 回待机() {
+    clearTimeout(计时);
+    覆盖 = '待机';
+    画('待机');
+  }
+
+  function 播动作(名) {
+    const 记 = 形象剪辑[名];
+    if (!记) return;
+    clearTimeout(计时);
+    覆盖 = 名;
+    画(名, true);
+    计时 = setTimeout(回待机, 记.时长 * Math.max(1, 记.轮数));
+  }
+
+  function 说话(开) {
+    if (开) {
+      clearTimeout(计时);
+      覆盖 = '说话';
+      画('说话', true);
+    } else {
+      clearTimeout(计时);
+      if (覆盖 === '说话') { 覆盖 = '待机'; 画('待机'); }
+    }
+  }
+
+  function 收起() {
+    const 角 = document.getElementById('形象角');
+    if (角) 角.classList.add('hide');
+    try { localStorage.setItem('形象收起', '1'); } catch (e) {}
+  }
+
+  function 初始化() {
+    const 角 = document.getElementById('形象角');
+    const 图 = 取图();
+    const 关 = document.getElementById('形象关');
+    if (!角 || !图) return;
+    try { if (localStorage.getItem('形象收起') === '1') 角.classList.add('hide'); } catch (e) {}
+    图.addEventListener('click', () => {
+      播动作(形象动作们[Math.floor(Math.random() * 形象动作们.length)]);
+    });
+    if (关) 关.addEventListener('click', 收起);
+    图.addEventListener('error', () => {
+      const 源 = 图.getAttribute('src') || '';
+      if (源.indexOf('.webp') > 0) {
+        图.setAttribute('src', 源.replace('.webp', '.gif'));
+      } else {
+        收起();
+      }
+    });
+  }
+
+  return { 初始化, 说话, 播动作, 回待机 };
+})();
+
+const 原run = run;
+run = function (能力, 参数) {
+  形象.说话(true);
+  try {
+    const 果 = 原run(能力, 参数);
+    if (果 && typeof 果.finally === 'function') {
+      return 果.finally(() => 形象.说话(false));
+    }
+    形象.说话(false);
+    return 果;
+  } catch (错) {
+    形象.说话(false);
+    throw 错;
+  }
+};
+
+document.addEventListener('DOMContentLoaded', 形象.初始化);
+
+
+async function 刷新审查记录() {
+  const 概览 = $('审查概览');
+  const 列表 = $('审查列表');
+  if (!列表) return;
+  say($('审查消息'), '读取中…');
+  let d;
+  try {
+    d = await run('审查者', { 动作: '查看', 最多: 50 });
+  } catch (错) {
+    say($('审查消息'), '没读成：' + 错, 'err');
+    return;
+  }
+  const 统 = d.统计 || {};
+  概览.textContent = d.正文 || '（没有概览）';
+  say($('审查消息'), '');
+  列表.innerHTML = '';
+  if (!d.条目 || !d.条目.length) {
+    列表.textContent = '暂时没有记录。';
+    return;
+  }
+  d.条目.forEach(一 => {
+    const 块 = document.createElement('div');
+    块.className = 'notice';
+    块.style.marginBottom = '10px';
+    const 头 = document.createElement('div');
+    头.innerHTML = '<b>' + 一.时间 + '</b>　判定：' + 一.判定
+      + '　问题 ' + 一.问题数 + ' 条　回答 ' + 一.回答字数 + ' 字　工具 ' + 一.工具次数 + ' 次';
+    块.appendChild(头);
+    if (一.老师说的) {
+      const 原 = document.createElement('div');
+      原.textContent = '老师当时说：' + 一.老师说的;
+      原.style.color = '#666';
+      块.appendChild(原);
+    }
+    (一.问题们 || []).forEach(问 => {
+      const 行 = document.createElement('div');
+      行.textContent = '· [' + 问.级别 + '] ' + (问.位置 ? 问.位置 + '：' : '') + 问.说明;
+      块.appendChild(行);
+    });
+    列表.appendChild(块);
+  });
+}
+
+async function 清空审查记录() {
+  const 答 = prompt('清空后不可恢复。要清空就把「确认清空」四个字填进来：');
+  if (答 === null) return;
+  try {
+    const d = await run('审查者', { 动作: '清空', 确认清空: 答 });
+    say($('审查消息'), d.正文 || '已清空');
+    刷新审查记录();
+  } catch (错) {
+    say($('审查消息'), '没清成：' + 错, 'err');
+  }
+}
+
+if ($('审查刷新')) $('审查刷新').addEventListener('click', 刷新审查记录);
+if ($('审查清空')) $('审查清空').addEventListener('click', 清空审查记录);
+
+
+const 识图长边上限 = 1600;
+
+function 缩图成base64(文件) {
+  return new Promise((好, 坏) => {
+    const 图 = new Image();
+    const 网址 = URL.createObjectURL(文件);
+    图.onload = () => {
+      const 比 = Math.min(1, 识图长边上限 / Math.max(图.width, 图.height));
+      const 布 = document.createElement('canvas');
+      布.width = Math.round(图.width * 比);
+      布.height = Math.round(图.height * 比);
+      布.getContext('2d').drawImage(图, 0, 0, 布.width, 布.height);
+      URL.revokeObjectURL(网址);
+      const 数据 = 布.toDataURL('image/jpeg', 0.88).split(',')[1];
+      好({ 数据, 宽: 布.width, 高: 布.height, 比 });
+    };
+    图.onerror = () => { URL.revokeObjectURL(网址); 坏('这张图打不开，换一张试试'); };
+    图.src = 网址;
+  });
+}
+
+let 识图要求 = '把图里的文字完整读出来，保留题号、勾选与手写。';
+
+function 取要求() {
+  const 框 = $('识图要求');
+  const 自写 = 框 && 框.value ? 框.value.trim() : '';
+  return 自写 || 识图要求;
+}
+
+function 挂识图问法() {
+  document.querySelectorAll('.识图问').forEach(钮 => {
+    钮.addEventListener('click', () => {
+      识图要求 = 钮.dataset.要求 || 识图要求;
+      const 框 = $('识图要求');
+      if (框) 框.value = '';
+      say($('识图状态'), '已选：' + 钮.textContent + '（也可以在上面自己写一句覆盖）');
+    });
+  });
+}
+if (document.querySelectorAll('.识图问').length) 挂识图问法();
+
+async function 识别一张() {
+  const 文件框 = $('识图文件');
+  const 状态 = $('识图状态');
+  const 结果 = $('识图结果');
+  if (!文件框 || !文件框.files || !文件框.files.length) {
+    say(状态, '先选一张图', 'err');
+    return;
+  }
+  say(状态, '正在缩放并上传…');
+  结果.textContent = '';
+  let 缩;
+  try {
+    缩 = await 缩图成base64(文件框.files[0]);
+  } catch (错) {
+    say(状态, String(错), 'err');
+    return;
+  }
+  const 预览 = $('识图预览');
+  预览.innerHTML = '';
+  const 小图 = document.createElement('img');
+  小图.src = 'data:image/jpeg;base64,' + 缩.数据;
+  小图.style.maxHeight = '160px';
+  预览.appendChild(小图);
+  say(状态, '已缩到 ' + 缩.宽 + '×' + 缩.高 + '，正在识别…');
+
+  try {
+    const 回 = await fetch('/api/识图', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 图片: 缩.数据, 要求: 取要求() }),
+    });
+    const 数据 = await 回.json();
+    if (!回.ok || 数据.错误) {
+      say(状态, '没识别成：' + (数据.错误 || 回.status), 'err');
+      return;
+    }
+    结果.textContent = 数据.正文 || '（没有读出内容）';
+    say(状态, '识别完成');
+  } catch (错) {
+    say(状态, '请求失败：' + 错, 'err');
+  }
+}
+
+if ($('识图开始')) $('识图开始').addEventListener('click', 识别一张);

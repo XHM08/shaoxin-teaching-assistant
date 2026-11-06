@@ -4,7 +4,6 @@ import re
 import subprocess
 import threading
 
-
 禁用清单 = (
     (r"\bformat\b", "格式化磁盘", "format D: /q"),
     (r"\bdiskpart\b", "磁盘分区工具", "diskpart /s 脚本.txt"),
@@ -22,7 +21,6 @@ import threading
     (r"\bcipher\b[^\n]{0,20}/w", "擦除磁盘空闲空间", "cipher /w:C"),
 )
 
-
 禁用清单_等价写法 = (
     "format/q D:",
     "format.com C:",
@@ -31,7 +29,6 @@ import threading
     "SHUTDOWN /s /t 0",
     "rd/s /q c:\\",
 )
-
 
 危险词 = (
     (r"\b(?:del|erase|rmdir|rd)\b", "删文件或目录"),
@@ -75,8 +72,6 @@ def 登记(命令文本):
 
 
 def 取票(编号, 命令文本):
-
-
     with _锁:
         登记过的 = _待确认表.get(str(编号))
         if 登记过的 is None:
@@ -88,8 +83,6 @@ def 取票(编号, 命令文本):
 
 
 def 检查基本(命令文本):
-
-
     文本 = str(命令文本 or "").strip()
     if not 文本:
         raise ValueError("命令不能为空。")
@@ -99,8 +92,6 @@ def 检查基本(命令文本):
 
 
 def 撞了禁用清单(命令文本):
-
-
     文本 = str(命令文本 or "")
     for 模式, 原因, _示例 in 禁用清单:
         if re.search(模式, 文本, re.I):
@@ -145,7 +136,6 @@ def _解码(原始字节):
 
 def 运行(命令文本, 工作目录, 超时秒数):
     try:
-
         结果 = subprocess.run(命令文本, shell=True, cwd=工作目录,
                               capture_output=True, timeout=超时秒数)
     except subprocess.TimeoutExpired:

@@ -3,20 +3,10 @@ chcp 65001 >nul
 title 「邵新」辅助教育系统
 cd /d "%~dp0"
 
-rem 判据必须是「能不能真跑」，不是「找不找得到」。
-rem where python 在没装 Python 的 Win10/11 上照样命中 Microsoft Store 的
-rem python.exe 别名桩（AppData\Local\Microsoft\WindowsApps 下那个），
-rem 拿它当判据的后果是：检查通过 → 其实打开的是应用商店 → 端口永远不通。
-rem 而且光看退出码也不够：有些 Windows/AppInstaller 版本的桩返回 0
-rem （2026-10-06 团队反馈的那台机器就是），会把"跑起来了"误判成通过。所以这里看输出：
-rem 只有真打印出主版本号 3 才算数（顺带挡掉 Python 2）。
 set "PY大版本="
 for /f "delims=" %%V in ('python -c "import sys;print(sys.version_info[0])" 2^>nul') do set "PY大版本=%%V"
 if not "%PY大版本%"=="3" goto NOPY
 
-rem 端口从 配置.json 读，启动器跟着配置走。
-rem 原来这里兜底 8765（2026-10-23 评审 P1-1）：配置坏掉时它会去错端口找服务，
-rem 表现成「起不来 / 端口被占」，真因看不见。现在拿不到就报错退出。
 set "PORT="
 for /f "delims=" %%P in ('python "脚本\取端口.py" 2^>nul') do set "PORT=%%P"
 if not defined PORT (
@@ -40,20 +30,10 @@ if not exist "本地服务.py" (
   exit /b 1
 )
 
-rem 版本号从 地基/版本.py 读，不在这里写死。
-rem 写死就多出一个「版本号的更新点」，两边迟早对不上（开发日志 D-15；
-rem 改这次之前正是：网页写 0.5、MCP 自报写 1.0）。
-rem 这一句要调 python，所以必须放在上面那句 Python 检查之后：
-rem 否则 python 是应用商店的别名桩时，这一句会把商店弹出来。
-rem 它还必须放在端口检查之前：「已经有一个在跑」那一支同样要显示版本号。
 set "VER="
 for /f "delims=" %%V in ('python -c "from 地基 import 版本;print(版本.版本号)"') do set "VER=%%V"
 if not defined VER set "VER=（读不出来）"
 
-rem 起服务之前先探一次端口：已经有人在听 = 上一个实例还活着。
-rem 不能等起来之后再探：那种探法分不清「我这次起的」和「早就有一个」，
-rem 会立刻判成功并打开浏览器，而实际跑的是上一次的代码
-rem （能力只在启动时加载，这个坑本项目已经栽过一轮）。
 "%SystemRoot%\System32\netstat.exe" -an | "%SystemRoot%\System32\findstr.exe" ":%PORT%" | "%SystemRoot%\System32\findstr.exe" "LISTENING" >nul
 if not errorlevel 1 goto PORTBUSY
 
@@ -67,17 +47,8 @@ echo  正在启动本地服务...
 
 start "「邵新」辅助教育系统-服务" /min python 本地服务.py
 
-rem 计数用 goto 循环，不用 for / if(...) 块：
-rem %N% 在 goto 循环里每次执行都会重新展开，所以这里不需要延迟展开；
-rem 一旦有人把它挪进 ( ) 块，就必须改成 !N! 并开 enabledelayedexpansion。
 set /a N=0
 :WAIT
-rem 等一秒的写法用 ping 而不是 timeout：
-rem · timeout 在 stdin 被重定向时直接报「Input redirection is not supported」退出，
-rem   一下也不等：循环会在几百毫秒里刷完，变成「探了 15 次但其实没等待」，
-rem   服务只是慢一点起也会被判成失败（实测过）。
-rem · 外部命令一律写全路径：项目在 Git Bash 的 PATH 下调试时 /usr/bin 排在 System32 前面，
-rem   直接写命令名会命中 MSYS 的同名程序（GNU timeout 不认 /t，会一直刷 invalid time interval）。
 "%SystemRoot%\System32\ping.exe" -n 2 127.0.0.1 >nul
 set /a N+=1
 "%SystemRoot%\System32\netstat.exe" -an | "%SystemRoot%\System32\findstr.exe" ":%PORT%" | "%SystemRoot%\System32\findstr.exe" "LISTENING" >nul
@@ -105,12 +76,6 @@ pause
 exit /b 1
 
 :PORTBUSY
-rem 端口上已经有人在听。先分辨是不是「我们自己」的服务：
-rem   是自己 → 直接把页面打开（老师想做的本来就是打开邵新）；
-rem   不是自己 → 才报错让人去处理。
-rem 以前这里是一律硬退，后果很实在：只要这台电脑上已经有一个邵新在跑，
-rem 再双击本文件就打不开，而且连欢迎界面都不出现。因为欢迎界面在这之后。
-rem （2026-09-17 开发团队就是这么被挡住的，占着端口的正是开发机自己留下的一个验证用服务。）
 python -c "import urllib.request as u,sys;sys.exit(0 if '邵新' in u.urlopen('http://127.0.0.1:%PORT%/',timeout=3).read().decode('utf-8','ignore') else 1)" >nul 2>nul
 if errorlevel 1 goto OCCUPIED
 

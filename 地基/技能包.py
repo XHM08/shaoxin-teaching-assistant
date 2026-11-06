@@ -7,7 +7,6 @@ from 地基 import 落盘, 配置
 代号长度上限 = 64
 描述长度上限 = 1024
 
-
 合法代号 = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
 
@@ -44,7 +43,6 @@ def 组装技能包(代号, 描述, 正文, 其它字段=None):
 
 
 def 拆头尾(原文):
-
     原文 = 原文.strip()
     if not 原文.startswith("---"):
         return {}, 原文
@@ -66,8 +64,6 @@ def 保存技能包(输出目录, 代号, 原文):
     目录 = os.path.join(输出目录, 代号)
     os.makedirs(目录, exist_ok=True)
     路径 = os.path.join(目录, "SKILL.md")
-
-
     落盘.带时间备份(路径)
     落盘.原子写文本(路径, 原文)
     return 路径
@@ -103,7 +99,6 @@ def 技能包清单():
             头部, _ = 读取技能包(os.path.join(目录, 代号))
             描述 = 头部.get("description", "")
         except (OSError, ValueError):
-
             描述 = ""
         条目表.append({"技能包代号": 代号, "描述": 描述})
     return 条目表

@@ -1,5 +1,3 @@
-
-
 import os
 import re
 import shutil
@@ -81,8 +79,6 @@ def 判断(泡着们, 口有人, 轮数, 已跑=0):
     if 泡着们 is None:
         return "等人看一眼", "拿不到进程表（PowerShell/WMI 没给结果），不敢当它死了"
     if 已跑 >= 轮数 and not 泡着们:
-
-
         return "啥也不用做", "这轮浸泡已经跑满 %d 轮，不用再起" % 轮数
     if 泡着们 and 口有人:
         return "啥也不用做", "浸泡在跑（PID %s），端口上那个就是它这一轮起的服务" % 泡着们[0]
@@ -135,8 +131,6 @@ def 重起(出目录, 轮数, 间隔):
               出目录.replace("\\", "/"), 出目录.replace("\\", "/")))
     出 = subprocess.run(["powershell.exe", "-NoProfile", "-Command", cmd],
                       capture_output=True, text=True, encoding="utf-8", errors="replace")
-
-
     期限 = time.time() + 12
     while time.time() < 期限:
         if 找出浸泡(进程表(), 出目录):
@@ -159,7 +153,6 @@ def 自测():
     for (做, 说), 期望 in ok:
         print("  %s 期望「%s」，实得「%s」  %s" % ("✓" if 做 == 期望 else "✗", 期望, 做, 说))
         坏 += 0 if 做 == 期望 else 1
-
     假自己 = os.getpid()
     表 = [(假自己, "python.exe 脚本/看住浸泡.py --出目录 C:/tmp/浸泡5"),
           (999999, "python.exe 脚本/浸泡.py 11 25 C:/tmp/浸泡5")]

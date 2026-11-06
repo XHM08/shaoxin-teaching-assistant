@@ -46,8 +46,6 @@ def 跑检查():
         空.slides.add_slide(空.slide_layouts[6])
         空.save(对照)
         _, 对照标记 = 读XR(对照)
-
-
         记("③ 反向验：不经过我们的写出，就没有我们的标记",
            对照标记 != "XR: C", "对照组是 %r" % (对照标记,))
     finally:
@@ -59,7 +57,6 @@ def 主():
     try:
         跑检查()
     except Exception as 错:
-
         记("检查本身跑完了", False, "%s: %s" % (type(错).__name__, 错))
     print()
     print("全部 %d 项通过" % 条数 if not 失败 else "通过 %d / 共 %d" % (条数 - len(失败), 条数))

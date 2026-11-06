@@ -10,7 +10,6 @@ import sys
 吞了不说 = re.compile(r"except[^\n:]+:\s*$", re.M)
 子串当计数 = re.compile(r'"\s*\d+\s*/\s*\d+\s*"\s+in\s')
 用户绝对路径 = re.compile(r"[A-Za-z]:[\\/]Users[\\/][^\\/\s\"']+")
-
 收尾写法 = ("项通过", "通过数", "%d/%d", "都对得上", "都画得出来", "正常。", "个能力和", "对了",
          "与现场一致", "处对不上", "%d/%d", "%02d/%02d")
 结果 = []
@@ -35,8 +34,6 @@ def main():
             if 裸吞.search(行):
                 吞的.append("%s:%d 裸 except: pass" % (名, i + 1))
             elif 吞了不说.search(行):
-
-
                 邻 = (行们[i] or "") + (行们[i + 1] or "") + (行们[i - 1] if i else "")
                 if not any(词 in 邻 for 词 in ("为什么", "忽略", "可忽略", "故意", "预期", "不忽略")):
                     吞的.append("%s:%d except…pass 没写为什么" % (名, i + 1))

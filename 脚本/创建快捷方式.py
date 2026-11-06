@@ -7,7 +7,6 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 BASE = os.path.dirname(HERE)
 
-
 客户端exe = os.path.join(BASE, "dist", "邵新", "邵新.exe")
 if os.path.isfile(客户端exe):
     TARGET = 客户端exe
@@ -19,15 +18,11 @@ else:
     SHORTCUT_DESC = "启动「邵新」辅助教育系统（本地服务 + 自动打开浏览器）"
 
 SHORTCUT_NAME = "「邵新」辅助教育系统.lnk"
-
-
 自备图标 = os.path.join(BASE, "邵新.ico")
 ICON = 自备图标 if os.path.isfile(自备图标) else r"C:\Windows\System32\shell32.dll,137"
 
 
 def ps(script):
-
-
     encoded = base64.b64encode(script.encode("utf-16-le")).decode("ascii")
     result = subprocess.run(
         ["powershell", "-NoProfile", "-NonInteractive", "-EncodedCommand", encoded],
@@ -69,7 +64,6 @@ def build_create_script():
         "Write-Output ('LINK_EXISTS=' + (Test-Path $linkPath))",
         "Write-Output ('WORKDIR_EXISTS=' + (Test-Path $workdir))",
         "Write-Output ('TARGET_EXISTS=' + (Test-Path $target))",
-
         "$c = $ws.CreateShortcut($linkPath)",
         "Write-Output ('ECHO_TARGET=' + $c.TargetPath)",
         "Write-Output ('ECHO_WORKDIR=' + $c.WorkingDirectory)",

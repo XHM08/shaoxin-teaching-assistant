@@ -41,6 +41,7 @@ def _追加(路, 记录):
         文件.write(json.dumps(记录, ensure_ascii=False) + "\n")
 
 
+
 def 记一条(内容, 类别="关键", 来源=""):
     内容 = str(内容 or "").strip()
     if not 内容:
@@ -65,6 +66,21 @@ def 修剪(上限=None):
     return len(记录们) - len(留)
 
 
+def 删一条(内容):
+    目标 = str(内容 or "").strip()
+    if not 目标:
+        return 0
+    路 = os.path.join(目录(), "关键记忆.jsonl")
+    记录们 = _读行(路)
+    留 = [记录 for 记录 in 记录们 if str(记录.get("内容", "")).strip() != 目标]
+    删了 = len(记录们) - len(留)
+    if 删了:
+        with open(路, "w", encoding="utf-8") as 文件:
+            for 记录 in 留:
+                文件.write(json.dumps(记录, ensure_ascii=False) + chr(10))
+    return 删了
+
+
 def 取记忆(最多=20):
     记录们 = _读行(os.path.join(目录(), "关键记忆.jsonl"))
     return list(reversed(记录们))[:int(最多)]
@@ -75,6 +91,7 @@ def 记忆文本(最多=12):
     if not 记录们:
         return ""
     return "\n".join("- " + 记录["内容"] for 记录 in 记录们)
+
 
 
 def 存摘要(会话, 覆盖到, 摘要):

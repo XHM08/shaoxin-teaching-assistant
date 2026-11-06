@@ -56,7 +56,6 @@ class 假语音(http.server.BaseHTTPRequestHandler):
 os.makedirs(课件目录)
 os.makedirs(参考音目录)
 
-
 with wave.open(os.path.join(参考音目录, "参考音.wav"), "wb") as 音频:
     音频.setnchannels(1)
     音频.setsampwidth(2)
@@ -64,7 +63,6 @@ with wave.open(os.path.join(参考音目录, "参考音.wav"), "wb") as 音频:
     音频.writeframes(b"\x00\x00" * 16000)
 with open(os.path.join(参考音目录, "参考音.txt"), "w", encoding="utf-8") as 文件:
     文件.write("这是自检用的参考音，念的是这一句话\n")
-
 
 夹具 = {"title": "配音夹具", "pages": [
     {"kind": "封面", "title": "封面", "points": ["六年级"], "script": "同学们好，今天讲分数的除法"},
@@ -85,7 +83,6 @@ with open(os.path.join(参考音目录, "参考音.txt"), "w", encoding="utf-8")
 审计.记一笔 = lambda 类别, 内容, **其余: 收到.append((类别, dict(内容)))
 
 try:
-
     try:
         语音.取地址 = lambda: "http://127.0.0.1:1"
         讲稿配音.处理("配音夹具.pptx")
@@ -95,7 +92,6 @@ try:
             "语音服务没在跑" in str(异常) and "启动" in str(异常),
             type(异常).__name__ + "：" + str(异常).splitlines()[0][:70])
     语音.取地址 = lambda: "http://127.0.0.1:%d" % 端口
-
 
     老参考 = 配置.取目录
     空目录 = os.path.join(临时, "空参考音")
@@ -110,7 +106,6 @@ try:
             str(异常).replace("\n", " ")[:70])
     配置.取目录 = 老参考
 
-
     记录.clear()
     回执 = 讲稿配音.处理("配音夹具.pptx", "1.0")
     配音目录 = os.path.join(课件目录, "配音夹具_配音")
@@ -123,12 +118,10 @@ try:
     检查("④ 没讲稿的页在回执里说明白了（不是悄悄少一页）",
         "1 页没有讲稿" in 回执["提示"] and "第 2 页" in 回执["提示"], 回执["提示"][:90])
 
-
     检查("⑤ 合成用的文本就是备注里的讲稿，且按页序",
         [记["体"]["text"] for 记 in 记录] ==
         ["同学们好，今天讲分数的除法", "下课之前再记一遍结论"],
         "实际：" + str([记["体"]["text"][:12] for 记 in 记录]))
-
 
     体 = 记录[0]["体"] if 记录 else {}
     检查("⑥ 请求体字段齐全且对（ref_audio_path / prompt_text / lang / speed / wav）",
@@ -138,7 +131,6 @@ try:
         and float(体.get("speed_factor", 0)) == 1.0 and 体.get("media_type") == "wav"
         and all(记["路径"] == "/tts" for 记 in 记录),
         "实际：" + json.dumps(体, ensure_ascii=False)[:110])
-
 
     def 秒数(名):
         with wave.open(os.path.join(配音目录, 名), "rb") as 音频:
@@ -150,23 +142,19 @@ try:
         "第1页 %.2fs(期望 %.2f) / 第3页 %.2fs(期望 %.2f)"
         % (秒数("第1页.wav"), 期望1, 秒数("第3页.wav"), 期望3))
 
-
     检查("⑧ 回执条目带页号、字数、时长、文件名",
         [(条["页"], 条["字数"]) for 条 in 回执["条目"]] == [(1, 13), (3, 10)],
         json.dumps(回执["条目"], ensure_ascii=False)[:110])
 
-
     检查("⑨ 审计记了「讲稿配音」一笔（含页数与字数）",
         any(类别 == "讲稿配音" and 内容.get("合成页数") == 2 for 类别, 内容 in 收到),
         json.dumps(收到[-1][1], ensure_ascii=False)[:90] if 收到 else "没记")
-
 
     try:
         讲稿配音.处理("../../配置.json")
         检查("⑩ 课件文件名带目录 → 拦住", False, "居然放过去了")
     except ValueError as 异常:
         检查("⑩ 课件文件名带目录 → 拦住并给人话", "只填文件名" in str(异常), str(异常)[:60])
-
 
     try:
         讲稿配音.处理("没这份.pptx")
@@ -176,13 +164,11 @@ try:
             "没有这份课件" in str(异常) and "配音夹具.pptx" in str(异常),
             str(异常).replace("\n", " ")[:80])
 
-
     try:
         讲稿配音.处理("配音夹具.pptx", "9")
         检查("⑫ 语速越界 → 拦住", False, "居然放过去了")
     except ValueError as 异常:
         检查("⑫ 语速越界 → 拦住并给人话", "语速只在" in str(异常), str(异常)[:60])
-
 
     目录名, 配音条目 = 讲稿配音.合成整份(os.path.join(课件目录, "配音夹具.pptx"))
     检查("⑬ 合成整份 返回的音频地址形状对（/配音/<目录>/第N页.wav，未编码）",
@@ -190,12 +176,10 @@ try:
                                         "/配音/配音夹具_配音/第3页.wav"],
         "实际：" + str([条["音频"] for 条 in 配音条目]))
 
-
     警告 = []
     讲稿配音.合成整份(os.path.join(课件目录, "配音夹具.pptx"), 1.0, 警告)
     检查("⑭ 没讲稿的页要在警告里说出来（调用方才有话告诉老师）",
         any("没有讲稿" in 一句 for 一句 in 警告), "警告：" + str(警告)[:80])
-
 
     语音.取地址 = lambda: "http://127.0.0.1:1"
     行不行, 原因 = 讲稿配音.能配音吗()
@@ -208,7 +192,6 @@ try:
     配置.取目录 = 老取
     检查("⑯ 参考音没放 → 不能配音，且原因指到参考音",
         行不行 is False and "参考音" in 原因, "原因：" + 原因[:70])
-
 
     副本名 = "自检用-差分副本.pptx"
     副本路径 = os.path.join(课件目录, 副本名)
@@ -229,7 +212,6 @@ try:
         检查("⑲ 没改过再配一次：一次都不调（沿用上次），且话说明了",
             次 == 0 and "一页都没重配" in 话, "调了 %d 次；%s" % (次, 话))
 
-
         from pptx import Presentation
         演示 = Presentation(副本路径)
         list(演示.slides)[2].notes_slide.notes_text_frame.text = "换一段讲稿试试，这页已经改过了"
@@ -237,7 +219,6 @@ try:
         次, 话 = 配一次()
         检查("⑳ 只改一页备注 → 只重配那一页（1 次），并点名第 3 页、说清其余沿用",
             次 == 1 and "第 3 页" in 话 and "其余 1 页" in 话, "调了 %d 次；%s" % (次, 话))
-
 
         演示 = Presentation(副本路径)
         for 形 in list(演示.slides)[0].shapes:
@@ -253,7 +234,6 @@ try:
         检查("㉒ 语速变了 → 全部重配（换个速度是另一条音频，不能拿旧的凑）", 次 == 2,
             "调了 %d 次；%s" % (次, 话))
 
-
         with open(os.path.join(副本配音目录, 讲稿配音.配音台账名), "w", encoding="utf-8") as 文件:
             文件.write("{这不是 json")
         次, 话 = 配一次(1.2)
@@ -266,7 +246,6 @@ try:
         shutil.rmtree(副本配音目录, ignore_errors=True)
         if os.path.isfile(副本路径):
             os.remove(副本路径)
-
 
     检查("⑰ 要不要配音：填「不」才跳过，空着/「要」都要配",
         (讲稿配音.要配音吗("不") is False and 讲稿配音.要配音吗("不要") is False

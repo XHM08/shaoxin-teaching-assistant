@@ -24,7 +24,6 @@ def 建联接(链接, 指向):
 
 
 def 删联接(链接):
-
     subprocess.run(["cmd", "/c", "rmdir", 链接.replace("/", "\\")], capture_output=True, text=True)
 
 
@@ -71,8 +70,6 @@ def main():
         for 链接 in (外链, 内链):
             删联接(链接)
         shutil.rmtree(连根, ignore_errors=True)
-
-
         剩下 = os.path.isfile(os.path.join(连外, "y.txt"))
         检查("清理时只删链接、没连带动目标里的文件", 剩下, "目标里的 y.txt 还在=" + str(剩下))
         shutil.rmtree(连外, ignore_errors=True)

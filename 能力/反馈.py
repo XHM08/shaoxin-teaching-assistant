@@ -6,7 +6,6 @@ from 地基 import 审计, 配置, 大模型, 提示词, 注册表
 
 from 能力 import _反馈
 
-
 项目背景 = (
     "「邵新」辅助教育系统：一个给乡村教师用的本地程序。\n"
     "技术约定：Python 标准库为主，.docx / .pptx / .xlsx 都是自己解 zip 里的 XML；\n"
@@ -43,8 +42,6 @@ def 读代码(相对路径们):
         全 = os.path.normcase(os.path.abspath(os.path.join(根, 名)))
         if os.path.commonpath([根, 全]) != 根:
             raise ValueError("这个路径跑到项目目录外面去了：" + 名)
-
-
         名 = os.path.normpath(名).replace(os.sep, "/")
         顶层 = 名.split("/")[0]
         if 顶层 in 禁区:
@@ -53,7 +50,6 @@ def 读代码(相对路径们):
             raise ValueError("没找到这个文件：" + 名)
         with open(全, "r", encoding="utf-8", errors="replace") as 文件:
             正文 = 文件.read(每文件上限)
-
         正文 = 正文.replace("```", "'''")
         if len(正文) >= 每文件上限:
             正文 += "\n…（这个文件太长，只取了前 " + str(每文件上限) + " 字）"

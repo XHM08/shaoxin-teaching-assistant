@@ -39,11 +39,9 @@ def _空端口():
 def main():
     根 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
     检查("源码模式下 取根目录() 指向 样本/",
         配置.取根目录(冻结=False) == 根,
         "得到 " + 配置.取根目录(冻结=False))
-
 
     检查("冻结模式下 取根目录(True) 指向 exe 所在目录",
         配置.取根目录(冻结=True) == os.path.dirname(os.path.abspath(sys.executable)),
@@ -52,7 +50,6 @@ def main():
     检查("模块级 根目录 是字符串且存在",
         isinstance(配置.根目录, str) and os.path.isdir(配置.根目录),
         配置.根目录)
-
 
     import 主程序 as 入口
     可分发 = getattr(入口, "认识这个命令", None)
@@ -74,7 +71,6 @@ def main():
     检查("两处都有 → 以注册表为准（那是权威版本号）",
         WebView2.判定("154.0.4258.62", "154.0.4258.53")[1] == "154.0.4258.62")
 
-
     假边 = os.path.abspath(__file__)
     不存在的边 = os.path.join(os.path.dirname(假边), "这个文件不存在-用来验回退.exe")
     命令 = WebView2.回退命令("http://127.0.0.1:8765", 候选=[假边])
@@ -89,7 +85,6 @@ def main():
     import inspect
 
     import 桌面客户端
-
 
     冻结命令 = 桌面客户端.子进程命令("服务", 冻结=True)
     检查("冻结时用 exe 自身 + 角色参数",
@@ -106,13 +101,11 @@ def main():
     空口 = _空端口()
     检查("没人听的端口 → 有人听吗() 是假", 桌面客户端.有人听吗(空口) is False)
 
-
     起 = time.time()
     成了 = 桌面客户端.等端口(空口, 超时秒=2)
     用了 = time.time() - 起
     检查("等一个没人听的端口 → 返回假（不假装成功）", 成了 is False)
     检查("等端口真的等满了超时（不是立刻返回）", 用了 >= 1.8, "用了 %.1f 秒" % 用了)
-
 
     假 = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
     强杀数 = None
@@ -126,9 +119,7 @@ def main():
     检查("收队之后那个进程真的没了", 假.poll() is not None, "poll=" + str(假.poll()))
     检查("收队报告了强杀个数（0 或 1 都合理）", 强杀数 in (0, 1), str(强杀数))
 
-
     检查("提示() 存在", callable(getattr(桌面客户端, "提示", None)))
-
 
     原_stderr = sys.stderr
     sys.stderr = io.StringIO()
@@ -139,10 +130,8 @@ def main():
         sys.stderr = 原_stderr
     检查("提示() 真的写到了 stderr（源码模式）", "自检探针" in 出了, 出了.strip()[:40])
 
-
     检查("【静态】主程序() 的源码里没有裸 print",
         "print(" not in inspect.getsource(桌面客户端.主程序))
-
 
     日志文件 = os.path.join(配置.根目录, "日志", "客户端-悬浮窗.log")
     原来就有日志 = os.path.isfile(日志文件)
@@ -158,13 +147,11 @@ def main():
         乙 = 桌面客户端.起悬浮窗()
         起了几个 = len([p for p in 桌面客户端.子进程们 if p.poll() is None])
     except Exception as 异常:
-
         起了几个 = -1
         甲 = 乙 = None
         说明起不来 = type(异常).__name__ + "：" + str(异常)[:50]
     finally:
         桌面客户端.子进程命令 = 原_命令
-
         桌面客户端.收队(list(桌面客户端.子进程们), 超时秒=1)
         桌面客户端.子进程们[:] = []
         桌面客户端.角色进程.pop("悬浮窗", None)

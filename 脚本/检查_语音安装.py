@@ -7,7 +7,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from 地基 import 语音
 
-
 关键文件 = [
     ".venv/Scripts/python.exe",
     "GPT_SoVITS/pretrained_models/s2G488k.pth",
@@ -43,7 +42,6 @@ else:
     检查("关键文件都在（权重 + 两个 BERT + 中文前端）", not 缺的,
         ("缺：" + "、".join(缺的)) if 缺的 else "%d 项都在" % len(关键文件))
 
-
     if 缺的:
         检查("那个 venv 还能导入整条依赖链（搬盘没搬坏）", False, "关键文件不齐，先补齐再说")
     else:
@@ -70,7 +68,6 @@ print()
 for 名字, 过, 说明 in 结果:
     print(("  通过  " if 过 else "  失败  ") + 名字 + ("　→　" + 说明 if 说明 else ""))
     坏 += 0 if 过 else 1
-
 
 地址 = 语音.取地址()
 if 语音.服务在吗():

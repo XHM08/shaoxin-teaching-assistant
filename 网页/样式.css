@@ -234,3 +234,25 @@ button.danger:hover { background: #a10c24; }
 .cmdbx button { margin-top: 10px; }
 
 .hide { display: none; }
+
+
+.wrap { padding-bottom: 172px; }
+.形象角 { position: fixed; right: 18px; bottom: 18px; z-index: 40; }
+.形象角 img { display: block; height: 150px; cursor: pointer; user-select: none; }
+.形象角 button { position: absolute; top: 0; right: 0; width: 22px; height: 22px;
+  border: 0; border-radius: 50%; background: #0006; color: #fff; cursor: pointer;
+  font-size: 14px; line-height: 22px; padding: 0; }
+.形象角.hide { display: none; }
+
+
+.think { margin-bottom: 8px; }
+.think > summary {
+  cursor: pointer; font-size: 12px; color: #666; user-select: none;
+  padding: 2px 0;
+}
+.think > summary:hover { color: #333; }
+.think > pre {
+  margin: 6px 0 0; padding: 8px 10px; border-left: 3px solid #d9d9d9;
+  background: #fafafa; color: #555; font-size: 12px; line-height: 1.6;
+  white-space: pre-wrap; word-break: break-word; max-height: 320px; overflow: auto;
+}

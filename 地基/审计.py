@@ -53,7 +53,6 @@ def 轮转(路径, 日志目录):
 
 
 def 记一笔(能力, 元信息=None, 成功=True, 秒数=0.0, 备注=""):
-
     记录 = {
         "时间": time.strftime("%Y-%m-%d %H:%M:%S"),
         "能力": 能力,
@@ -80,7 +79,6 @@ def 记一笔(能力, 元信息=None, 成功=True, 秒数=0.0, 备注=""):
         with open(路径, "a", encoding="utf-8") as 文件:
             文件.write(json.dumps(记录, ensure_ascii=False) + "\n")
     except OSError as 异常:
-
         记录["备注"] = "审计写入失败：" + str(异常)
     return 记录
 

@@ -26,7 +26,6 @@ def main():
     os.makedirs(课件目录, exist_ok=True)
     端口 = 配置.取端口()
 
-
     if not 服务活着(端口):
         print("  服务没起（127.0.0.1:%d 连不上）。先启动服务再跑这个检查。" % 端口)
         return 1
@@ -69,7 +68,6 @@ def main():
     except urllib.error.URLError as 异常:
         问题.append("连不上服务：" + str(异常.reason))
     except Exception as 异常:
-
         问题.append(type(异常).__name__ + ": " + str(异常) + "  ← 响应很可能被写坏了")
     finally:
         if os.path.isfile(临时课件):

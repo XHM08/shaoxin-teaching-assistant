@@ -1,1 +1,2 @@
-D:\projects\GPT-SoVITS
+# GPT-SoVITS 的安装目录。装到别处就改这一行。
+# 例：D:\projects\GPT-SoVITS

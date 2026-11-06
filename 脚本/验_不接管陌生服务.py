@@ -1,5 +1,3 @@
-
-
 import http.server
 import os
 import socket
@@ -77,7 +75,6 @@ def main():
     print("---- 跑法说的话 ----")
     for 行 in 输出.splitlines()[:6]:
         print("  " + 行)
-
 
     还活着 = 线.is_alive()
     try:

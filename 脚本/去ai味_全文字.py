@@ -1,5 +1,3 @@
-
-
 import io
 import json
 import os
@@ -23,8 +21,6 @@ def 该跳过(名):
 
 def 换破折号(文):
     文 = re.sub(r"^([ \t>\-]*[ \t]*)——[ \t]*", r"\1", 文, flags=re.M)
-
-
     文 = re.sub(r"[ \t\r]*——[ \t\r]*(\r?\n)", r"：\1", 文)
     文 = re.sub(r"[ \t]*——[ \t]*(?=\r?\n|\Z)", "：", 文)
 
@@ -60,8 +56,6 @@ def 处理一段(文):
 
 
 def 处理md(原):
-
-
     出 = []
     缓 = []
 
@@ -80,8 +74,6 @@ def 处理md(原):
             continue
         if not 在块 and l.lstrip().startswith("|"):
             冲()
-
-
             出.append(收加粗(表情正则.sub("", l)))
             continue
         缓.append(l)
@@ -122,7 +114,6 @@ def 扫js(段):
 
 def 处理代码段(段, 注释开头):
     if 段.lstrip().lower().startswith("<style"):
-
         出 = []
         for l in 段.splitlines(True):
             出.append(处理一段(l) if l.lstrip().startswith(注释开头) else l)
@@ -135,7 +126,6 @@ def 处理html(原):
     出 = []
     for i, s in enumerate(段):
         if i % 2:
-
             注释开头 = ("/*",) if s.lstrip().lower().startswith("<style") else ("//", "/*", "*")
             出.append(处理代码段(s, 注释开头))
         else:
@@ -144,8 +134,6 @@ def 处理html(原):
 
 
 def 处理bat(原):
-
-
     出 = []
     for l in 原.splitlines(True):
         s = l.strip().lower()
@@ -157,7 +145,6 @@ def 处理bat(原):
 
 
 def 处理json(原):
-
     段 = re.split(r'("(?:[^"\\]|\\.)*")', 原)
     return "".join(s if i % 2 else 处理一段(s) for i, s in enumerate(段))
 
@@ -176,7 +163,6 @@ def 校验(原, 新, 后):
             json.loads(新)
         except ValueError as e:
             return "JSON 解析不过：" + str(e)[:50]
-
     if 原.count("\r\n") * 2 > 原.count("\n"):
         独 = 新.count("\n") - 新.count("\r\n")
         if 独 > 0:
@@ -186,10 +172,10 @@ def 校验(原, 新, 后):
 
 def 主程序():
     干 = "--写" in sys.argv
-    根们 = [r"C:/Users/你的用户名/Desktop/样本", r"C:/Users/你的用户名/Desktop/内部文档"]
+    根们 = [r"C:/Users/25768/Desktop/样本", r"C:/Users/25768/Desktop/科赛"]
     备份根 = None
     if 干:
-        备份根 = r"C:/Users/你的用户名/Desktop/内部文档/_备份_去ai味_%s" % time.strftime("%Y%m%d-%H%M%S")
+        备份根 = r"C:/Users/25768/Desktop/科赛/_备份_去ai味_%s" % time.strftime("%Y%m%d-%H%M%S")
         os.makedirs(备份根, exist_ok=True)
 
     动的 = []
@@ -228,7 +214,6 @@ def 主程序():
                 总计["加粗"] += 原.count("**") - 新.count("**")
                 总计["表情"] += len(表情正则.findall(原)) - len(表情正则.findall(新))
                 if 干:
-
                     到 = os.path.join(备份根, os.path.basename(根), 相对)
                     os.makedirs(os.path.dirname(到), exist_ok=True)
                     shutil.copy2(全, 到)

@@ -44,7 +44,6 @@ def 服务通(口):
         with urllib.request.urlopen("http://127.0.0.1:%d/" % 口, timeout=2) as 答:
             return "邵新" in 答.read().decode("utf-8", "ignore")
     except Exception:
-
         return False
 
 

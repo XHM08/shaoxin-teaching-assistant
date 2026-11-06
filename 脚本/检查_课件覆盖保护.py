@@ -93,13 +93,11 @@ try:
         len(备份们()) == 3 and any("不是邵新生成的" in 一句 for 一句 in 警告),
         "备份 %d 份；警告=%s" % (len(备份们()), 警告[:1]))
 
-
     顶层 = sorted(名 for 名 in os.listdir(输出目录)
                  if 名.endswith(".pptx") and not 名.startswith("_"))
     检查("⑥ 备份都在 _备份/ 里、顶层只剩正常课件（不会混进课件列表）",
         all("老师改过" not in 名 for 名 in 顶层) and bool(备份们()),
         "顶层=%s" % 顶层)
-
 
     原记录路径 = _课件.生成记录路径
     _课件.生成记录路径 = lambda p: 输出目录

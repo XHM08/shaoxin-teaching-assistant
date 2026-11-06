@@ -39,7 +39,6 @@ def 检查(名字, 通过, 说明=""):
     ],
 }
 
-
 怪样子 = {"title": "怪数据", "pages": [
     {"title": "整段字符串的要点", "关键句": "看看会不会一个字一行",
      "points": "第一条要点\n第二条要点\n第三条要点", "script": "讲稿"},
@@ -51,7 +50,6 @@ def 检查(名字, 通过, 说明=""):
 try:
     from pptx import Presentation
 
-
     路径 = os.path.join(临时目录, "夹具.pptx")
     幻灯片.写出(夹具, 路径)
     prs = Presentation(路径)
@@ -60,13 +58,11 @@ try:
 
     页们 = list(prs.slides)
 
-
     封面右 = max((s.left + s.width) / 914400 for s in 页们[0].shapes)
     封面左 = min(s.left / 914400 for s in 页们[0].shapes)
     检查("② 封面是整幅的（左右都铺到边）",
         封面左 <= 容差 and 封面右 >= 画布 - 容差,
         "左 %.2f 右 %.2f（画布 %.2f）" % (封面左, 封面右, 画布))
-
 
     for 序号, 页 in enumerate(页们[1:], 2):
         右 = max((s.left + s.width) / 914400 for s in 页.shapes)
@@ -75,14 +71,12 @@ try:
             右 >= 画布 - 边距 - 容差)
         检查("④ 第 %d 页没贴到左边缘（左 %.2f）" % (序号, 左), 左 >= 边距 - 容差)
 
-
     没有页脚 = []
     for 序号, 页 in enumerate(页们[1:], 2):
         if not any(abs(s.top / 914400 - 6.92) < 0.2 for s in 页.shapes if s.has_text_frame):
             没有页脚.append(序号)
     检查("⑤ 内容页都有页脚（第几页）", not 没有页脚,
         ("缺页脚的是第 " + "、".join(map(str, 没有页脚)) + " 页") if 没有页脚 else "")
-
 
     缺标题 = []
     for 序号, (页, 页数据) in enumerate(zip(页们, 夹具["pages"]), 1):
@@ -92,12 +86,10 @@ try:
     检查("⑥ 每页都能找到标题", not 缺标题,
         ("缺的是第 " + "、".join(map(str, 缺标题)) + " 页") if 缺标题 else "")
 
-
     缺备注 = [序号 for 序号, 页 in enumerate(页们, 1)
              if not (页.has_notes_slide and 页.notes_slide.notes_text_frame.text.strip())]
     检查("⑦ 讲稿都进了备注（投屏不显示、演讲者视图能看到）", not 缺备注,
         ("缺的是第 " + "、".join(map(str, 缺备注)) + " 页") if 缺备注 else "")
-
 
     怪路径 = os.path.join(临时目录, "怪.pptx")
     try:
@@ -119,7 +111,6 @@ try:
         检查("⑧ points 是一整段字符串时没有崩", False,
             type(异常).__name__ + "：" + str(异常).splitlines()[0][:90])
 
-
     try:
         空路径 = os.path.join(临时目录, "空.pptx")
         幻灯片.写出({"title": "空", "pages": []}, 空路径)
@@ -128,8 +119,6 @@ try:
     except Exception as 异常:
         检查("⑫ 一个页面都没有时也产出可打开的文件", False,
             type(异常).__name__ + "：" + str(异常).splitlines()[0][:90])
-
-
     try:
         from PIL import Image
         图目录 = os.path.join(临时目录, "材料")
@@ -147,8 +136,6 @@ try:
             {"kind": "小结", "title": "小结", "关键句": "记住", "points": ["一条"], "script": "讲稿", "图": ""},
         ]}
         上下文 = {"图目录": 图目录, "警告": [], "配图页": []}
-
-
         图路径 = os.path.join(临时目录, "配图.pptx")
         幻灯片.写出(带图, 图路径, 上下文)
         图prs = Presentation(图路径)
@@ -177,17 +164,13 @@ try:
         缺页脚的 = [序号 for 序号, 页 in enumerate(图页们[1:], 2)
                   if not any(abs(s.top / 914400 - 6.92) < 0.2
                              for s in 页.shapes if s.has_text_frame)]
-
-
         检查("⑱ 带图页的页脚还在（配图没把它挤掉）", not 缺页脚的,
             ("缺页脚的是第 " + "、".join(map(str, 缺页脚的)) + " 页") if 缺页脚的 else "")
     except ImportError as 异常:
-
         检查("⑬~⑱ 配图排版（要 Pillow 现场画图）", False,
             "ImportError：" + str(异常)[:60] + "（先看是不是这台电脑没有 Pillow）")
     except Exception as 异常:
         检查("⑬~⑱ 配图排版", False, type(异常).__name__ + "：" + str(异常).splitlines()[0][:90])
-
 
     try:
         提示词文本 = open(os.path.join(配置.取目录("提示词"), "课件生成.md"), encoding="utf-8").read()

@@ -17,7 +17,6 @@ def 读取(名字):
 
 
 def 填充(原文, **替换表):
-
     for 键, 值 in 替换表.items():
         原文 = 原文.replace("{" + 键 + "}", str(值))
     return 原文

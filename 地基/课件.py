@@ -99,6 +99,8 @@ def 转文字(数据):
     return "\n".join(行表)
 
 
+
+
 def 指纹(路径):
     路径 = str(路径)
     if not os.path.isfile(路径):
@@ -113,7 +115,6 @@ def 指纹(路径):
                 哈希.update(一段)
                 一段 = 文件.read(1024 * 1024)
     except OSError as 异常:
-
         raise ValueError("这份课件现在读不了（多半是正被 WPS 打开着）：" + os.path.basename(路径)
                        + "。请先把 WPS 里那份关掉，或另存一份再试。") from 异常
     return {"改动时间": 改动时间, "大小": 尺寸, "内容": 哈希.hexdigest()[:16]}
@@ -156,8 +157,6 @@ def 读各页(路径):
                 备注 = (页.notes_slide.notes_text_frame.text or "").strip()
         except Exception:
             备注 = ""
-
-
         标题 = ""
         try:
             if 页.shapes.title is not None and 页.shapes.title.text_frame.text.strip():

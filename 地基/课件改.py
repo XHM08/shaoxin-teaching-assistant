@@ -51,7 +51,6 @@ def 解析清单(原文, 页数):
         raise ValueError("模型给的清单不是一份对象（{}），没法当改动用")
     改动们 = 数据.get("改动")
     if not isinstance(改动们, list) or not 改动们:
-
         return {"改动": [], "做不到的": [str(x) for x in (数据.get("做不到的") or [])]}
     改动, 做不到 = [], list(str(x) for x in (数据.get("做不到的") or []))
     for 一条 in 改动们:
@@ -152,8 +151,6 @@ def 执行清单(课件路径, 清单, 警告=None):
 
     def 写回(框, 段落们):
         档 = 抄格式(框)
-
-
         框.clear()
         for 序号, 一段 in enumerate(段落们):
             段 = 框.paragraphs[0] if 序号 == 0 else 框.add_paragraph()
@@ -198,7 +195,6 @@ def 执行清单(课件路径, 清单, 警告=None):
                                                      type(异常).__name__))
         if 这页成了:
             好页.append(一条["页"])
-
 
     临时 = str(课件路径) + ".改中" + "." + uuid.uuid4().hex[:8]
     演示文稿.save(临时)

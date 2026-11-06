@@ -47,7 +47,6 @@ def 钩子正文(名单=快速项):
 def 写钩子(位置, 名单=快速项):
     with io.open(位置, "w", encoding="utf-8", newline="\n") as 文件:
         文件.write(钩子正文(名单))
-
     try:
         os.chmod(位置, os.stat(位置).st_mode | 0o111)
     except OSError:
@@ -90,7 +89,6 @@ def 自测():
         if 全绿.returncode != 0:
             失败.append("全绿却退出码 %d" % 全绿.returncode)
 
-
         坏 = os.path.join(仓库, "脚本", 快速项[0])
         io.open(坏, "w", encoding="utf-8").write("raise SystemExit(1)\n")
         有红 = 跑(路, 仓库)
@@ -98,7 +96,6 @@ def 自测():
             有红.returncode, "没过" in (有红.stdout or "")))
         if 有红.returncode == 0:
             失败.append("有检查失败，钩子却放行")
-
 
         os.remove(坏)
         缺 = 跑(路, 仓库)

@@ -24,18 +24,14 @@ os.environ["SHAOXIN_TOKEN"] = 令牌
 配音目录 = os.path.join(课件目录, "自检课件_配音")
 os.makedirs(配音目录)
 
-
 with open(os.path.join(配音目录, "第1页.wav"), "wb") as 文件:
     文件.write(b"RIFF" + bytes(range(256)) * 8 + b"WAVE")
 声音路径 = os.path.join(配音目录, "第1页.wav")
 声音 = open(声音路径, "rb").read()
-
 with open(os.path.join(配音目录, "那里有份.pptx"), "wb") as 文件:
     文件.write(b"PK\x03\x04 fake")
-
 with open(os.path.join(临时, "秘密.txt"), "wb") as 文件:
     文件.write("这是课件目录之外的文件".encode("utf-8"))
-
 
 图目录 = os.path.join(课件目录, "自检课件_页图")
 os.makedirs(图目录, exist_ok=True)
@@ -78,7 +74,6 @@ def 取(路径, 范围=None, 带令牌=True):
 地址 = 目录头 + quote("第1页.wav")
 
 try:
-
     码, 头, 体 = 取(地址)
     检查("① 整份取回：200 + audio/wav + 内容逐字节一致",
         码 == 200 and 头.get("Content-Type") == "audio/wav" and 体 == 声音
@@ -87,24 +82,20 @@ try:
     检查("② 明确告诉浏览器支持分段（<audio> 拖动进度条要用）",
         头.get("Accept-Ranges") == "bytes", "Accept-Ranges=" + str(头.get("Accept-Ranges")))
 
-
     码, 头, 体 = 取(地址, 范围="bytes=0-99")
     检查("③ Range: bytes=0-99 → 206 + 切片内容对",
         码 == 206 and 体 == 声音[:100] and 头.get("Content-Range") == "bytes 0-99/%d" % len(声音),
         "码=%s Content-Range=%s 长度=%d" % (码, 头.get("Content-Range"), len(体)))
-
 
     码, 头, 体 = 取(地址, 范围="bytes=100-")
     检查("④ Range: bytes=100- → 206 + 到末尾的内容",
         码 == 206 and 体 == 声音[100:] and 头.get("Content-Range") == "bytes 100-%d/%d" % (len(声音) - 1, len(声音)),
         "码=%s 长度=%d" % (码, len(体)))
 
-
     码, 头, 体 = 取(地址, 范围="bytes=abc-def")
     检查("⑤ 怪 Range → 退化成整份（200，内容完整、不是 206 的错位切片）",
 
         码 == 200 and 体 == 声音, "码=%s 长度=%d" % (码, len(体)))
-
 
     try:
         _码0, _头0, _身0 = 取(地址, 范围=None, 带令牌=True)
@@ -117,7 +108,6 @@ try:
     except Exception as _异常:
         检查("Range 后缀区间：bytes=-1000 要的是最后 1000 字节", False,
            type(_异常).__name__ + "：" + str(_异常)[:60])
-
 
     原判本机 = 模块.请求处理.是对端本机
     模块.请求处理.是对端本机 = lambda self: False
@@ -142,10 +132,8 @@ try:
         "不带=%s 带对=%s 带错=%s（本机回环免令牌，所以下面几条不带令牌也通，那是设计）"
         % (不带, 带对, 带错))
 
-
     码, 头, 体 = 取(目录头 + quote("那里有份.pptx"))
     检查("⑦ 要一个不是 .wav 的文件 → 404", 码 == 404, "码=%s" % 码)
-
 
     码, 头, 体 = 取(前缀 + "..%2F..%2F/" + quote("秘密.txt"))
     码2, 头2, 体2 = 取(前缀 + quote("..") + "/" + quote("秘密.txt"))
@@ -154,16 +142,13 @@ try:
         码 == 404 and 码2 == 404 and "课件目录之外" not in 穿越内容.decode("utf-8", "replace"),
         "码=%s/%s" % (码, 码2))
 
-
     码, 头, 体 = 取(目录头.rstrip("/"))
     码2, _, _ = 取(前缀 + "a/b/c.wav")
     检查("⑨ 地址段数不对 → 404 且给人话（不是 500）",
         码 == 404 and 码2 == 404, "码=%s/%s" % (码, 码2))
 
-
     码, 头, 体 = 取(目录头 + quote("第9页.wav"))
     检查("⑩ 文件不存在 → 404", 码 == 404, "码=%s" % 码)
-
 
     图目录头 = 前缀.replace(quote("配音"), quote("课件图")) + quote("自检课件_页图") + "/"
     码, 头, 体 = 取(图目录头 + "page1.png")

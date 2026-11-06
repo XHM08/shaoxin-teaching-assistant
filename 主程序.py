@@ -8,7 +8,6 @@ from 地基 import 配置, 注册表, 工具箱
 
 def 加载():
     结果 = 注册表.全部加载(os.path.join(配置.根目录, "能力"))
-
     工具箱.接上MCP(记录=lambda 一条: print("  " + 一条))
     return 结果
 
@@ -54,7 +53,6 @@ def 看工具():
 
 
 def 运行(名字, 实参):
-
     try:
         处理函数 = 注册表.校验参数(名字, 实参)
     except (KeyError, ValueError) as 异常:
@@ -77,8 +75,6 @@ def 运行(名字, 实参):
 
 
 def 起服务():
-
-
     try:
         import 本地服务
     except ImportError as 异常:
@@ -102,17 +98,13 @@ def 不认识怎么说(命令):
 
 
 def 主程序(命令行参数):
-
-
     命令 = 命令行参数[1] if len(命令行参数) > 1 else "客户端"
 
     if 命令 in 帮助命令:
-        print("「邵新」辅助教育系统\n\n无参 = 起客户端（双击 exe 走的也是这条）\n"
-              "可用命令：客户端 / 服务 / 悬浮窗 / 列出 / 运行 / 工具 / 起服务")
+        print(__doc__.strip())
         return 0
     if not 认识这个命令(命令):
         raise SystemExit(不认识怎么说(命令))
-
 
     if 命令 == "客户端":
         try:
@@ -136,7 +128,6 @@ def 主程序(命令行参数):
         raise SystemExit("能力加载失败（能力/ 里有文件写错了）：\n  "
                          + type(异常).__name__ + ": " + str(异常))
 
-
     try:
         if 命令 == "列出":
             return 列出()
@@ -150,7 +141,6 @@ def 主程序(命令行参数):
             return 起服务()
     except (KeyError, ValueError, OSError, RuntimeError) as 异常:
         raise SystemExit("[" + type(异常).__name__ + "] " + str(异常))
-
 
     raise SystemExit(不认识怎么说(命令))
 

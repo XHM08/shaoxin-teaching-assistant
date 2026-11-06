@@ -4,12 +4,10 @@ import uuid
 
 from 地基 import 配置, 课件
 
-
 页宽 = 13.333
 页高 = 7.5
 边距 = 0.75
 内容宽 = 页宽 - 2 * 边距
-
 
 主蓝 = (0x1A, 0x3C, 0x6E)
 淡蓝 = (0xEC, 0xF1, 0xF8)
@@ -20,9 +18,7 @@ from 地基 import 配置, 课件
 
 字体 = "微软雅黑"
 
-
 类型们 = ("封面", "知识", "例题", "练习", "小结")
-
 
 可插图后缀 = (".jpg", ".jpeg", ".png", ".gif")
 可配图的类型 = ("知识", "例题")
@@ -46,13 +42,10 @@ def _取图(一页, 上下文):
     根 = (上下文 or {}).get("图目录") or 配置.取目录("材料")
     真根 = os.path.realpath(根)
     路径 = os.path.realpath(名字 if os.path.isabs(名字) else os.path.join(真根, 名字))
-
     if not 路径.startswith(真根 + os.sep) or not os.path.isfile(路径):
         _警(上下文, "这一页没配上图（材料/ 里找不到这个文件）：" + 名字[:40])
         return None
     if os.path.splitext(路径)[1].lower() not in 可插图后缀:
-
-
         _警(上下文, "这个格式这一版不收（只收 JPEG / PNG / GIF）：" + 名字[:40])
         return None
     return 路径
@@ -147,8 +140,6 @@ def _页脚(页, 课题, 序号, 总页数):
 
 
 def _排封面(页, 一页, 课题, 序号=None, 总页数=None, 上下文=None):
-
-
     from pptx.util import Inches, Pt
     _加矩形(页, 0, 0, 页宽, 页高, 主蓝)
     _加矩形(页, 0, 页高 - 1.05, 页宽, 1.05, (0x14, 0x2F, 0x57))
@@ -181,7 +172,6 @@ def _排知识(页, 一页, 课题, 序号, 总页数, 上下文=None):
 
     要点 = _取要点(一页)
     if 要点:
-
         _加文字(页, 边距 + 0.05, 上, 宽, 页高 - 上 - 0.7,
               ["·  " + 一条 for 一条 in 要点], 18 if 图路径 else 20, 行距=1.35, 段后=12,
               名字="要点")
@@ -200,7 +190,6 @@ def _排例题(页, 一页, 课题, 序号, 总页数, 上下文=None):
     宽 = 文字窄宽 if 图路径 else 内容宽
     关键句 = str(一页.get("关键句") or "").strip()
     if 关键句:
-
         _加矩形(页, 边距, 上, 宽, 1.22, 淡蓝, 圆角=True)
         _加矩形(页, 边距, 上, 0.08, 1.22, 强调红)
         _加文字(页, 边距 + 0.4, 上 + 0.22, 宽 - 0.8, 0.85,
@@ -221,7 +210,6 @@ def _排例题(页, 一页, 课题, 序号, 总页数, 上下文=None):
 
 
 def _排练习(页, 一页, 课题, 序号, 总页数, 上下文=None):
-
     _页眉(页, 一页)
     上 = 1.6
     关键句 = str(一页.get("关键句") or "").strip()
@@ -239,7 +227,6 @@ def _排练习(页, 一页, 课题, 序号, 总页数, 上下文=None):
 
 
 def _排小结(页, 一页, 课题, 序号, 总页数, 上下文=None):
-
     上 = 1.6
     _页眉(页, 一页)
     要点 = _取要点(一页)
@@ -262,8 +249,6 @@ def _排小结(页, 一页, 课题, 序号, 总页数, 上下文=None):
 
 
 def 写出(课件数据, 输出路径, 上下文=None):
-
-
     try:
         from pptx import Presentation
         from pptx.util import Inches
@@ -280,8 +265,6 @@ def 写出(课件数据, 输出路径, 上下文=None):
     上下文.setdefault("配图页", [])
 
     演示文稿 = Presentation()
-
-
     演示文稿.core_properties.comments = "XR: C"
     演示文稿.slide_width = Inches(页宽)
     演示文稿.slide_height = Inches(页高)
@@ -295,18 +278,14 @@ def 写出(课件数据, 输出路径, 上下文=None):
             类型 = "知识"
         排页面[类型](页, 一页, 课题, 序号, 总页数, 上下文)
         if 类型 not in 可配图的类型 and str(一页.get("图") or "").strip():
-
             _警(上下文, "第 %d 页（%s）填了图，已忽略：只有【知识】【例题】两页配图" % (序号, 类型))
 
         讲稿 = 一页.get("script")
         if 讲稿:
-
             页.notes_slide.notes_text_frame.text = str(讲稿)
 
     if not 页面们:
-
         演示文稿.slides.add_slide(空白版式)
-
 
     临时 = str(输出路径) + "." + uuid.uuid4().hex[:8] + ".写出中"
     try:

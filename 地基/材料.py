@@ -12,7 +12,6 @@ import zipfile
 
 from 地基 import 配置
 
-
 单文件上限 = 64 * 1024 * 1024
 抽取字上限 = 200000
 包条目上限 = 2000
@@ -33,7 +32,6 @@ PDF后缀 = (".pdf",)
 参考资料条数上限 = 5000
 材料条数上限 = 5000
 
-
 PDF至少几个字才算有文字层 = 50
 
 本目录 = os.path.dirname(os.path.abspath(__file__))
@@ -44,12 +42,9 @@ A = "{http://schemas.openxmlformats.org/drawingml/2006/main}"
 表 = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 
 _OCR可用 = None
-
-
 _OCR原因 = ""
 _OCR探针时刻 = 0.0
 OCR失败缓存秒 = 300
-
 
 OCR探针图 = (
     "iVBORw0KGgoAAAANSUhEUgAAAHgAAAAwCAIAAABVDSmEAAAAyUlEQVR4nO3awQqEMAwA0Ub8/1+u"
@@ -76,9 +71,7 @@ def _读原始文字(路径):
     with open(路径, "rb") as 文件:
         数据 = 文件.read()
     if 数据[:2] in (b"\xff\xfe", b"\xfe\xff"):
-
         return 数据.decode("utf-16", errors="replace")
-
     for 编码 in ("utf-8-sig", "gb18030"):
         try:
             return 数据.decode(编码)
@@ -86,8 +79,6 @@ def _读原始文字(路径):
             continue
     文字 = 数据.decode("utf-8", errors="replace")
     if 文字.count("\ufffd") * 20 > len(文字):
-
-
         raise ValueError("这份文件看着不是文本（解出来一半是乱码）。"
                          "它可能是图片、压缩包或别的程序的数据，请换成文本或图片再来。")
     return 文字
@@ -102,8 +93,6 @@ def _去标签(原文):
 
 
 def _像加密件吗(路径):
-
-
     try:
         with open(路径, "rb") as 文件:
             头 = 文件.read(8)
@@ -116,7 +105,6 @@ def _像加密件吗(路径):
 
 
 def _读压缩包(路径, 挑名字):
-
     try:
         包 = zipfile.ZipFile(路径)
     except (zipfile.BadZipFile, OSError) as 异常:
@@ -137,8 +125,6 @@ def _读压缩包(路径, 挑名字):
                 if 名字 in 名字表:
                     结果[名字] = 包.read(名字)
         except Exception as 异常:
-
-
             raise ValueError("这个 Office 文档内部有损坏或加了密码，读不出来（"
                              + type(异常).__name__ + "）") from 异常
         return 结果
@@ -158,7 +144,6 @@ def _页号(名字):
 
 
 def _列号(字母):
-
     数 = 0
     for 字 in str(字母).upper():
         if "A" <= 字 <= "Z":
@@ -187,15 +172,11 @@ def _抽docx(路径):
                 一行 += "\t"
             elif 节点.tag in (W + "br", W + "cr"):
                 一行 += "\n"
-
-
         if 一行.strip() and 段表 and 一行.strip() in 段表[-1]:
             continue
         段表.append(一行)
     文字 = "\n".join(段表)
     if not 文字.strip() and 看到["有图"]:
-
-
         raise ValueError("这份 .docx 里只有图片、没有文字。照片上的字读不出来。"
                          "请把文字打出来，或把图片单独拿出来（图片能走本机 OCR）。")
     return 文字
@@ -203,7 +184,6 @@ def _抽docx(路径):
 
 def _抽pptx(路径):
     def 挑(名字表):
-
         页表 = [n for n in 名字表 if re.fullmatch(r"ppt/slides/slide\d+\.xml", n)]
         return sorted(页表, key=_页号)
 
@@ -235,7 +215,6 @@ def _抽xlsx(路径):
         for 条 in _解析(件["xl/sharedStrings.xml"]).iter(表 + "si"):
             共享.append("".join(节点.text or "" for 节点 in 条.iter(表 + "t")))
 
-
     名字 = {}
     if "xl/workbook.xml" in 件 and "xl/_rels/workbook.xml.rels" in 件:
         目标 = {}
@@ -259,17 +238,13 @@ def _抽xlsx(路径):
             格表 = []
             for 格 in 行.iter(表 + "c"):
                 类 = 格.get("t") or ""
-
-
                 if 类 == "inlineStr":
                     原文 = "".join(节点.text or "" for 节点 in 格.iter(表 + "t"))
                 else:
                     值 = 格.find(表 + "v")
                     原文 = "" if 值 is None else (值.text or "")
                     if 类 == "s":
-
                         原文 = 共享[int(原文)] if 原文.isdigit() and int(原文) < len(共享) else ""
-
                 列号 = _列号(re.sub(r"[^A-Za-z]", "", 格.get("r") or "")) or (len(格表) + 1)
                 while len(格表) < 列号 - 1:
                     格表.append("")
@@ -296,7 +271,6 @@ def _用pypdf读(路径):
 
 
 def _有fitz():
-
     try:
         import pymupdf
         return pymupdf
@@ -336,18 +310,14 @@ def _PDF文字层(路径):
         if 文字 is not None:
             候选.append(文字)
     if not 候选:
-
-
         raise ValueError(
             "读 PDF 需要一个可选的库，这台电脑上没找到。装上就能用：pip install pypdf"
             "（不装也不影响别的格式，只是 PDF 读不了。）"
         )
-
     return max(候选, key=lambda 文字: len(文字.strip()))
 
 
 def 找powershell():
-
     for 名字 in ("powershell.exe", "powershell"):
         路径 = shutil.which(名字)
         if 路径:
@@ -405,8 +375,6 @@ def _跑OCR(图片路径, 输出路径):
 
 
 def _缩小图(图路径, 目标路径):
-
-
     try:
         from PIL import Image
     except ImportError:
@@ -426,7 +394,6 @@ def _缩小图(图路径, 目标路径):
 
 
 def _OCR一张(图片路径):
-
     if not OCR可用():
         raise ValueError("这台电脑上没有可用的本机 OCR（要 Windows 自带的那种），"
                          "读不了图片里的字。请先把图转成文字，存成 .txt 再放进来。")
@@ -447,8 +414,6 @@ def _OCR一张(图片路径):
         if 运行.returncode == 2:
             raise ValueError("这台电脑上的 Windows OCR 没有可用的识别包（中文包没装），读不了图。")
         if 运行.returncode != 0:
-
-
             行表 = [行.strip() for 行 in (运行.stderr or 运行.stdout or "").splitlines()
                   if 行.strip()]
             有用的 = [行 for 行 in 行表
@@ -486,8 +451,6 @@ def _抽扫描PDF(路径):
                     文档[序号].get_pixmap(dpi=200).save(图路径)
                     文字 = _OCR一张(图路径).strip()
                 except Exception as 异常:
-
-
                     坏页.append("第 " + str(序号 + 1) + " 页（" + str(异常)[:20] + "）")
                     continue
                 if 文字:
@@ -528,7 +491,6 @@ def _抽正文(路径, 后缀):
         return _抽pdf(路径)
     if 后缀 in 图片后缀:
         return _抽图片(路径)
-
     return _读原始文字(路径)
 
 
@@ -538,7 +500,6 @@ def 能读(文件名):
         return True, "直接读"
     if 后缀 in PDF后缀:
         if not _有PDF库():
-
             return False, "这台电脑上没装读 PDF 的库（pypdf 或 pymupdf），PDF 暂时读不了。"
         return True, "直接读；扫描件会自动转文字"
     if 后缀 in 图片后缀:
@@ -551,14 +512,11 @@ def 能读(文件名):
     if 后缀 in 旧版后缀:
         return False, "这是 Office 2003 的老格式，程序读不了。请用 WPS 或 Word 打开后「另存为」.docx / .xlsx / .pptx 再放进来。"
     if not 后缀:
-
         return True, "没有后缀，按文本试读"
     return False, "认不出这个格式。请先转成常见格式（PDF / .docx / .pptx / .xlsx / .txt / 图片）再放进来。"
 
 
 def 支持格式说明():
-
-
     图话 = ("照片和扫描图由本机 OCR 转成文字（不联网、不外发，可能有错字）；扫描版 PDF 会逐页转。"
             if OCR可用() else
             "这台电脑上没有可用的本机 OCR，所以照片和扫描图读不出文字。请先把图上的字打出来。")
@@ -572,7 +530,6 @@ def 读材料(路径):
     try:
         大小 = os.path.getsize(路径)
     except OSError:
-
         raise ValueError("找不到这份材料：" + os.path.basename(str(路径))) from None
     if 大小 > 单文件上限:
         raise ValueError("这份材料有 " + str(round(大小 / 1048576, 1)) + " MB，超过了 "
@@ -582,7 +539,6 @@ def 读材料(路径):
         raise ValueError(说明)
     正文 = _封顶(清洗文字(_抽正文(路径, os.path.splitext(路径)[1].lower())))
     if not 正文.strip():
-
         raise ValueError("这份材料里一个字都没读到（空文件，或者格式不对）："
                          + 说明_empty_hint(路径))
     return 正文
@@ -615,15 +571,11 @@ def 材料路径(文件名):
     相对 = 校验材料名(文件名)
     根 = 配置.取目录("材料")
     完整 = os.path.join(根, *相对.split("/"))
-
-
     根真身 = os.path.realpath(根)
     真身 = os.path.realpath(完整)
     if 真身 != 根真身 and not 真身.startswith(根真身 + os.sep):
         raise ValueError("这个材料名指到 材料/ 外面去了：" + repr(文件名))
     if os.path.isdir(完整):
-
-
         raise ValueError("这是个文件夹、不是文件：" + repr(文件名) + "，请选里面的某个文件")
     return 完整
 
@@ -644,8 +596,6 @@ def 材料清单():
             真身 = os.path.realpath(os.path.join(当前目录, 名))
             if 真身 in 去过的真身:
                 continue
-
-
             if not 真身.startswith(根真身 + os.sep):
                 continue
             去过的真身.add(真身)
@@ -669,15 +619,11 @@ def 材料清单():
 
 
 def 参考资料清单():
-
-
     目录 = 配置.取目录("参考资料")
     if not os.path.isdir(目录):
         return []
 
     条目表 = []
-
-
     去过的真身 = {os.path.realpath(目录)}
     for 当前目录, 子目录表, 文件表 in os.walk(目录):
         留住 = []

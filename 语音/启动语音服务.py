@@ -7,7 +7,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from 地基 import 语音
 
-
 必须的 = [
     ("GPT_SoVITS/pretrained_models/s2G488k.pth", "预训练权重"),
     ("GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth", "v2 的生成权重"),

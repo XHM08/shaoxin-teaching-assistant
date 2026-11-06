@@ -3,7 +3,6 @@ import os
 import subprocess
 import sys
 
-
 客户端_GUID = "{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
 注册表键 = r"SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients"
 安装目录候选 = (

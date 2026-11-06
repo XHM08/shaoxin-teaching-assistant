@@ -12,7 +12,6 @@ from 地基 import 课件, 配置
 导出高 = 900
 导出超时 = 180
 
-
 导出脚本骨架 = r"""
 param([string]$Prog, [string]$Pptx, [string]$Out)
 $ErrorActionPreference = 'Stop'
@@ -72,7 +71,6 @@ def 读台账(输出目录):
         return {}
     if not isinstance(账, dict):
         return {}
-
     图 = 账.get("图")
     if isinstance(图, dict):
         干净 = {}
@@ -140,7 +138,6 @@ def 导出各页(课件路径, 警告=None):
         raise RuntimeError("导出每页图失败：" + (末[:160] or "没有任何输出"))
     导了 = int(末.split()[1])
     if 导了 != 页数:
-
         raise RuntimeError("导出的页数（%d）与课件的页数（%d）对不上，不敢用这批图" % (导了, 页数))
 
     图们 = []
@@ -150,7 +147,6 @@ def 导出各页(课件路径, 警告=None):
         if not os.path.isfile(如果) or os.path.getsize(如果) < 1024:
             raise RuntimeError("导出的第 %d 页图不对劲（没生成或太小）" % 序号)
         图们.append(名)
-
 
     for 名 in os.listdir(输出目录):
         if 名.startswith("page") and 名.endswith(".png") and 名 not in 图们:
@@ -162,8 +158,6 @@ def 导出各页(课件路径, 警告=None):
     写台账(输出目录, {"课件指纹": 现在指纹, "页数": len(图们),
                    "图": {str(i + 1): 名 for i, 名 in enumerate(图们)}})
     if isinstance(警告, list):
-
-
         警告.append(("已导出 %d 页图" if 首次 else "课件改了，重新导出了 %d 页图") % len(图们))
     位置.update({"图": 图们, "页数": len(图们)})
     return 位置

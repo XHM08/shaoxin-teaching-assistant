@@ -7,6 +7,7 @@ from 地基 import 技能包 as 技能包库
 from 能力 import _评定
 
 
+
 def 处理出讲解(技能包, 题目):
     开始时刻 = time.time()
     技能包库.校验代号(技能包)

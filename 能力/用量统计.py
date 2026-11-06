@@ -1,13 +1,10 @@
 
 from 地基 import 审计, 注册表
 
-
 读多少行 = 20000
 
 
 def 是数字(值):
-
-
     return isinstance(值, (int, float)) and not isinstance(值, bool)
 
 
@@ -24,8 +21,6 @@ def 处理():
         这次命中 = 命中 if 是数字(命中) else None
         这次未命中 = 未命中 if 是数字(未命中) else None
         if 这次命中 is None and 这次未命中 is None:
-
-
             没带缓存字段 += 1
             continue
         组 = 分组.setdefault(元.get("来源") or "（未标明）",
@@ -46,15 +41,12 @@ def 处理():
             "推理token": 组["推理"],
             "命中率": ("%.1f%%" % (100.0 * 组["命中"] / 总数)) if 总数 else "—",
         })
-
-
     条目.sort(key=lambda 一: -一["未命中token"])
 
     命中合计 = sum(一["命中token"] for 一 in 条目)
     未命中合计 = sum(一["未命中token"] for 一 in 条目)
     推理合计 = sum(一["推理token"] for 一 in 条目)
     总数 = 命中合计 + 未命中合计
-
 
     说明 = ("读了日志最后 " + str(len(全部)) + " 行（最多取 " + str(读多少行) + " 条），其中模型调用 "
             + str(len(调用)) + " 次。")
@@ -63,7 +55,7 @@ def 处理():
                  + " 次响应里没带可用的缓存字段（服务商或中转站不报、或报的不是数字），没算进命中率。")
 
     注意事项 = (
-        "几件容易误判的事，先说清楚：\n"
+        "几件容易误判的事：\n"
         "· 各家缓存字段叫法不同（DeepSeek 用 prompt_cache_hit_tokens，火山方舟用 "
         "prompt_tokens_details.cached_tokens），软件两种都认了；不报、或报的不是数字，"
         "一律计成「算不出」而不是 0% 命中。\n"

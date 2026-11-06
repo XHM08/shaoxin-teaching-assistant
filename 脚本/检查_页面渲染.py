@@ -28,8 +28,6 @@ EDGE们 = [
 预览 = os.path.join(网页目录, "_预览.html")
 产物 = os.path.join(根, "_页面截图")
 端口 = 配置.取端口()
-
-
 地址 = "http://127.0.0.1:%d%s" % (端口, urllib.parse.quote("/网页/_预览.html"))
 
 最小图 = 20000
@@ -76,7 +74,6 @@ def main():
             print("    " + 一个)
         return 1
 
-
     锁 = os.path.join(产物 + ".lock")
     try:
         if os.path.isfile(锁) and (time.time() - os.path.getmtime(锁)) < 600:
@@ -105,11 +102,9 @@ def 跑一遍(edge):
         print("  找不到首页：" + 首页)
         return 1
 
-
     import _页面文本
     原 = io.open(首页, encoding="utf-8").read()
     全文 = _页面文本.读页面()
-
 
     脚本 = re.search(r"const VIEWS\s*=\s*\[([^\]]*)\]", 全文)
     页们 = re.findall(r"'([^']+)'", 脚本.group(1)) if 脚本 else []
@@ -119,7 +114,6 @@ def 跑一遍(edge):
     if "</body>" not in 原:
         print("  首页里找不到 </body>，注入会静默失效。先看这个")
         return 1
-
 
     try:
         urllib.request.urlopen("http://127.0.0.1:%d/" % 端口, timeout=5).read(1)
@@ -137,7 +131,6 @@ def 跑一遍(edge):
     print("  逐页截图（共 %d 页）→ %s" % (len(页们), 产物))
 
     try:
-
         if 写预览(原, 页们[0]) is None:
             print("  注入没生效（长度没变）：先看首页的收尾标签")
             return 1
@@ -213,15 +206,11 @@ def 跑一遍(edge):
             elif "hide" in 收.表[目标]:
                 问题.append(页 + " 没切过去：" + 目标 + " 还带着 hide")
             elif 暴露:
-
                 问题.append(页 + " 显示时这些页也还露着：" + "、".join(暴露))
 
             print("    %-8s %7d 字节  md5 %s" % (页, 字节数, 指纹[:12]))
 
-
     finally:
-
-
         try:
             for 一个 in (预览,):
                 if os.path.isfile(一个):
@@ -234,7 +223,6 @@ def 跑一遍(edge):
         if 残留说明 or os.path.isfile(一个):
             问题.append("临时页没删掉，还留在 " + 一个 + "，请手动删"
                         + ("（" + 残留说明 + "）" if 残留说明 else ""))
-
 
     反查 = {}
     for 页, 指纹 in 指纹表.items():

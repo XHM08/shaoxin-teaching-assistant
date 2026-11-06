@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -81,8 +80,8 @@
         <span class="t-desc">把一位教师的材料整理成 AI 技能包</span>
         <span class="t-state ok">可用</span>
       </button>
-        <button class="tile" data-go="本地知识库">
-        <span class="t-name">本地知识库</span>
+        <button class="tile" data-go="资料与记忆">
+        <span class="t-name">资料与记忆</span>
         <span class="t-desc">教师材料与已生成的技能包</span>
         <span class="t-state ok">可用</span>
       </button>
@@ -101,7 +100,17 @@
         <span class="t-desc">一句话让电脑做事：看内存、清垃圾、清回收站</span>
         <span class="t-state ok">可用</span>
       </button>
-        <button class="tile" data-go="反馈与优化">
+        <button class="tile" data-go="识图">
+        <span class="t-name">识图</span>
+        <span class="t-desc">选一张图，让它读文字或描述内容；不联网，走本机视觉接口</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="审查者">
+        <span class="t-name">审查者</span>
+        <span class="t-desc">它自己的记录：哪一轮挑出什么问题，只报告不改答案</span>
+        <span class="t-state ok">可用</span>
+      </button>
+      <button class="tile" data-go="反馈与优化">
         <span class="t-name">反馈与优化</span>
         <span class="t-desc">提意见 → 出诊断草稿 → 人决定改不改（机器不动代码）</span>
         <span class="t-state ok">可用</span>
@@ -116,15 +125,13 @@
       <h2>电脑服务</h2>
       <div class="body">
         <div class="notice">
-          不会用电脑也没关系：用一句话说，或点下面的按钮。<br>
-          <b>只看不动的</b>（看内存、看垃圾有多少）点一下就出结果；
-          <b>要动手的</b>（清临时文件、清回收站）会先把「会发生什么」摊开给你看，
-          你按 <b>确认执行</b> 才会真的做。
+          用一句话说，或点下面的按钮。<br>
+          只看不动的（看内存、看垃圾有多少）点一下出结果；
+          要动手的（清临时文件、清回收站）先列出会发生什么，你按 <b>确认执行</b> 才真的做。
           <br><br>
-          <b>先说清楚一件事</b>：Windows 没有可靠的「清理内存」操作。那些号称清内存的软件
-          是把程序的工作集强行刷走，用起来反而更卡。真正管用的是
-          <b>磁盘腾出空间</b>（清临时文件）和 <b>关掉不用的程序</b>；
-          该关哪个，「谁最占内存」会告诉你，这一步请你自己关。
+          没有「清理内存」这个按钮。Windows 没有可靠的清内存操作，那些号称清内存的软件
+          会把程序的工作集强行刷走，用起来更卡。腾空间靠清临时文件，占用靠关掉不用的程序；
+          该关哪个，「谁最占内存」里有名字，关的动作请你来做。
         </div>
         <div class="chatrow">
           <textarea id="pcText" rows="2" placeholder="例如：电脑好卡，帮我清一下垃圾"></textarea>
@@ -147,13 +154,12 @@
       <h2>环境配置</h2>
       <div class="body">
         <div class="notice">
-          检测这台电脑上有没有 Python / Node / Git / VS Code / WSL。
-          <b>检测</b>只看不动；
-          <b>安装</b>走 Windows 自带的 winget（微软官方包管理器），会先把「装什么、要多久、
-          要不要授权」摊开给你看，你按 <b>确认安装</b> 才开始。
+          检测这台电脑上有没有 Python / Node / Git / VS Code / WSL。检测只看不动。
+          安装走 Windows 自带的 winget（微软官方包管理器），先列出装什么、要多久、要不要授权，
+          你按 <b>确认安装</b> 才开始。
           <br><br>
-          <b>WSL 不代劳</b>：它需要管理员权限且装完要重启电脑，系统只给命令，请你自己执行。
-          装完后本系统可能要关掉重开，才会检测到新装的东西。
+          WSL 只给命令，不代你执行：它需要管理员权限，装完还要重启电脑。
+          装完本系统要关掉重开，才能检测到新装的东西。
         </div>
         <div id="envAlert" class="notice err hide" style="white-space:pre-line"></div>
         <div style="margin-top:12px">
@@ -172,12 +178,12 @@
       <h2>可选接入（外部服务）</h2>
       <div class="body">
         <div class="notice">
-          这里列的是<b>核过来源</b>的外部服务（走 MCP，给邵新挂外部工具用）。
-          只有 <b>stdio 形态</b>的能装上；Supabase / Google 那几家现在是远程 HTTP + OAuth，
-          本机这套（<code>地基/MCP.py</code>）接不了，所以标灰并写明原因，不给能点的按钮。
+          这里列的是核过来源的外部服务（走 MCP，给邵新挂外部工具用）。
+          只有 stdio 形态的能装。Supabase / Google 那几家是远程 HTTP + OAuth，
+          本机这套（<code>地基/MCP.py</code>）接不了，所以标灰写着原因，不给按钮。
           <br><br>
-          装上之后，去 <code>MCP服务器.json</code> 里那条的 <code>env</code> 里把 token 填上，
-          否则服务器起得来、一调工具就报没凭据。改这个文件之前系统会自动留一份到 <code>_历史/</code>。
+          token 填在 <code>MCP服务器.json</code> 对应那条的 <code>env</code> 里。
+          不填的话服务器起得来，一调工具就报没凭据。改这个文件前系统自动留一份到 <code>_历史/</code>。
         </div>
         <div style="margin-top:12px">
           <button id="btn接入查">看看能接什么</button>
@@ -194,20 +200,16 @@
       <h2>创造模式</h2>
       <div class="body">
         <div class="notice">
-          直接跟 AI 说想做什么，它会自己动手。能做的事：
-          <b>出课件</b>（生成 HTML 课件文件）、<b>备课</b>（生成整课讲稿）、
-          <b>查材料与技能包</b>、<b>录学生记录</b>（需先签同意书）。
+          直接跟 AI 说想做什么，它会自己动手。能做的：出课件（生成 HTML 文件）、
+          备课（生成整课讲稿）、查材料与技能包、录学生记录（需先签同意书）。
           <br>
-          对话会留在你这台电脑上（保存在「教师数据\网页缓存」里），关掉再开、刷新都不丢；
-          要清掉就点下面的「清空对话」，删得干净。服务端不保存。
-          涉及学生可以写姓名（2026-09-22 起），但报告、PPT、截图里仍然不出现姓名。
+          对话存在「教师数据\网页缓存」里，关掉再开、刷新都不丢；点下面的「清空对话」就删掉。
+          服务端不保存。对话里可以出现学生姓名（2026-09-22 起），报告、PPT、截图里不出现。
         </div>
         <div id="authBox" class="notice">
           <b>测试阶段内开启全部授权</b>（不限时）。
           <div id="authState" style="margin-top:6px">现在没有授权窗口。</div>
           <div style="margin-top:8px" id="authButtons">
-            <button class="ghost" id="btnAuthSafe">安全授权（不限时）</button>
-            <button class="ghost" id="btnAuthNormal">普通授权（不限时）</button>
             <button class="danger" id="btnAuthFull">全部授权（不限时）</button>
             <button class="ghost" id="btnAuthOff">收回</button>
           </div>
@@ -228,10 +230,10 @@
       <h2>联网查证（教师用）</h2>
       <div class="body">
         <div class="notice">
-          给问题就上网搜（每条带来源、时间和权威度），给网址就抓那一页正文。
-          走的是 DeepSeek 官方接口，<b>按次计费</b>（千次约 $0.75，失败和空结果不计费）。
+          给问题就上网搜，每条带来源、时间和权威度；给网址就抓那一页正文。
+          走 DeepSeek 官方接口，按成功请求次数计费，千次 5 元，失败、无结果和超时都不计费。
           <br>
-          <b>别把学生姓名、学号写进问题里</b>——搜出去的内容会离开这台电脑。
+          问题里别写学生姓名和学号，搜出去的内容会离开这台电脑。
         </div>
         <label>要查什么</label>
         <textarea id="netQuestion" rows="2" placeholder="例如：2026 年初中数学新课标有什么变化"></textarea>
@@ -249,26 +251,12 @@
         <div id="netOut" style="margin-top:12px; white-space:pre-wrap"></div>
       </div>
     </div>
-    <div class="card">
-      <h2>本地记忆</h2>
-      <div class="body">
-        <div class="notice">
-          已记住 <b id="memCount">0</b> 条长期事实，另有 <b id="memSum">0</b> 段对话小结。
-          都存在这台电脑上，不会发给别人；清空只清记忆，不影响学生档案与课件。
-        </div>
-        <div style="margin-top:12px">
-          <button id="btnMemClear">清空记忆</button>
-          <span id="memMsg" style="margin-left:10px"></span>
-        </div>
-        <div id="memList" style="margin-top:12px; white-space:pre-wrap"></div>
-      </div>
-    </div>
     <div class="card hide" id="cmdCard">
       <h2>AI 想执行的命令（等你确认）</h2>
       <div class="body">
         <div class="notice">
-          下面是为完成你刚才那句话、AI 想跑的命令。
-          <b>先读一遍说明，看不懂就别点</b>。命令没确认之前，一个字符都没跑。
+          下面是为完成你刚才那句话、AI 想跑的命令。先读一遍说明，看不懂就别点。
+          没按确认之前，命令一个字符都没跑。
         </div>
         <div id="cmdList"></div>
         <div id="cmdMsg" style="margin-top:12px"></div>
@@ -309,8 +297,43 @@
     </div>
   </section>
 
-  <section id="view-本地知识库" class="hide">
+  <section id="view-资料与记忆" class="hide">
     <button class="back" data-go="首页">← 返回工作台</button>
+    <div class="card">
+      <h2>概览</h2>
+      <div class="body">
+        <div class="notice">
+          这里放三样：材料与技能包（老师自己的素材）、关键记忆（我在对话里记下的长期事实）、
+          对话小结（长对话压出来的摘要）。材料、课件、记忆都在本机。
+        </div>
+        <div style="margin-top:12px; font-size:14px">
+          教师材料 <b id="sumMats">–</b> 份 · 参考资料 <b id="sumRefs">–</b> 份 ·
+          技能包 <b id="sumSkills">–</b> 个 · 课件 <b id="sumDecks">–</b> 个 ·
+          关键记忆 <b id="memCount">0</b> 条 · 对话小结 <b id="memSum">0</b> 段
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>关键记忆</h2>
+      <div class="body">
+        <div class="notice">
+          这些是对话里挑出来长期记住的事实：教材版本、目录约定、老师的偏好。
+          哪条不对就点「删掉」，全都不要就点「清空记忆」。
+        </div>
+        <div style="margin-top:12px">
+          <button class="ghost" id="btnMemRefresh">刷新</button>
+          <button id="btnMemClear" style="margin-left:8px">清空记忆</button>
+          <span id="memMsg" style="margin-left:10px"></span>
+        </div>
+        <table style="margin-top:12px">
+          <thead><tr><th style="width:52px">序号</th><th style="width:80px">类别</th><th>内容</th>
+            <th style="width:150px">记下的时间</th><th style="width:80px">操作</th></tr></thead>
+          <tbody id="memRows"><tr><td colspan="5">加载中…</td></tr></tbody>
+        </table>
+        <div style="margin-top:14px"><b>对话小结</b>（长对话压出来的，按时间倒序）</div>
+        <div id="memList" style="margin-top:8px; white-space:pre-wrap"></div>
+      </div>
+    </div>
     <div class="card">
       <h2>教师材料</h2>
       <div class="body">
@@ -325,7 +348,7 @@
     <div class="card">
       <h2>参考资料</h2>
       <div class="body">
-        <div class="notice" id="refNotice">公开的参考资料：可以查术语口径、当参照，<b>不是蒸馏原料</b>。</div>
+        <div class="notice" id="refNotice">公开的参考资料，可以查术语口径、当参照，不参与蒸馏。</div>
         <table style="margin-top:12px">
           <thead><tr><th style="width:50px">序号</th><th>文件</th><th style="width:90px">格式</th><th style="width:80px">能不能读</th><th style="width:110px">大小（字节）</th></tr></thead>
           <tbody id="refRows"><tr><td colspan="5">加载中…</td></tr></tbody>
@@ -361,10 +384,8 @@
       <h2>技能包校订</h2>
       <div class="body">
         <div class="notice">
-          把这份技能包按 <code>##</code> 拆成一段一段，请老师逐段过一遍：
-          申报材料里写的「该老师<b>本人逐条校对</b>技能包」就是这里。
-          改动会直接写回 <code>SKILL.md</code>，但<b>存之前会自动备份</b>到
-          <code>_历史\</code>，改坏了可以照着恢复。
+          这份技能包按 <code>##</code> 拆成一段一段，逐段过一遍。申报材料里「该老师本人逐条校对技能包」指的这一步。
+          改动直接写回 <code>SKILL.md</code>，存之前自动备份到 <code>_历史\</code>，改坏可以照着恢复。
         </div>
         <div id="skillEditMsg" style="margin-top:12px"></div>
         <div id="skillEditList"></div>
@@ -389,9 +410,8 @@
       <h2>录入一条记录</h2>
       <div class="body">
         <div class="notice">
-          记录以<b>编号为键</b>（文件夹与文件名是 S01、S02…）；<b>姓名可以写进题目与作答</b>，
-          也可以随材料发给 AI 服务商（2026-09-22 放宽；两份同意书需要改版重签）。
-          报告、PPT、截图里仍然不出现姓名。明细只存本机。
+          记录以编号为键，文件夹与文件名是 S01、S02…。姓名可以写进题目与作答，也会随材料发给 AI 服务商
+          （2026-09-22 放宽，两份同意书需要改版重签）。报告、PPT、截图里不出现姓名。明细只存本机。
         </div>
         <div class="row">
           <div>
@@ -439,8 +459,8 @@
       <h2>学生问答</h2>
       <div class="body">
         <div class="notice">
-          填你自己的编号，选一位老师，然后提问。回答会按这位老师的讲法。
-          <b>这次问答会记进你自己的档案</b>（《学生数据处理约定》4.1 采集清单第 1 项）。
+          填自己的编号，选一位老师，然后提问，回答按这位老师的讲法。
+          这次问答记进你自己的档案（《学生数据处理约定》4.1 采集清单第 1 项）。
           需先取得监护人签署的《家长知情同意书》。
         </div>
         <div class="row">
@@ -471,11 +491,10 @@
       <h2>学生注册</h2>
       <div class="body">
         <div class="notice">
-          登记 <b>编号</b>（如 S01）与学生的识别信息。编号会分到一个自己的档案文件夹
-          （<b>学生数据/&lt;编号&gt;/</b>）。
-          姓名、年级、班级会写进 <b>学生数据/对照表/姓名对照表.json</b>；
-          <b>2026-09-22 起，它们也会随材料发给 AI 服务商</b>（以前承诺的“不出本机”已按团队要求取消）。
-          报告、PPT、截图里仍然不出现姓名。明细只存本机。
+          登记编号（如 S01）与学生的识别信息。编号分到一个自己的档案文件夹（<b>学生数据/&lt;编号&gt;/</b>）。
+          姓名、年级、班级写进 <b>学生数据/对照表/姓名对照表.json</b>，也随材料发给 AI 服务商
+          （2026-09-22 起；以前承诺的“不出本机”已按团队要求取消）。
+          报告、PPT、截图里不出现姓名。明细只存本机。
         </div>
         <div class="row">
           <div>
@@ -526,10 +545,9 @@
       <h2>PPT 生成</h2>
       <div class="body">
         <div class="notice">
-          按所选技能包里 <b>那位老师的风格</b> 生成 <b>PowerPoint 课件（.pptx）</b>：
-          要点在幻灯片上，讲稿放在该页的<b>备注</b>里（放映时用演讲者视图看得到）。
-          下载后可用 PowerPoint 或 WPS 打开修改。
-          想在上课时逐页讲解、随时答疑，用「联动教学」。
+          按所选技能包里那位老师的风格生成 PowerPoint 课件（.pptx）：要点在幻灯片上，
+          讲稿放在该页的备注里，放映时用演讲者视图看得到。下载后可用 PowerPoint 或 WPS 打开修改。
+          上课时逐页讲解、随时答疑用「联动教学」。
         </div>
         <div class="row">
           <div>
@@ -562,8 +580,8 @@
       <h2>错因诊断</h2>
       <div class="body">
         <div class="notice">
-          判断这道题<b>为什么错</b>，并按所选技能包里<b>那位老师的方法</b>重讲一遍。
-          结果<b>不落盘</b>（它不在采集清单三项里）；要留档就把它带到「学生档案馆」再录一条。
+          判断这道题为什么错，再按所选技能包里那位老师的方法重讲一遍。
+          结果不落盘，也不在采集清单三项里。要留档就带到「学生档案馆」录一条。
         </div>
         <div class="row">
           <div>
@@ -601,9 +619,9 @@
       <h2>讲解评定 · 出题</h2>
       <div class="body">
         <div class="notice">
-          用<b>项目组自备的题目</b>让 AI 按这位老师的方法写一段讲解（<b>不经学生</b>），
-          再由<b>老师本人</b>看这段讲解对不对。他的改版会和 AI 原版一起留下，
-          供实验五做盲评对照。（依据：知情同意书-教师 第三节第 6 项。）
+          用项目组自备的题目让 AI 按这位老师的方法写一段讲解，不经学生；
+          再由老师本人判断这段讲解对不对。他的改版和 AI 原版一起留下，供实验五做盲评对照。
+          依据：知情同意书-教师 第三节第 6 项。
         </div>
         <div class="row">
           <div>
@@ -665,16 +683,75 @@
     </div>
   </section>
 
+  <section id="view-识图" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <h2 class="page">识图</h2>
+    <div class="notice">
+      选一张图（照片、扫描件、截图都行），再说一句要它做什么。它不是扫描仪：可以读文字，
+      也可以回答画面里有什么。浏览器会先把长边缩到 1600 再传，服务端把它存成临时文件读一次就删。
+    </div>
+    <div class="card">
+      <div class="card-h">选图与要求</div>
+      <div class="card-b">
+        <input type="file" id="识图文件" accept="image/*">
+        <div class="notice" style="margin-top:8px">
+          这张图你想让它干什么？三种都走同一个视觉模型，区别只是问法。
+        </div>
+        <div class="row" style="margin-top:6px">
+          <button class="识图问" data-要求="把图里的文字完整读出来，保留题号、勾选与手写。">读文字</button>
+          <button class="识图问" data-要求="这张图里有什么？把画面内容、布局、颜色、人物或物体都说清楚。">描述画面</button>
+          <button class="识图问" data-要求="当成教材页来读：先说出这一页在讲什么，再列出要点与其中的例题。">当教材读</button>
+        </div>
+        <div style="margin-top:8px">
+          <input type="text" id="识图要求" style="width:100%" placeholder="也可以自己写一句，例如：这个学生的第 3 题错在哪">
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button id="识图开始">问这一句</button>
+          <span id="识图状态" class="notice"></span>
+        </div>
+        <div id="识图预览" style="margin-top:10px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">结果</div>
+      <div class="card-b"><pre id="识图结果" style="white-space:pre-wrap;margin:0"></pre></div>
+    </div>
+  </section>
+
+  <section id="view-审查者" class="hide">
+    <button class="back" data-go="首页">← 返回工作台</button>
+    <h2 class="page">审查者</h2>
+    <div class="notice">
+      审查者每轮只报告、不改答案。以前它的意见直接拼在回答末尾，每轮都冒出来；
+      现在挪到这里，老师想看再点开。只有真动过东西、或回答超过 400 字时它才跑，纯闲聊不会有记录。
+    </div>
+    <div class="card">
+      <div class="card-h">概览</div>
+      <div class="card-b">
+        <div id="审查概览" class="notice">（还没读）</div>
+        <div class="row" style="margin-top:8px">
+          <button id="审查刷新">刷新</button>
+          <button id="审查清空">清空记录</button>
+        </div>
+        <div id="审查消息" class="notice"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h">最近几轮</div>
+      <div class="card-b"><div id="审查列表"></div></div>
+    </div>
+  </section>
+
   <section id="view-反馈与优化" class="hide">
     <button class="back" data-go="首页">← 返回工作台</button>
     <div class="card">
       <h2>提一条反馈</h2>
       <div class="body">
         <div class="notice">
-          遇到不好用、算错了、太慢，或者想要什么功能，写在这里会存进 <code>教师数据\反馈.jsonl</code> 等排期。
+          不好用、算错了、太慢，或者想要什么功能，写在这里存进 <code>教师数据\反馈.jsonl</code>。
           <br>
-          <b>学生自己提的意见请由老师转述</b>。反馈内容不属《学生数据处理约定》里的三项采集内容，
-          学生那边<b>不落盘</b>（所以学生用的那两个视图上没有这个入口）。
+          学生自己提的意见由老师转述。反馈不属《学生数据处理约定》的三项采集内容，
+          学生那边不落盘，学生用的那两个视图上也没有这个入口。
         </div>
         <div class="row">
           <div>
@@ -736,11 +813,11 @@
       <h2>诊断草稿（只出主意，不动代码）</h2>
       <div class="body">
         <div class="notice">
-          把一条反馈和<b>你点名要看的文件</b>交给模型，产出「定位 / 建议改动 / 要动哪几个文件 / 怎么验证 / 风险」。
-          <b>它不改任何文件、不执行任何命令</b>。改不改由人定；改完要过自检 + 双向回归，再 git 提交（所以能回滚）。
+          把一条反馈和你点名要看的文件交给模型，产出定位、建议改动、要动哪几个文件、怎么验证、风险。
+          它不改文件、不执行命令。改不改由人定；改完过自检和双向回归，再 git 提交。
           <br>
-          路径里带 <code>..</code> 的一律拒；<code>密钥\</code>、<code>学生数据\</code>、
-          <code>教师数据\</code> 里的东西<b>一律不许</b>发给模型。
+          路径带 <code>..</code> 的一律拒；<code>密钥\</code>、<code>学生数据\</code>、
+          <code>教师数据\</code> 里的东西不许发给模型。
         </div>
         <div class="row">
           <div>
@@ -766,9 +843,9 @@
       <h2>联动教学 · 备课</h2>
       <div class="body">
         <div class="notice">
-          两种上法：<b>按技能包生成一份新课件</b>，或者<b>用你自己已有的课件</b>
-          用已有的那份时，先把它复制进 <code>课件输出/</code>，系统只给<b>没有讲稿的页</b>补讲稿，
-          已有的讲稿一个字都不动。上起课来一样：一页页讲，学生按 <b>「我有问题」</b> 就会暂停，答完再继续。
+          两种上法：按技能包生成一份新课件，或者用你自己已有的课件。
+          用已有的那份时，先把它复制进 <code>课件输出/</code>，系统只给没有讲稿的页补讲稿，已有的讲稿不动。
+          上课一页页讲，学生按「我有问题」就暂停，答完再继续。
         </div>
         <div class="row">
           <div>
@@ -894,8 +971,8 @@
       <h2>模型用量与缓存命中</h2>
       <div class="body">
         <div class="notice">
-          上下文缓存由服务商侧默认开启、不用改代码。这里只展示软件自己记下来的用量：记下来才看得出是哪条路径低。
-          <b>官方说明：前两次请求不会命中，第三次起才命中</b>；缓存尽力而为、不保证 100%。
+          上下文缓存由服务商侧默认开启，不用改代码。这里只展示软件自己记的用量。
+          官方说明：前两次请求不会命中，第三次起才命中。缓存尽力而为，不保证 100%。
         </div>
         <button class="ghost" id="btnCacheRefresh">刷新用量</button>
         <div id="cacheMsg" style="margin-top:12px"></div>
@@ -914,6 +991,10 @@
   </div>
 </div>
 
+<div id="形象角" class="形象角">
+  <img id="形象图" src="/网页/形象/待机.webp" alt="虚拟形象">
+  <button id="形象关" title="收起形象">×</button>
+</div>
 <script src="/网页/首页.js"></script>
 </body>
 </html>

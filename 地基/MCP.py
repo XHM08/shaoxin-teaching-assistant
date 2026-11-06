@@ -48,9 +48,7 @@ class 服务器:
         except OSError as 异常:
             raise 出错("起不了 MCP 服务器「%s」：%s" % (self.名字, 异常)) from 异常
 
-
         threading.Thread(target=self._读stdout, daemon=True).start()
-
         threading.Thread(target=self._读stderr, daemon=True).start()
 
         回 = None
@@ -61,16 +59,12 @@ class 服务器:
                 "clientInfo": {"name": "邵新辅助教育系统", "version": 版本.版本号},
             })
         except Exception:
-
-
             self.关闭()
             raise
         结果 = 回.get("result") or {}
         self.协商版本 = str(结果.get("protocolVersion") or "")
         self.服务器信息 = 结果.get("serverInfo") or {}
         self.能力 = 结果.get("capabilities") or {}
-
-
         self._通知("notifications/initialized", {})
         return self
 
@@ -153,7 +147,6 @@ class 服务器:
     def _写(self, 消息):
         if self.进程 is None or self.进程.stdin is None:
             raise 出错("MCP 服务器「%s」已经关了" % self.名字)
-
         行 = json.dumps(消息, ensure_ascii=False) + "\n"
         try:
             self.进程.stdin.write(行)
@@ -174,8 +167,6 @@ class 服务器:
             while True:
                 剩 = 截止 - time.monotonic()
                 if 剩 <= 0:
-
-
                     self._尽力取消(号)
                     raise 出错("MCP 服务器「%s」的 %s 超时（%.0f 秒没回）。它最近的日志：%s"
                                % (self.名字, 方法, self.超时, self._日志尾巴()))

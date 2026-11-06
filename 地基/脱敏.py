@@ -55,7 +55,6 @@ def 脱敏(文本):
     if not 映射:
         return 原文, 0
     次数 = 0
-
     for 姓名 in sorted(映射, key=len, reverse=True):
         次数 += 原文.count(姓名)
         原文 = 原文.replace(姓名, 映射[姓名])

@@ -62,18 +62,15 @@ with open(os.path.join(材料, "说明.md"), "w", encoding="utf-8") as 文件:
 
 配置.取目录 = lambda 名: 材料 if 名 == "材料" else 原取目录(名)
 大模型.问 = 假问
-
 __import__("地基.技能包", fromlist=["x"]).读技能包全文 = lambda 代号: "（自检用的假技能包）"
 
 try:
-
     清单, 说明 = _课件.可配图()
     检查("① 可配图只列插得进的图（webp / md 不在内）",
        清单 == ["横图.png", "竖图.png", "子目录/嵌套图.jpg"],
        "实际：" + "、".join(清单))
     检查("② 清单是相对 材料/ 的路径、且用 / 分隔", all("/" in 名 for 名 in 清单 if "子" in 名),
        "实际：" + "、".join(清单))
-
 
     许多 = os.path.join(临时, "多图材料")
     os.makedirs(许多)
@@ -91,7 +88,6 @@ try:
     检查("⑤ 可插图后缀 ⊆ 大模型能发的后缀（两个集合不该相等）",
        set(幻灯片.可插图后缀) <= set(大模型.图片类型),
        "只插得进：%s；能发给模型：%s" % (tuple(幻灯片.可插图后缀), tuple(大模型.图片类型)))
-
 
     大模型.读配置 = lambda *a, **k: {"default": "看图的",
         "providers": {"看图的": {"base_url": "https://例子.invalid", "model": "看图的模型",
@@ -114,7 +110,6 @@ try:
        not any("没标「支持图片」" in 一句 for 一句 in 上下文["警告"]),
        "警告：" + "；".join(上下文["警告"])[:100])
 
-
     大模型.读配置 = lambda *a, **k: {"default": "纯文本的",
         "providers": {"纯文本的": {"base_url": "https://例子.invalid", "model": "纯文本",
                                 "key_env": "假的"}}}
@@ -128,7 +123,6 @@ try:
     检查("⑭ 没标支持图片 → 警告里告诉了老师（不静默降级）",
        any("没标「支持图片」" in 一句 for 一句 in 上下文2["警告"]),
        "警告：" + "；".join(上下文2["警告"])[:100])
-
 
     大模型.读配置 = lambda *a, **k: {"default": "看图的",
         "providers": {"看图的": {"base_url": "https://例子.invalid", "model": "看图的模型",
@@ -162,7 +156,6 @@ try:
            for 页 in 页们 for s in 页.shapes if hasattr(s, "image")))
     检查("㉑ 提示词里的文件清单与实际发出去的图一一对应（不多不少）",
        [一条[0][4:] for 一条 in 图们] == [名 for 名 in 清单] if 图们 else False)
-
 
     坏数据 = {"title": "编的", "pages": [
         {"kind": "知识", "title": "编的名字", "points": ["一条"], "script": "讲稿", "图": "根本没有这张.png"}]}

@@ -15,10 +15,7 @@ from 地基 import 材料, 语音
 跳过 = []
 根 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 判据样式 = re.compile(r"print\s*\(\s*sys\.version_info\[0\]\s*\)")
-
-
 where样式 = re.compile(r"where(\.exe)?\s+[\"']?python", re.I)
 
 
@@ -27,7 +24,6 @@ def 检查(名字, 通过, 说明=""):
 
 
 def 跳过一项(名字, 说明=""):
-
     跳过.append((名字, 说明))
     print("  跳过  " + 名字 + ("　→　" + 说明 if 说明 else ""))
 
@@ -58,7 +54,6 @@ def 批处理判据():
         判据行 = [行 for 行 in 执行行 if 判据样式.search(行)]
         检查("① %s 的判据是看输出（桩返回 0 也挡得住）" % 名, bool(判据行),
             str(判据行[0])[:76] if 判据行 else "执行行里没找到 print(sys.version_info[0])")
-
         检查("① %s 是 UTF-8 无 BOM + CRLF（改它时别把编码改掉）" % 名,
             (not 原.startswith(b"\xef\xbb\xbf")) and 原.count(b"\r\n") > 0
             and 原.count(b"\n") == 原.count(b"\r\n"),
@@ -67,7 +62,6 @@ def 批处理判据():
 
 
 def OCR判据():
-
     try:
         原因 = 材料.OCR不可用的原因()
         检查("② 没探测过时问「OCR 为什么不可用」→ 返回空串、不抛错", isinstance(原因, str), repr(原因))
@@ -75,11 +69,9 @@ def OCR判据():
         检查("② 没探测过时问「OCR 为什么不可用」→ 返回空串、不抛错", False,
             type(异常).__name__ + "：" + str(异常)[:60])
 
-
     if os.name != "nt" or not os.path.isfile(材料.OCR脚本路径) or 材料.找powershell() is None:
         跳过一项("② 探针那一组（这台机器上 OCR 脚本或 powershell 不可达）", "这一条没验")
         return
-
 
     原可用, 原因0, 时刻0 = 材料._OCR可用, 材料._OCR原因, 材料._OCR探针时刻
     原跑 = 材料._跑OCR
@@ -116,7 +108,6 @@ def OCR判据():
 def 语音判据():
     检查("③ 空端口 → 语音服务判成「不在」", 语音.服务在吗("http://127.0.0.1:1", 超时=1) is False)
 
-
     服务 = socket.socket()
     服务.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     服务.bind(("127.0.0.1", 0))
@@ -137,7 +128,6 @@ def 语音判据():
             语音.服务在吗("http://127.0.0.1:%d" % 端口, 超时=1) is False)
     finally:
         服务.close()
-
 
     class 最小HTTP(http.server.BaseHTTPRequestHandler):
         def do_GET(self):

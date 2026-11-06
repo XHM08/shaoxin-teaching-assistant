@@ -147,13 +147,11 @@ def 合成(文本, 参考音, 参考音文本, 语言="zh", 语速=1.0, 地址=N
         with urllib.request.urlopen(请求, timeout=超时) as 响应:
             数据 = 响应.read()
     except urllib.error.HTTPError as 异常:
-
         详情 = 异常.read().decode("utf-8", "replace")[:200]
         raise RuntimeError("语音服务返回 " + str(异常.code) + "：" + 详情) from 异常
     except urllib.error.URLError as 异常:
         raise RuntimeError(没启动怎么说(地址) + "\n（底层错误：" + str(异常.reason) + "）") from 异常
     if len(数据) < 44 or 数据[:4] != b"RIFF":
-
         raise RuntimeError("语音服务没回音频（前 120 字节：" + repr(数据[:120]) + "）")
     return 数据
 

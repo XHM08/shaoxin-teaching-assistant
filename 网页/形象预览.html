@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>形象预览（开发用）</title>
+<link rel="stylesheet" href="/网页/样式.css">
+<style>
+  .舞台 { display: flex; gap: 24px; align-items: flex-start; padding: 16px; flex-wrap: wrap; }
+  .画框 { background: #f7f7f7; border: 1px solid #e3e3e3; border-radius: 12px; padding: 12px; }
+  .画框.深色 { background: #1e2836; border-color: #2c3a4e; }
+  .画框 img { display: block; height: 460px; max-height: 70vh; }
+  #按钮行 { display: flex; flex-wrap: wrap; gap: 8px; max-width: 420px; }
+  #按钮行 button { min-width: 84px; }
+  .说明 { max-width: 460px; line-height: 1.7; font-size: 13px; color: #444; }
+  .标 { font-size: 13px; color: #666; margin: 6px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h2 class="page">形象预览</h2>
+  <p class="标">开发用页面，不进产品导航；打包脚本会把这两个文件从产物里删掉。切深色底用来看透明通道有没有白边。</p>
+
+  <div class="舞台">
+    <div class="画框" id="画框">
+      <img id="头像" src="/网页/形象/待机.webp" alt="虚拟形象">
+    </div>
+    <div>
+      <p class="标">当前显示：<b id="当前状态">待机</b></p>
+      <div id="按钮行"></div>
+      <p>
+        <button id="底色">切深色底</button>
+        <button id="探测">重新探测资源</button>
+      </p>
+      <p class="标" id="探测结果">探测中…</p>
+      <div class="说明">
+        <p>状态四种：待机、说话、动作、表情覆盖。动作播满 2 轮后硬切回待机（WebP 自己会一直循环，浏览器不管轮数，所以这是按整轮时长对齐的硬切）。表情是覆盖层，选中后一直生效，点「表情清空」回待机。</p>
+        <p>「说话」点一下开始、再点一下停。资源走 <code>/网页/形象/&lt;文件名&gt;</code>；某个 webp 取不到时自动回落到同名 gif，回落过的名字会写在上面的探测结果里。</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/网页/形象预览.js"></script>
+</body>
+</html>

@@ -10,7 +10,6 @@ from 地基 import 配置
 
 根 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 期望端口 = 18765
 
 失败 = []
@@ -89,7 +88,6 @@ def 主():
     try:
         跑检查()
     except Exception as 错:
-
         记("检查本身跑完了", False, "%s: %s" % (type(错).__name__, 错))
     print()
     print("全部 %d 项通过" % 条数 if not 失败 else "通过 %d / 共 %d" % (条数 - len(失败), 条数))
